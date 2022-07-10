@@ -179,6 +179,8 @@ global ZarielRequires := ""
 global ZarielCosts := ""
 ;Web Tools globals
 global WebToolCodes := "https://incendar.com/idlechampions_codes.php#123"
+global WebToolFormation := "https://ic.byteglow.com/formation"
+global WebToolModron := "https://ic.byteglow.com/modron"
 
 ;GUI globals
 global oMyGUI := ""
@@ -313,6 +315,9 @@ class MyGui {
 		Menu, ToolsSubmenu, Add, &Blacksmith, :BlacksmithSubmenu
 
 		Menu, ToolsSubmenu, Add, &Redeem Codes, Open_Codes
+		
+		Menu, ToolsSubmenu, Add, &Formation Calc (Web), Open_Web_Formation_Calc
+		Menu, ToolsSubmenu, Add, &Modron Core Calc (Web), Open_Web_Modron_Core_Calc
 
 		Menu, AdvSubmenu, Add, &Load New Adv, LoadAdventure
 		Menu, AdvSubmenu, Add, &End Current Adv, EndAdventure
@@ -1009,6 +1014,18 @@ Briv_Calc:
 Close_Codes:
 	{
 		Gui, CodeWindow:Destroy
+		return
+	}
+
+Open_Web_Formation_Calc()
+	{
+		Run, %WebToolFormation%
+		return
+	}
+
+Open_Web_Modron_Core_Calc()
+	{
+		Run, %WebToolModron%
 		return
 	}
 
