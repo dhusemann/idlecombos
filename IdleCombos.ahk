@@ -332,9 +332,6 @@ class MyGui {
 		Menu, ToolsSubmenu, Add, &Blacksmith, :BlacksmithSubmenu
 
 		Menu, ToolsSubmenu, Add, &Redeem Codes, Open_Codes
-		
-		Menu, ToolsSubmenu, Add, &Formation Calc (Web), Open_Web_Formation_Calc
-		Menu, ToolsSubmenu, Add, &Modron Core Calc (Web), Open_Web_Modron_Core_Calc
 
 		Menu, AdvSubmenu, Add, &Load New Adv, LoadAdventure
 		Menu, AdvSubmenu, Add, &End Current Adv, EndAdventure
@@ -348,6 +345,10 @@ class MyGui {
 		Menu, ToolsSubmenu, Add, &Adventure Manager, :AdvSubmenu
 
 		Menu, ToolsSubmenu, Add, &Briv Stack Calculator, Briv_Calc
+
+		Menu, ToolsSubmenu, Add, &Formation Calc (Web), Open_Web_Formation_Calc
+		Menu, ToolsSubmenu, Add, &Modron Core Calc (Web), Open_Web_Modron_Core_Calc
+
 		Menu, IdleMenu, Add, &Tools, :ToolsSubmenu
 
 		Menu, HelpSubmenu, Add, &Run Setup, FirstRun
