@@ -300,7 +300,7 @@ class MyGui {
 	__New()
 	{
 		Gui, MyWindow:New
-		Gui, MyWindow:+Resize -MaximizeBox 
+		Gui, MyWindow:-Resize -MaximizeBox 
 
 		Menu, ICSettingsSubmenu, Add, &View Settings, ViewICSettings
 		Menu, ICSettingsSubmenu, Add, &Framerate, SetFramerate
