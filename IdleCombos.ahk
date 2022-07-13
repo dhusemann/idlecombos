@@ -195,9 +195,10 @@ global ZarielChallenges := ""
 global ZarielRequires := ""
 global ZarielCosts := ""
 ;Web Tools globals
-global WebToolCodes := "https://incendar.com/idlechampions_codes.php#123"
+
 global WebToolFormation := "https://ic.byteglow.com/formation"
 global WebToolModron := "https://ic.byteglow.com/modron"
+global WebToolCodes := "https://incendar.com/idlechampions_codes.php#123"
 
 ;GUI globals
 global oMyGUI := ""
