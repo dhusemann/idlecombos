@@ -377,8 +377,9 @@ class MyGui {
 
 		Menu, ToolsSubmenu, Add, &Briv Stack Calculator, Briv_Calc
 
-		Menu, ToolsSubmenu, Add, &Formation Calc (Web), Open_Web_Formation_Calc
-		Menu, ToolsSubmenu, Add, &Modron Core Calc (Web), Open_Web_Modron_Core_Calc
+		Menu, WebToolsSubmenu, Add, &Formation Calc, Open_Web_Formation_Calc
+		Menu, WebToolsSubmenu, Add, &Modron Core Calc, Open_Web_Modron_Core_Calc
+		Menu, ToolsSubmenu, Add, &Web Tools, :WebToolsSubmenu
 
 		Menu, IdleMenu, Add, &Tools, :ToolsSubmenu
 
