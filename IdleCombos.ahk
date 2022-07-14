@@ -1973,7 +1973,7 @@ Hg_Blacksmith:
 			case 34: CurrentLgBS := v.inventory_amount
 			case 1797: CurrentHgBS := v.inventory_amount
 		}
-		AvailableChests := "= " Floor(CurrentGems/50) " Silver Chests"
+		AvailableChests := "= " Floor(CurrentGems/50) " Silver Chests = " Floor(CurrentGems/500) " Gold Chests"
 		tokencount := (CurrentTinyBounties*12)+(CurrentSmBounties*72)+(CurrentMdBounties*576)+(CurrentLgBounties*1152)
 		if (UserDetails.details.event_details[1].user_data.event_tokens) {
 			tokentotal := UserDetails.details.event_details[1].user_data.event_tokens
