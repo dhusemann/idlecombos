@@ -1973,6 +1973,33 @@ Hg_Blacksmith:
 			case 34: CurrentLgBS := v.inventory_amount
 			case 1797: CurrentHgBS := v.inventory_amount
 		}
+		if (CurrentTinyBounties = "") {
+			CurrentTinyBounties := 0
+		}
+		if (CurrentSmBounties = "") {
+			CurrentSmBounties := 0
+		}
+		if (CurrentMdBounties = "") {
+			CurrentMdBounties := 0
+		}
+		if (CurrentLgBounties = "") {
+			CurrentLgBounties := 0
+		}
+		if (CurrentTinyBS = "") {
+			CurrentTinyBS := 0
+		}
+		if (CurrentSmBS = "") {
+			CurrentSmBS := 0
+		}
+		if (CurrentMdBS = "") {
+			CurrentMdBS := 0
+		}
+		if (CurrentLgBS = "") {
+			CurrentLgBS := 0
+		}
+		if (CurrentHgBS = "") {
+			CurrentHgBS := 0
+		}
 		AvailableChests := "= " Floor(CurrentGems/50) " Silver Chests = " Floor(CurrentGems/500) " Gold Chests"
 		tokencount := (CurrentTinyBounties*12)+(CurrentSmBounties*72)+(CurrentMdBounties*576)+(CurrentLgBounties*1152)
 		if (UserDetails.details.event_details[1].user_data.event_tokens) {
@@ -2051,10 +2078,20 @@ Hg_Blacksmith:
 					StrahdVariants := "Locked"
 					StrahdFPCurrency := "Requires:"
 					StrahdChallenges := "Costs:"
-					StrahdRequires := UserDetails.details.stats.highest_area_completed_ever_c413 "/250 in Adventure 413 && " TotalChamps "/40 Champs"
-					if ((UserDetails.details.stats.highest_area_completed_ever_c413 > 249) && (TotalChamps > 39)) {
+					StrahdRequiresAdventure := UserDetails.details.stats.highest_area_completed_ever_c413
+					if (StrahdRequiresAdventure = "") {
+						StrahdRequiresAdventure := "0"
+					}
+					StrahdRequires := StrahdRequiresAdventure "/250 in Adventure 413 && " TotalChamps "/40 Champs"
+					if ((StrahdRequiresAdventure > 249) && (TotalChamps > 39)) {
 						Gui, Font, cGreen
 						GuiControl, Font, StrahdFPCurrency
+					}
+					if (CurrentSilvers = "") {
+						CurrentSilvers := "0"
+					}
+					if (CurrentLgBounties = "") {
+						CurrentLgBounties := "0"
 					}
 					StrahdCosts := CurrentLgBounties "/10 Lg Bounties && " CurrentSilvers "/20 Silver Chests"
 					if ((CurrentLgBounties > 9) && (CurrentSilvers > 19)) {
