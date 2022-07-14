@@ -1,5 +1,5 @@
 # idlecombos
-3.00 is supported Version. </br>
+3.20 is supported Version. </br>
 IMPORTANT - When opening chests with the idlecombos app:</br>
 The game client can save an outdated inventory, overwriting some consumables.</br>
 It's recommended to exit the game first to avoid losing items.</br>
