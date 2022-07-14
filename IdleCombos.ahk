@@ -72,6 +72,7 @@ global GameInstallDir := "C:\Program Files (x86)\Steam\steamapps\common\IdleCham
 global GameIDEpic := "40cb42e38c0b4a14a1bb133eb3291572"
 global GameClientEpic := "C:\ProgramData\Epic\UnrealEngineLauncher\LauncherInstalled.dat"
 global GameClientEpicLauncher := ""
+; Detect Epic Games install and fallback to Steam install
 if FileExist(GameClientEpic) {
 	FileRead, EpicJSONString, %GameClientEpic%
 	EpicJSONobj := JSON.parse(EpicJSONString)
