@@ -2163,7 +2163,7 @@ Hg_Blacksmith:
 
 		if (UserDetails.details.stats.dhani_monsters_painted) {
 			dhanipaint := UserDetails.details.stats.dhani_monsters_painted
-			ChampDetails := ChampDetails "D hani Paints: " dhanipaint "`n`n"
+			ChampDetails := ChampDetails "D'hani Paints: " dhanipaint "`n`n"
 		}
 
 	}	
