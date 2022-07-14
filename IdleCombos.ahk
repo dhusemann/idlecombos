@@ -2,12 +2,24 @@
 #include %A_ScriptDir%
 #include JSON.ahk
 #include idledict.ahk
+
+; CHANGELOG
+
+;3.20
+;add working detection for Epic Games installation (thanks Adan Rehtla)
+;update to Redeem Codes (thanks Adan Rehtla)
+;autoomation to retrieve Redeem Codes via web (thanks Adan Rehtla)
+;add minimum GUI windows sizes (thanks Adan Rehtla)
+;other minor fixes (thanks Adan Rehtla)
+
 ;3.10
-;add working core 4 and party 4 thanks Fmagdi
-;hopeful fix for opening to many chest ban thanks deathoone
-;support for huge contracts thanks NeyahPeterson
+;add working core 4 and party 4 (thanks Fmagdi)
+;hopeful fix for opening to many chest ban (thanks deathoone)
+;support for huge contracts (thanks NeyahPeterson)
+
 ;3.00
 ;disabled log files by default
+
 ;2.00
 ;2/15/22 servers settle down, reduce timer to .5 secs for Chest
 ;open routine 
@@ -18,34 +30,42 @@
 ;client. including most of the work that had been done to limit log files locally
 ;once steam idlecombos working merge recent changes into egs client, and maybe
 ;make the dhani paint work. Or focus Idlecombos.
+
 ;1.98
 ;update idledict content, 
 ;added NERDS as evergreen for equipment screen
+
 ;1.97
 ;include fixes for single instance from mikebaldi
+
 ;1.96
 ;update dict file to latest content and versioned to 1.96 
+
 ;1.95
-;disabled opening chest while client is open, 
+;disabled opening chest while client is open,
+
 ;1.94
 ;Updated Cleaned up UI around redeam codes with mikebaldi1980 Help
 ;added in party 3 and core 3 with code from HPX
 ;updated Eunomiac code to copy and find code from discord combination channel
 ;should be robust enough to find chest code in most channel but haven't verified
+
 ;1.93
 ;more work to clean up window for combination code.
-;Added in 1.92
+
+;1.92
 ;added Eunomiac code to copy and find code from discord combination channel
-;Added in 1.91
+
+;1.91
 ;Added DeathoEye Server update
 ;Neal's Json escape code for redeaming codes
 ;updated dict file to 1.91 champs, chest and feats up to UserDetailsFile
 
-;Added in 1.9
+;1.90
 ;-Patron Zariel
 ;-Dictionary file updated to 1.9
-;
-;Added in 1.8
+
+;1.80
 ;-Pity Timer for Golds on Inventory Tab
 ;-Event Pity Timers in the Chests menu
 ;-More info on number of tokens/FPs available
@@ -54,8 +74,9 @@
 ;-Dictionary file updated to 1.8
 ;-(Also resized the window finally) :P
 
-;Special thanks to all the idle dragons who inspired and assisted me!
-global VersionNumber := "3.10"
+;Special thanks to all the idle dragoneers who inspired and assisted me!
+
+global VersionNumber := "3.20"
 global CurrentDictionary := "2.00"
 
 ;Local File globals
@@ -704,7 +725,7 @@ Save_Settings:
 
 About_Clicked:
 	{
-		MsgBox, , About IdleCombos v%VersionNumber%, IdleCombos v%VersionNumber% by QuickMythril Updates by Eldoen`n`nSpecial thanks to all the idle dragons who inspired and assisted me!
+		MsgBox, , About IdleCombos v%VersionNumber%, IdleCombos v%VersionNumber% by QuickMythril`nUpdates by Eldoen, dhusemann, NeyahPeterson, deathoone, Fmagdi, Adan Rehtla `n`nSpecial thanks to all the idle dragoneers who inspired and assisted me!
 		return
 	}
 
