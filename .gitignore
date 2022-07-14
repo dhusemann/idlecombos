@@ -4,8 +4,7 @@ IdleCombos.ahk.bak
 # SETTINGS
 idlecombosettings.json
 userdetails.json
-
-# LOGS
+idlecombosettings.json
 idlecombolog.txt
 eos_loader_log.txt
 blacksmithlog.json
