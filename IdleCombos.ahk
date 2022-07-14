@@ -3087,18 +3087,18 @@ ShowPityTimers() {
 
 getChestCodes() {
 	clipContents := clipboard
-regexpPattern = P)\b(?<![A-Za-z0-9-/@#$`%^&!*])([A-Za-z0-9-@#$`%^&!*]{12,20})(?![A-Za-z0-9-/@#$`%^&!*])
-foundCodeString := ""
-while (clipContents ~= regexpPattern) {
-	foundPos := RegExMatch(clipContents, regexpPattern, foundLength)
-	foundCode := RegExReplace(SubStr(clipContents, foundPos, foundLength), "-")
-	clipContents := SubStr(clipContents, foundPos + foundLength)
-	if (InStr(foundCodeString, foundCode) = 0 && (StrLen(foundCode) = 12 || StrLen(foundCode) == 16)) {
-		foundCodeString .= foundCode . "`r`n"
+	regexpPattern = P)\b(?<![A-Za-z0-9-/@#$`%^&!*])([A-Za-z0-9-@#$`%^&!*]{12,20})(?![A-Za-z0-9-/@#$`%^&!*])
+	foundCodeString := ""
+	while (clipContents ~= regexpPattern) {
+		foundPos := RegExMatch(clipContents, regexpPattern, foundLength)
+		foundCode := RegExReplace(SubStr(clipContents, foundPos, foundLength), "-")
+		clipContents := SubStr(clipContents, foundPos + foundLength)
+		if (InStr(foundCodeString, foundCode) = 0 && (StrLen(foundCode) = 12 || StrLen(foundCode) == 16)) {
+			foundCodeString .= foundCode . "`r`n"
+		}
 	}
-}
-foundCodeString := RegExReplace(foundCodeString, "`r`n$")
-return foundCodeString
+	foundCodeString := RegExReplace(foundCodeString, "`r`n$")
+	return foundCodeString
 }
 
 ;{ ScrollBox
