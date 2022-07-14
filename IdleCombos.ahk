@@ -56,7 +56,7 @@
 
 ;Special thanks to all the idle dragons who inspired and assisted me!
 global VersionNumber := "3.10"
-global CurrentDictionary := "2.00"
+global CurrentDictionary := "2.10"
 
 ;Local File globals
 ;global OutputLogFile := "idlecombolog.txt"
@@ -1428,7 +1428,7 @@ Hg_Blacksmith:
 			if ErrorLevel
 				return
 		}
-		while !((heroid > 0) && (heroid < 100)) {
+		while !((heroid > 0) && (heroid < 107) && (heroid != 103) && (heroid != 104) && (heroid != 105)) {
 			InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number.", , 200, 180, , , , , %LastBSChamp%
 			if ErrorLevel
 				return
