@@ -1,5 +1,5 @@
 # idlecombos
-3.00 is supported Version. </br>
+3.20 is supported Version. </br>
 IMPORTANT - When opening chests with the idlecombos app:</br>
 The game client can save an outdated inventory, overwriting some consumables.</br>
 It's recommended to exit the game first to avoid losing items.</br>
@@ -26,7 +26,7 @@ Features:</br>
 - Can reload game client on crash (Steam only)</br>
 </br>
 Requirements:</br>
-Steam install, or able to enter your user_id & hash if on another platform.</br>
+Steam install or Epic install, or able to enter your user_id & hash if on another platform.</br>
 </br>
 Includes:</br>
 json.ahk [github.com/Chunjee]</br>

@@ -2,12 +2,24 @@
 #include %A_ScriptDir%
 #include JSON.ahk
 #include idledict.ahk
+
+; CHANGELOG
+
+;3.20
+;add working detection for Epic Games installation (thanks djravine)
+;update to Redeem Codes (thanks djravine)
+;autoomation to retrieve Redeem Codes via web (thanks djravine)
+;add minimum GUI windows sizes (thanks djravine)
+;other minor fixes (thanks djravine)
+
 ;3.10
-;add working core 4 and party 4 thanks Fmagdi
-;hopeful fix for opening to many chest ban thanks deathoone
-;support for huge contracts thanks NeyahPeterson
+;add working core 4 and party 4 (thanks Fmagdi)
+;hopeful fix for opening to many chest ban (thanks deathoone)
+;support for huge contracts (thanks NeyahPeterson)
+
 ;3.00
 ;disabled log files by default
+
 ;2.00
 ;2/15/22 servers settle down, reduce timer to .5 secs for Chest
 ;open routine 
@@ -18,34 +30,42 @@
 ;client. including most of the work that had been done to limit log files locally
 ;once steam idlecombos working merge recent changes into egs client, and maybe
 ;make the dhani paint work. Or focus Idlecombos.
+
 ;1.98
 ;update idledict content, 
 ;added NERDS as evergreen for equipment screen
+
 ;1.97
 ;include fixes for single instance from mikebaldi
+
 ;1.96
 ;update dict file to latest content and versioned to 1.96 
+
 ;1.95
-;disabled opening chest while client is open, 
+;disabled opening chest while client is open,
+
 ;1.94
 ;Updated Cleaned up UI around redeam codes with mikebaldi1980 Help
 ;added in party 3 and core 3 with code from HPX
 ;updated Eunomiac code to copy and find code from discord combination channel
 ;should be robust enough to find chest code in most channel but haven't verified
+
 ;1.93
 ;more work to clean up window for combination code.
-;Added in 1.92
+
+;1.92
 ;added Eunomiac code to copy and find code from discord combination channel
-;Added in 1.91
+
+;1.91
 ;Added DeathoEye Server update
 ;Neal's Json escape code for redeaming codes
 ;updated dict file to 1.91 champs, chest and feats up to UserDetailsFile
 
-;Added in 1.9
+;1.90
 ;-Patron Zariel
 ;-Dictionary file updated to 1.9
-;
-;Added in 1.8
+
+;1.80
 ;-Pity Timer for Golds on Inventory Tab
 ;-Event Pity Timers in the Chests menu
 ;-More info on number of tokens/FPs available
@@ -54,9 +74,10 @@
 ;-Dictionary file updated to 1.8
 ;-(Also resized the window finally) :P
 
-;Special thanks to all the idle dragons who inspired and assisted me!
-global VersionNumber := "3.10"
-global CurrentDictionary := "2.10"
+;Special thanks to all the idle dragoneers who inspired and assisted me!
+
+global VersionNumber := "3.20"
+global CurrentDictionary := "2.00"
 
 ;Local File globals
 ;global OutputLogFile := "idlecombolog.txt"
@@ -72,6 +93,7 @@ global GameInstallDir := "C:\Program Files (x86)\Steam\steamapps\common\IdleCham
 global GameIDEpic := "40cb42e38c0b4a14a1bb133eb3291572"
 global GameClientEpic := "C:\ProgramData\Epic\UnrealEngineLauncher\LauncherInstalled.dat"
 global GameClientEpicLauncher := ""
+; Detect Epic Games install and fallback to Steam install
 if FileExist(GameClientEpic) {
 	FileRead, EpicJSONString, %GameClientEpic%
 	EpicJSONobj := JSON.parse(EpicJSONString)
@@ -120,15 +142,19 @@ global ActiveInstance := 0
 global CurrentAdventure := ""
 global CurrentArea := ""
 global CurrentPatron := ""
+global CurrentChampions := ""
 global BackgroundAdventure := ""
 global BackgroundArea := ""
 global BackgroundPatron := ""
+global BackgroundChampions := ""
 global Background2Adventure := ""
 global Background2Area := ""
 global Background2Patron := ""
+global Background2Champions := ""
 global Background3Adventure := ""
 global Background3Area := ""
 global Background3Patron := ""
+global Background3Champions := ""
 global AchievementInfo := "This page intentionally left blank.`n`n`n`n`n`n`n"
 global BlessingInfo := "`n`n`n`n`n`n"
 global ChampDetails := ""
@@ -157,6 +183,10 @@ global CurrentLgBS := ""
 global CurrentHgBS := ""
 global AvailableBSLvs := ""
 ;Loot globals
+global ChampionsUnlockedCount := 0
+global ChampionsActiveCount := 0
+global FamiliarsUnlockedCount := 0
+global CostumesUnlockedCount := 0
 global EpicGearCount := 0
 global BrivSlot4 := 0
 global BrivZone := 0
@@ -301,7 +331,7 @@ class MyGui {
 	__New()
 	{
 		Gui, MyWindow:New
-		Gui, MyWindow:+Resize -MaximizeBox 
+		Gui, MyWindow:+Resize -MaximizeBox +MinSize
 
 		Menu, ICSettingsSubmenu, Add, &View Settings, ViewICSettings
 		Menu, ICSettingsSubmenu, Add, &Framerate, SetFramerate
@@ -390,38 +420,46 @@ class MyGui {
 
 		Gui, Tab, Summary
 		Gui, MyWindow:Add, Text, vAchievementInfo x15 y33 w300, % AchievementInfo
-		Gui, MyWindow:Add, Text, vBlessingInfo x200 y33 w300, % BlessingInfo
+		Gui, MyWindow:Add, Text, vBlessingInfo x200 y33 w300 h210, % BlessingInfo
 
 		Gui, Tab, Adventures
 		Gui, MyWindow:Add, Text, x15 y33 w130, Current Adventure:
 		Gui, MyWindow:Add, Text, vCurrentAdventure x+2 w50, % CurrentAdventure
 		Gui, MyWindow:Add, Text, x15 y+p w130, Current Patron:
 		Gui, MyWindow:Add, Text, vCurrentPatron x+2 w50, % CurrentPatron
+		Gui, MyWindow:Add, Text, x15 y+p w130, Current Champions:
+		Gui, MyWindow:Add, Text, vCurrentChampions x+2 w50, % CurrentChampions
 		Gui, MyWindow:Add, Text, x15 y+p w130, Current Area:
 		Gui, MyWindow:Add, Text, vCurrentArea x+2 w50, % CurrentArea
-		Gui, MyWindow:Add, Text, x15 y76 w130, Background Adventure:
+		Gui, MyWindow:Add, Text, x15 y88 w130, Background Adventure:
 		Gui, MyWindow:Add, Text, vBackgroundAdventure x+2 w50, % BackgroundAdventure
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background Patron:
 		Gui, MyWindow:Add, Text, vBackgroundPatron x+2 w50, % BackgroundPatron
+		Gui, MyWindow:Add, Text, x15 y+p w130, Background Champions:
+		Gui, MyWindow:Add, Text, vBackgroundChampions x+2 w50, % BackgroundChampions
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background Area:
 		Gui, MyWindow:Add, Text, vBackgroundArea x+2 w50, % BackgroundArea
-		Gui, MyWindow:Add, Text, x15 y119 w130, Background2 Adventure:
+		Gui, MyWindow:Add, Text, x15 y143 w130, Background2 Adventure:
 		Gui, MyWindow:Add, Text, vBackground2Adventure x+2 w50, % Background2Adventure
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background2 Patron:
 		Gui, MyWindow:Add, Text, vBackground2Patron x+2 w50, % Background2Patron
+		Gui, MyWindow:Add, Text, x15 y+p w130, Background2 Champions:
+		Gui, MyWindow:Add, Text, vBackground2Champions x+2 w50, % Background2Champions
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background2 Area:
 		Gui, MyWindow:Add, Text, vBackground2Area x+2 w50, % Background2Area
-		Gui, MyWindow:Add, Text, x15 y162 w130, Background3 Adventure:
+		Gui, MyWindow:Add, Text, x15 y198 w130, Background3 Adventure:
 		Gui, MyWindow:Add, Text, vBackground3Adventure x+2 w50, % Background3Adventure
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background3 Patron:
 		Gui, MyWindow:Add, Text, vBackground3Patron x+2 w50, % Background3Patron
+		Gui, MyWindow:Add, Text, x15 y+p w130, Background3 Champions:
+		Gui, MyWindow:Add, Text, vBackground3Champions x+2 w50, % Background3Champions
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background3 Area:
 		Gui, MyWindow:Add, Text, vBackground3Area x+2 w50, % Background3Area
 
 		Gui, MyWindow:Add, Text, vFGCore x200 y33 w150, % FGCore
-		Gui, MyWindow:Add, Text, vBGCore x200 y76 w150, % BGCore
-		Gui, MyWindow:Add, Text, vBG2Core x200 y119 w150, % BG2Core
-		Gui, MyWindow:Add, Text, vBG3Core x200 y162 w150, % BG3Core
+		Gui, MyWindow:Add, Text, vBGCore x200 y88 w150, % BGCore
+		Gui, MyWindow:Add, Text, vBG2Core x200 y143 w150, % BG2Core
+		Gui, MyWindow:Add, Text, vBG3Core x200 y198 w150, % BG3Core
 
 		Gui, Tab, Inventory
 		Gui, MyWindow:Add, Text, x15 y33 w70, Current Gems:
@@ -551,15 +589,19 @@ class MyGui {
 		GuiControl, MyWindow:, CurrentAdventure, % CurrentAdventure, w250 h210
 		GuiControl, MyWindow:, CurrentArea, % CurrentArea, w250 h210
 		GuiControl, MyWindow:, CurrentPatron, % CurrentPatron, w250 h210
+		GuiControl, MyWindow:, CurrentChampions, % CurrentChampions, w250 h210
 		GuiControl, MyWindow:, BackgroundAdventure, % BackgroundAdventure, w250 h210
 		GuiControl, MyWindow:, BackgroundArea, % BackgroundArea, w250 h210
 		GuiControl, MyWindow:, BackgroundPatron, % BackgroundPatron, w250 h210
+		GuiControl, MyWindow:, BackgroundChampions, % BackgroundChampions, w250 h210
 		GuiControl, MyWindow:, Background2Adventure, % Background2Adventure, w250 h210
 		GuiControl, MyWindow:, Background2Area, % Background2Area, w250 h210
 		GuiControl, MyWindow:, Background2Patron, % Background2Patron, w250 h210
+		GuiControl, MyWindow:, Background2Champions, % Background2Champions, w250 h210
 		GuiControl, MyWindow:, Background3Adventure, % Background3Adventure, w250 h210
 		GuiControl, MyWindow:, Background3Area, % Background3Area, w250 h210
 		GuiControl, MyWindow:, Background3Patron, % Background3Patron, w250 h210
+		GuiControl, MyWindow:, Background3Champions, % Background3Champions, w250 h210
 
 		GuiControl, MyWindow:, FGCore, % FGCore, w250 h210
 		GuiControl, MyWindow:, BGCore, % BGCore, w250 h210
@@ -703,7 +745,7 @@ Save_Settings:
 
 About_Clicked:
 	{
-		MsgBox, , About IdleCombos v%VersionNumber%, IdleCombos v%VersionNumber% by QuickMythril Updates by Eldoen`n`nSpecial thanks to all the idle dragons who inspired and assisted me!
+		MsgBox, , About IdleCombos v%VersionNumber%, IdleCombos v%VersionNumber% by QuickMythril`nUpdates by Eldoen, dhusemann, NeyahPeterson, deathoone, Fmagdi, djravine `n`nSpecial thanks to all the idle dragoneers who inspired and assisted me!
 		return
 	}
 
@@ -779,7 +821,7 @@ Open_Codes:
 		; GUI
 		Gui, CodeWindow:New
 		Gui, Menu, MyMenuBar
-		Gui, CodeWindow:-Resize -MaximizeBox
+		Gui, CodeWindow:-Resize -MaximizeBox +MinSize
 		Gui, CodeWindow:Show, w230 h240, Codes
 		Gui, CodeWindow:Add, Edit, r12 vCodestoEnter w190 x20 y20, IDLE-CHAM-PION-SNOW
 		Gui, CodeWindow:Add, Button, gRedeem_Codes, Submit
@@ -1754,28 +1796,53 @@ Hg_Blacksmith:
 
 	ParseAdventureData() {
 		bginstance := 0
+		ChampionsActiveCount := 0
 		for k, v in UserDetails.details.game_instances
 		if (v.game_instance_id == ActiveInstance) {
 			CurrentAdventure := v.current_adventure_id
 			CurrentArea := v.current_area
 			CurrentPatron := PatronFromID(v.current_patron_id)
+			CurrentChampions := 0
+			for l, w in v.formation
+			if (w > 0) {
+				CurrentChampions += 1
+			}
+			ChampionsActiveCount += CurrentChampions
 		}
 		else if (bginstance == 0){
 			BackgroundAdventure := v.current_adventure_id
 			BackgroundArea := v.current_area
 			BackgroundPatron := PatronFromID(v.current_patron_id)
+			BackgroundChampions := 0
+			for l, w in v.formation
+			if (w > 0) {
+				BackgroundChampions += 1
+			}
+			ChampionsActiveCount += BackgroundChampions
 			bginstance += 1
 		}
 		else if (bginstance == 1){
 			Background2Adventure := v.current_adventure_id
 			Background2Area := v.current_area
 			Background2Patron := PatronFromID(v.current_patron_id)
+			Background2Champions := 0
+			for l, w in v.formation
+			if (w > 0) {
+				Background2Champions += 1
+			}
+			ChampionsActiveCount += Background2Champions
 			bginstance += 1
 		}
 		else if (bginstance == 2){
 			Background3Adventure := v.current_adventure_id
 			Background3Area := v.current_area
 			Background3Patron := PatronFromID(v.current_patron_id)
+			Background3Champions := 0
+			for l, w in v.formation
+			if (w > 0) {
+				Background3Champions += 1
+			}
+			ChampionsActiveCount += Background3Champions
 		}
 
 		FGCore := "`n"
@@ -1973,7 +2040,34 @@ Hg_Blacksmith:
 			case 34: CurrentLgBS := v.inventory_amount
 			case 1797: CurrentHgBS := v.inventory_amount
 		}
-		AvailableChests := "= " Floor(CurrentGems/50) " Silver Chests"
+		if (CurrentTinyBounties = "") {
+			CurrentTinyBounties := 0
+		}
+		if (CurrentSmBounties = "") {
+			CurrentSmBounties := 0
+		}
+		if (CurrentMdBounties = "") {
+			CurrentMdBounties := 0
+		}
+		if (CurrentLgBounties = "") {
+			CurrentLgBounties := 0
+		}
+		if (CurrentTinyBS = "") {
+			CurrentTinyBS := 0
+		}
+		if (CurrentSmBS = "") {
+			CurrentSmBS := 0
+		}
+		if (CurrentMdBS = "") {
+			CurrentMdBS := 0
+		}
+		if (CurrentLgBS = "") {
+			CurrentLgBS := 0
+		}
+		if (CurrentHgBS = "") {
+			CurrentHgBS := 0
+		}
+		AvailableChests := "= " Floor(CurrentGems/50) " Silver Chests = " Floor(CurrentGems/500) " Gold Chests"
 		tokencount := (CurrentTinyBounties*12)+(CurrentSmBounties*72)+(CurrentMdBounties*576)+(CurrentLgBounties*1152)
 		if (UserDetails.details.event_details[1].user_data.event_tokens) {
 			tokentotal := UserDetails.details.event_details[1].user_data.event_tokens
@@ -2051,10 +2145,20 @@ Hg_Blacksmith:
 					StrahdVariants := "Locked"
 					StrahdFPCurrency := "Requires:"
 					StrahdChallenges := "Costs:"
-					StrahdRequires := UserDetails.details.stats.highest_area_completed_ever_c413 "/250 in Adventure 413 && " TotalChamps "/40 Champs"
-					if ((UserDetails.details.stats.highest_area_completed_ever_c413 > 249) && (TotalChamps > 39)) {
+					StrahdRequiresAdventure := UserDetails.details.stats.highest_area_completed_ever_c413
+					if (StrahdRequiresAdventure = "") {
+						StrahdRequiresAdventure := "0"
+					}
+					StrahdRequires := StrahdRequiresAdventure "/250 in Adventure 413 && " TotalChamps "/40 Champs"
+					if ((StrahdRequiresAdventure > 249) && (TotalChamps > 39)) {
 						Gui, Font, cGreen
 						GuiControl, Font, StrahdFPCurrency
+					}
+					if (CurrentSilvers = "") {
+						CurrentSilvers := "0"
+					}
+					if (CurrentLgBounties = "") {
+						CurrentLgBounties := "0"
 					}
 					StrahdCosts := CurrentLgBounties "/10 Lg Bounties && " CurrentSilvers "/20 Silver Chests"
 					if ((CurrentLgBounties > 9) && (CurrentSilvers > 19)) {
@@ -2104,8 +2208,22 @@ Hg_Blacksmith:
 	}
 
 	ParseLootData() {
+		ChampionsUnlockedCount := 0
+		FamiliarsUnlockedCount := 0
+		CostumesUnlockedCount := 0
 		EpicGearCount := 0
 		todogear := "`nHighest Gear Level: " UserDetails.details.stats.highest_level_gear
+		for k, v in UserDetails.details.heroes {
+			if (v.owned == "1") {
+				ChampionsUnlockedCount += 1
+			}
+		}
+		for k, v in UserDetails.details.familiars {
+			FamiliarsUnlockedCount += 1
+		}
+		for k, v in UserDetails.details.unlocked_hero_skins {
+			CostumesUnlockedCount += 1
+		}
 		for k, v in UserDetails.details.loot {
 			if (v.rarity == "4") {
 				EpicGearCount += 1
@@ -2163,7 +2281,7 @@ Hg_Blacksmith:
 
 		if (UserDetails.details.stats.dhani_monsters_painted) {
 			dhanipaint := UserDetails.details.stats.dhani_monsters_painted
-			ChampDetails := ChampDetails "D hani Paints: " dhanipaint "`n`n"
+			ChampDetails := ChampDetails "D'hani Paints: " dhanipaint "`n`n"
 		}
 
 	}	
@@ -2331,17 +2449,44 @@ Hg_Blacksmith:
 	}
 
 	CheckBlessings() {
+
 		epiccount := ""
 		epicvalue := Round((1.02 ** EpicGearCount), 2)
 		if (UserDetails.details.reset_upgrade_levels.44) { ;Helm-Slow and Steady (X Epics)
-			epiccount := "Slow and Steady:`nx" epicvalue " damage (" EpicGearCount " epics)`n`n"
+			epiccount := "Slow and Steady:`n    x" epicvalue " damage (" EpicGearCount " epics)`n"
 		}
+
+		championcount := ""
+		championvalue := Round((1.02 ** ChampionsUnlockedCount), 2)
+		if (UserDetails.details.reset_upgrade_levels.72) { ;Helm-Familiar Faces (X Champions)
+			championcount := "Familiar Faces:`n    x" championvalue " damage (" ChampionsUnlockedCount " champions)`n"
+		}
+
+		championactivecount := ""
+		championactivevalue := Round((1.02 ** ChampionsActiveCount), 2)
+		if (UserDetails.details.reset_upgrade_levels.76) { ;Helm-Splitting the Party (X Champions)
+			championactivecount := "Splitting the Party:`n    x" championactivevalue " damage (" ChampionsActiveCount " active champions)`n"
+		}
+
 		veterancount := ""
 		veteranvalue := Round(1 + (0.1 * UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c22), 2)
 		if (UserDetails.details.reset_upgrade_levels.56) { ;Tiamat-Veterans of Avernus (X Adventures)
-			veterancount := "Veterans of Avernus:`nx" veteranvalue " damage (" UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c22 " adventures)`n`n"
+			veterancount := "Veterans of Avernus:`n    x" veteranvalue " damage (" UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c22 " adventures)`n"
 		}
-		BlessingInfo := "Blessing Details`n`n" epiccount veterancount
+
+		costumecount := ""
+		costumevalue := Round((1.20 ** CostumesUnlockedCount), 2)
+		if (UserDetails.details.reset_upgrade_levels.88) { ;Auril-Costume Party (X Skins)
+			costumecount := "Costume Party:`n    x" costumevalue " damage (" CostumesUnlockedCount " skins)`n"
+		}
+
+		familiarcount := ""
+		familiarvalue := Round((1.20 ** FamiliarsUnlockedCount), 2)
+		if (UserDetails.details.reset_upgrade_levels.108) { ;Corellon-Familiar Stakes (X Familiars)
+			familiarcount := "Familiar Stakes:`n    x" familiarvalue " damage (" FamiliarsUnlockedCount " familiars)`n"
+		}
+
+		BlessingInfo := "Blessing Details`n`n" epiccount championcount championactivecount veterancount costumecount familiarcount
 		if (BlessingInfo == "Blessing Details`n`n") {
 			BlessingInfo := "Blessing Details: N/A"
 		}
@@ -3087,18 +3232,18 @@ ShowPityTimers() {
 
 getChestCodes() {
 	clipContents := clipboard
-regexpPattern = P)\b(?<![A-Za-z0-9-/@#$`%^&!*])([A-Za-z0-9-@#$`%^&!*]{12,20})(?![A-Za-z0-9-/@#$`%^&!*])
-foundCodeString := ""
-while (clipContents ~= regexpPattern) {
-	foundPos := RegExMatch(clipContents, regexpPattern, foundLength)
-	foundCode := RegExReplace(SubStr(clipContents, foundPos, foundLength), "-")
-	clipContents := SubStr(clipContents, foundPos + foundLength)
-	if (InStr(foundCodeString, foundCode) = 0 && (StrLen(foundCode) = 12 || StrLen(foundCode) == 16)) {
-		foundCodeString .= foundCode . "`r`n"
+	regexpPattern = P)\b(?<![A-Za-z0-9-/@#$`%^&!*])([A-Za-z0-9-@#$`%^&!*]{12,20})(?![A-Za-z0-9-/@#$`%^&!*])
+	foundCodeString := ""
+	while (clipContents ~= regexpPattern) {
+		foundPos := RegExMatch(clipContents, regexpPattern, foundLength)
+		foundCode := RegExReplace(SubStr(clipContents, foundPos, foundLength), "-")
+		clipContents := SubStr(clipContents, foundPos + foundLength)
+		if (InStr(foundCodeString, foundCode) = 0 && (StrLen(foundCode) = 12 || StrLen(foundCode) == 16)) {
+			foundCodeString .= foundCode . "`r`n"
+		}
 	}
-}
-foundCodeString := RegExReplace(foundCodeString, "`r`n$")
-return foundCodeString
+	foundCodeString := RegExReplace(foundCodeString, "`r`n$")
+	return foundCodeString
 }
 
 ;{ ScrollBox
