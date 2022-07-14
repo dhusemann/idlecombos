@@ -6,11 +6,11 @@
 ; CHANGELOG
 
 ;3.20
-;add working detection for Epic Games installation (thanks Adan Rehtla)
-;update to Redeem Codes (thanks Adan Rehtla)
-;autoomation to retrieve Redeem Codes via web (thanks Adan Rehtla)
-;add minimum GUI windows sizes (thanks Adan Rehtla)
-;other minor fixes (thanks Adan Rehtla)
+;add working detection for Epic Games installation (thanks djravine)
+;update to Redeem Codes (thanks djravine)
+;autoomation to retrieve Redeem Codes via web (thanks djravine)
+;add minimum GUI windows sizes (thanks djravine)
+;other minor fixes (thanks djravine)
 
 ;3.10
 ;add working core 4 and party 4 (thanks Fmagdi)
@@ -745,7 +745,7 @@ Save_Settings:
 
 About_Clicked:
 	{
-		MsgBox, , About IdleCombos v%VersionNumber%, IdleCombos v%VersionNumber% by QuickMythril`nUpdates by Eldoen, dhusemann, NeyahPeterson, deathoone, Fmagdi, Adan Rehtla `n`nSpecial thanks to all the idle dragoneers who inspired and assisted me!
+		MsgBox, , About IdleCombos v%VersionNumber%, IdleCombos v%VersionNumber% by QuickMythril`nUpdates by Eldoen, dhusemann, NeyahPeterson, deathoone, Fmagdi, djravine `n`nSpecial thanks to all the idle dragoneers who inspired and assisted me!
 		return
 	}
 
