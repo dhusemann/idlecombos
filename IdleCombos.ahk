@@ -301,7 +301,7 @@ class MyGui {
 	__New()
 	{
 		Gui, MyWindow:New
-		Gui, MyWindow:-Resize -MaximizeBox 
+		Gui, MyWindow:+Resize -MaximizeBox +MinSize
 
 		Menu, ICSettingsSubmenu, Add, &View Settings, ViewICSettings
 		Menu, ICSettingsSubmenu, Add, &Framerate, SetFramerate
@@ -779,7 +779,7 @@ Open_Codes:
 		; GUI
 		Gui, CodeWindow:New
 		Gui, Menu, MyMenuBar
-		Gui, CodeWindow:-Resize -MaximizeBox
+		Gui, CodeWindow:-Resize -MaximizeBox +MinSize
 		Gui, CodeWindow:Show, w230 h240, Codes
 		Gui, CodeWindow:Add, Edit, r12 vCodestoEnter w190 x20 y20, IDLE-CHAM-PION-SNOW
 		Gui, CodeWindow:Add, Button, gRedeem_Codes, Submit
