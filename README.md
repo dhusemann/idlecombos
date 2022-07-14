@@ -26,7 +26,7 @@ Features:</br>
 - Can reload game client on crash (Steam only)</br>
 </br>
 Requirements:</br>
-Steam install, or able to enter your user_id & hash if on another platform.</br>
+Steam install oor Epic install, or able to enter your user_id & hash if on another platform.</br>
 </br>
 Includes:</br>
 json.ahk [github.com/Chunjee]</br>

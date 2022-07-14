@@ -142,15 +142,19 @@ global ActiveInstance := 0
 global CurrentAdventure := ""
 global CurrentArea := ""
 global CurrentPatron := ""
+global CurrentChampions := ""
 global BackgroundAdventure := ""
 global BackgroundArea := ""
 global BackgroundPatron := ""
+global BackgroundChampions := ""
 global Background2Adventure := ""
 global Background2Area := ""
 global Background2Patron := ""
+global Background2Champions := ""
 global Background3Adventure := ""
 global Background3Area := ""
 global Background3Patron := ""
+global Background3Champions := ""
 global AchievementInfo := "This page intentionally left blank.`n`n`n`n`n`n`n"
 global BlessingInfo := "`n`n`n`n`n`n"
 global ChampDetails := ""
@@ -179,6 +183,10 @@ global CurrentLgBS := ""
 global CurrentHgBS := ""
 global AvailableBSLvs := ""
 ;Loot globals
+global ChampionsUnlockedCount := 0
+global ChampionsActiveCount := 0
+global FamiliarsUnlockedCount := 0
+global CostumesUnlockedCount := 0
 global EpicGearCount := 0
 global BrivSlot4 := 0
 global BrivZone := 0
@@ -412,38 +420,46 @@ class MyGui {
 
 		Gui, Tab, Summary
 		Gui, MyWindow:Add, Text, vAchievementInfo x15 y33 w300, % AchievementInfo
-		Gui, MyWindow:Add, Text, vBlessingInfo x200 y33 w300, % BlessingInfo
+		Gui, MyWindow:Add, Text, vBlessingInfo x200 y33 w300 h210, % BlessingInfo
 
 		Gui, Tab, Adventures
 		Gui, MyWindow:Add, Text, x15 y33 w130, Current Adventure:
 		Gui, MyWindow:Add, Text, vCurrentAdventure x+2 w50, % CurrentAdventure
 		Gui, MyWindow:Add, Text, x15 y+p w130, Current Patron:
 		Gui, MyWindow:Add, Text, vCurrentPatron x+2 w50, % CurrentPatron
+		Gui, MyWindow:Add, Text, x15 y+p w130, Current Champions:
+		Gui, MyWindow:Add, Text, vCurrentChampions x+2 w50, % CurrentChampions
 		Gui, MyWindow:Add, Text, x15 y+p w130, Current Area:
 		Gui, MyWindow:Add, Text, vCurrentArea x+2 w50, % CurrentArea
-		Gui, MyWindow:Add, Text, x15 y76 w130, Background Adventure:
+		Gui, MyWindow:Add, Text, x15 y88 w130, Background Adventure:
 		Gui, MyWindow:Add, Text, vBackgroundAdventure x+2 w50, % BackgroundAdventure
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background Patron:
 		Gui, MyWindow:Add, Text, vBackgroundPatron x+2 w50, % BackgroundPatron
+		Gui, MyWindow:Add, Text, x15 y+p w130, Background Champions:
+		Gui, MyWindow:Add, Text, vBackgroundChampions x+2 w50, % BackgroundChampions
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background Area:
 		Gui, MyWindow:Add, Text, vBackgroundArea x+2 w50, % BackgroundArea
-		Gui, MyWindow:Add, Text, x15 y119 w130, Background2 Adventure:
+		Gui, MyWindow:Add, Text, x15 y143 w130, Background2 Adventure:
 		Gui, MyWindow:Add, Text, vBackground2Adventure x+2 w50, % Background2Adventure
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background2 Patron:
 		Gui, MyWindow:Add, Text, vBackground2Patron x+2 w50, % Background2Patron
+		Gui, MyWindow:Add, Text, x15 y+p w130, Background2 Champions:
+		Gui, MyWindow:Add, Text, vBackground2Champions x+2 w50, % Background2Champions
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background2 Area:
 		Gui, MyWindow:Add, Text, vBackground2Area x+2 w50, % Background2Area
-		Gui, MyWindow:Add, Text, x15 y162 w130, Background3 Adventure:
+		Gui, MyWindow:Add, Text, x15 y198 w130, Background3 Adventure:
 		Gui, MyWindow:Add, Text, vBackground3Adventure x+2 w50, % Background3Adventure
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background3 Patron:
 		Gui, MyWindow:Add, Text, vBackground3Patron x+2 w50, % Background3Patron
+		Gui, MyWindow:Add, Text, x15 y+p w130, Background3 Champions:
+		Gui, MyWindow:Add, Text, vBackground3Champions x+2 w50, % Background3Champions
 		Gui, MyWindow:Add, Text, x15 y+p w130, Background3 Area:
 		Gui, MyWindow:Add, Text, vBackground3Area x+2 w50, % Background3Area
 
 		Gui, MyWindow:Add, Text, vFGCore x200 y33 w150, % FGCore
-		Gui, MyWindow:Add, Text, vBGCore x200 y76 w150, % BGCore
-		Gui, MyWindow:Add, Text, vBG2Core x200 y119 w150, % BG2Core
-		Gui, MyWindow:Add, Text, vBG3Core x200 y162 w150, % BG3Core
+		Gui, MyWindow:Add, Text, vBGCore x200 y88 w150, % BGCore
+		Gui, MyWindow:Add, Text, vBG2Core x200 y143 w150, % BG2Core
+		Gui, MyWindow:Add, Text, vBG3Core x200 y198 w150, % BG3Core
 
 		Gui, Tab, Inventory
 		Gui, MyWindow:Add, Text, x15 y33 w70, Current Gems:
@@ -573,15 +589,19 @@ class MyGui {
 		GuiControl, MyWindow:, CurrentAdventure, % CurrentAdventure, w250 h210
 		GuiControl, MyWindow:, CurrentArea, % CurrentArea, w250 h210
 		GuiControl, MyWindow:, CurrentPatron, % CurrentPatron, w250 h210
+		GuiControl, MyWindow:, CurrentChampions, % CurrentChampions, w250 h210
 		GuiControl, MyWindow:, BackgroundAdventure, % BackgroundAdventure, w250 h210
 		GuiControl, MyWindow:, BackgroundArea, % BackgroundArea, w250 h210
 		GuiControl, MyWindow:, BackgroundPatron, % BackgroundPatron, w250 h210
+		GuiControl, MyWindow:, BackgroundChampions, % BackgroundChampions, w250 h210
 		GuiControl, MyWindow:, Background2Adventure, % Background2Adventure, w250 h210
 		GuiControl, MyWindow:, Background2Area, % Background2Area, w250 h210
 		GuiControl, MyWindow:, Background2Patron, % Background2Patron, w250 h210
+		GuiControl, MyWindow:, Background2Champions, % Background2Champions, w250 h210
 		GuiControl, MyWindow:, Background3Adventure, % Background3Adventure, w250 h210
 		GuiControl, MyWindow:, Background3Area, % Background3Area, w250 h210
 		GuiControl, MyWindow:, Background3Patron, % Background3Patron, w250 h210
+		GuiControl, MyWindow:, Background3Champions, % Background3Champions, w250 h210
 
 		GuiControl, MyWindow:, FGCore, % FGCore, w250 h210
 		GuiControl, MyWindow:, BGCore, % BGCore, w250 h210
@@ -1776,28 +1796,53 @@ Hg_Blacksmith:
 
 	ParseAdventureData() {
 		bginstance := 0
+		ChampionsActiveCount := 0
 		for k, v in UserDetails.details.game_instances
 		if (v.game_instance_id == ActiveInstance) {
 			CurrentAdventure := v.current_adventure_id
 			CurrentArea := v.current_area
 			CurrentPatron := PatronFromID(v.current_patron_id)
+			CurrentChampions := 0
+			for l, w in v.formation
+			if (w > 0) {
+				CurrentChampions += 1
+			}
+			ChampionsActiveCount += CurrentChampions
 		}
 		else if (bginstance == 0){
 			BackgroundAdventure := v.current_adventure_id
 			BackgroundArea := v.current_area
 			BackgroundPatron := PatronFromID(v.current_patron_id)
+			BackgroundChampions := 0
+			for l, w in v.formation
+			if (w > 0) {
+				BackgroundChampions += 1
+			}
+			ChampionsActiveCount += BackgroundChampions
 			bginstance += 1
 		}
 		else if (bginstance == 1){
 			Background2Adventure := v.current_adventure_id
 			Background2Area := v.current_area
 			Background2Patron := PatronFromID(v.current_patron_id)
+			Background2Champions := 0
+			for l, w in v.formation
+			if (w > 0) {
+				Background2Champions += 1
+			}
+			ChampionsActiveCount += Background2Champions
 			bginstance += 1
 		}
 		else if (bginstance == 2){
 			Background3Adventure := v.current_adventure_id
 			Background3Area := v.current_area
 			Background3Patron := PatronFromID(v.current_patron_id)
+			Background3Champions := 0
+			for l, w in v.formation
+			if (w > 0) {
+				Background3Champions += 1
+			}
+			ChampionsActiveCount += Background3Champions
 		}
 
 		FGCore := "`n"
@@ -2163,8 +2208,22 @@ Hg_Blacksmith:
 	}
 
 	ParseLootData() {
+		ChampionsUnlockedCount := 0
+		FamiliarsUnlockedCount := 0
+		CostumesUnlockedCount := 0
 		EpicGearCount := 0
 		todogear := "`nHighest Gear Level: " UserDetails.details.stats.highest_level_gear
+		for k, v in UserDetails.details.heroes {
+			if (v.owned == "1") {
+				ChampionsUnlockedCount += 1
+			}
+		}
+		for k, v in UserDetails.details.familiars {
+			FamiliarsUnlockedCount += 1
+		}
+		for k, v in UserDetails.details.unlocked_hero_skins {
+			CostumesUnlockedCount += 1
+		}
 		for k, v in UserDetails.details.loot {
 			if (v.rarity == "4") {
 				EpicGearCount += 1
@@ -2390,17 +2449,44 @@ Hg_Blacksmith:
 	}
 
 	CheckBlessings() {
+
 		epiccount := ""
 		epicvalue := Round((1.02 ** EpicGearCount), 2)
 		if (UserDetails.details.reset_upgrade_levels.44) { ;Helm-Slow and Steady (X Epics)
-			epiccount := "Slow and Steady:`nx" epicvalue " damage (" EpicGearCount " epics)`n`n"
+			epiccount := "Slow and Steady:`n    x" epicvalue " damage (" EpicGearCount " epics)`n"
 		}
+
+		championcount := ""
+		championvalue := Round((1.02 ** ChampionsUnlockedCount), 2)
+		if (UserDetails.details.reset_upgrade_levels.72) { ;Helm-Familiar Faces (X Champions)
+			championcount := "Familiar Faces:`n    x" championvalue " damage (" ChampionsUnlockedCount " champions)`n"
+		}
+
+		championactivecount := ""
+		championactivevalue := Round((1.02 ** ChampionsActiveCount), 2)
+		if (UserDetails.details.reset_upgrade_levels.76) { ;Helm-Splitting the Party (X Champions)
+			championactivecount := "Splitting the Party:`n    x" championactivevalue " damage (" ChampionsActiveCount " active champions)`n"
+		}
+
 		veterancount := ""
 		veteranvalue := Round(1 + (0.1 * UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c22), 2)
 		if (UserDetails.details.reset_upgrade_levels.56) { ;Tiamat-Veterans of Avernus (X Adventures)
-			veterancount := "Veterans of Avernus:`nx" veteranvalue " damage (" UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c22 " adventures)`n`n"
+			veterancount := "Veterans of Avernus:`n    x" veteranvalue " damage (" UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c22 " adventures)`n"
 		}
-		BlessingInfo := "Blessing Details`n`n" epiccount veterancount
+
+		costumecount := ""
+		costumevalue := Round((1.20 ** CostumesUnlockedCount), 2)
+		if (UserDetails.details.reset_upgrade_levels.88) { ;Auril-Costume Party (X Skins)
+			costumecount := "Costume Party:`n    x" costumevalue " damage (" CostumesUnlockedCount " skins)`n"
+		}
+
+		familiarcount := ""
+		familiarvalue := Round((1.20 ** FamiliarsUnlockedCount), 2)
+		if (UserDetails.details.reset_upgrade_levels.108) { ;Corellon-Familiar Stakes (X Familiars)
+			familiarcount := "Familiar Stakes:`n    x" familiarvalue " damage (" FamiliarsUnlockedCount " familiars)`n"
+		}
+
+		BlessingInfo := "Blessing Details`n`n" epiccount championcount championactivecount veterancount costumecount familiarcount
 		if (BlessingInfo == "Blessing Details`n`n") {
 			BlessingInfo := "Blessing Details: N/A"
 		}
