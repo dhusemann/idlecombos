@@ -106,7 +106,7 @@ if FileExist(GameClientEpic) {
 	}
 }
 global WRLFile := GameInstallDir "IdleDragons_Data\StreamingAssets\downloaded_files\webRequestLog.txt"
-global DictionaryFile := "https://raw.githubusercontent.com/dhusemann/idlecombos/master/idledict.ahk"
+global DictionaryFile := "https://raw.githubusercontent.com/djravine/idlecombos/master/idledict.ahk"
 global LocalDictionary := "idledict.ahk"
 
 global ICSettingsFile := A_AppData
