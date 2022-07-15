@@ -39,3 +39,9 @@ It's recommended to exit the game first to avoid losing items.</br>
 - json.ahk (json parsing, included in exe) [github.com/Chunjee]</br>
 - README.md (this file)</br>
 </br>
+
+### How To Run: <br/>
+- Install [AutoHotKey](https://www.autohotkey.com/)
+- Checkout this REPO or download a [release](https://github.com/djravine/idlecombos/releases)
+- Right click the file `IdleCombos.ahk` and open with AutoHotKey
+  <img src=https://i.imgur.com/UFWxScW.png>
