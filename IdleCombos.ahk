@@ -77,7 +77,7 @@
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
 global VersionNumber := "3.20"
-global CurrentDictionary := "2.00"
+global CurrentDictionary := "2.10"
 
 ;Local File globals
 ;global OutputLogFile := "idlecombolog.txt"
