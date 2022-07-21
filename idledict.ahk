@@ -167,9 +167,9 @@ ChampFromID(id) {
 		switch id {
 			case "101": namefromid := "Merilwen"
 			case "102": namefromid := "Nahara"
-	;		case "103": namefromid := "UNKNOWN (" id ")"
-	;		case "104": namefromid := "UNKNOWN (" id ")"
-	;		case "105": namefromid := "UNKNOWN (" id ")"
+			case "103": namefromid := "Valentine"
+			case "104": namefromid := "V (Soon)"
+			case "105": namefromid := "UNKNOWN (" id ")"
 			case "106": namefromid := "Blooshi"
 	;		case "107": namefromid := "UNKNOWN (" id ")"
 	;		case "108": namefromid := "UNKNOWN (" id ")"

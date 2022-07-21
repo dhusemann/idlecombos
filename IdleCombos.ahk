@@ -1428,7 +1428,7 @@ Hg_Blacksmith:
 			if ErrorLevel
 				return
 		}
-		while !((heroid > 0) && (heroid < 107) && (heroid != 103) && (heroid != 104) && (heroid != 105)) {
+		while !((heroid > 0) && (heroid < 107)) {
 			InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number.", , 200, 180, , , , , %LastBSChamp%
 			if ErrorLevel
 				return
