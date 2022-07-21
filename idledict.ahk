@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.00"
+global DictionaryVersion := "2.10"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -167,50 +167,26 @@ ChampFromID(id) {
 		switch id {
 			case "101": namefromid := "Merilwen"
 			case "102": namefromid := "Nahara"
-			case "103": namefromid := "UNKNOWN (" id ")"
-			case "104": namefromid := "UNKNOWN (" id ")"
+			case "103": namefromid := "Valentine"
+			case "104": namefromid := "V (Soon)"
 			case "105": namefromid := "UNKNOWN (" id ")"
 			case "106": namefromid := "Blooshi"
-			case "107": namefromid := "UNKNOWN (" id ")"
-	;		case "88": namefromid := "UNKNOWN (" id ")"
-	;		case "100": namefromid := "UNKNOWN (" id ")"
-	;		case "90": namefromid := "UNKNOWN (" id ")"
-	;		case "91": namefromid := "UNKNOWN (" id ")"
-	;		case "92": namefromid := "UNKNOWN (" id ")"
-	;		case "93": namefromid := "UNKNOWN (" id ")"
-	;		case "94": namefromid := "UNKNOWN (" id ")"
-	;		case "95": namefromid := "UNKNOWN (" id ")"
-	;		case "96": namefromid := "UNKNOWN (" id ")"
-	;		case "97": namefromid := "UNKNOWN (" id ")"
-	;		case "98": namefromid := "UNKNOWN (" id ")"
-	;		case "99": namefromid := "UNKNOWN (" id ")"
-	;		case "100": namefromid := "UNKNOWN (" id ")"
+	;		case "107": namefromid := "UNKNOWN (" id ")"
+	;		case "108": namefromid := "UNKNOWN (" id ")"
+	;		case "109": namefromid := "UNKNOWN (" id ")"
+	;		case "110": namefromid := "UNKNOWN (" id ")"
+	;		case "111": namefromid := "UNKNOWN (" id ")"
+	;		case "112": namefromid := "UNKNOWN (" id ")"
+	;		case "113": namefromid := "UNKNOWN (" id ")"
+	;		case "114": namefromid := "UNKNOWN (" id ")"
+	;		case "115": namefromid := "UNKNOWN (" id ")"
+	;		case "116": namefromid := "UNKNOWN (" id ")"
+	;		case "117": namefromid := "UNKNOWN (" id ")"
+	;		case "118": namefromid := "UNKNOWN (" id ")"
+	;		case "119": namefromid := "UNKNOWN (" id ")"
+	;		case "120": namefromid := "UNKNOWN (" id ")"
 		}
 	}
-	;	else if (id < 107) {
-	;	switch id {
-	;		case "101": namefromid := "UNKNOWN (" id ")"
-	;		case "102": namefromid := "UNKNOWN (" id ")"
-	;		case "103": namefromid := "UNKNOWN (" id ")"
-	;		case "104": namefromid := "UNKNOWN (" id ")"
-	;		case "105": namefromid := "UNKNOWN (" id ")"
-	;		case "106": namefromid := "UNKNOWN (" id ")"
-	;		case "107": namefromid := "UNKNOWN (" id ")"
-	;		case "88": namefromid := "UNKNOWN (" id ")"
-	;		case "100": namefromid := "UNKNOWN (" id ")"
-	;		case "90": namefromid := "UNKNOWN (" id ")"
-	;		case "91": namefromid := "UNKNOWN (" id ")"
-	;		case "92": namefromid := "UNKNOWN (" id ")"
-	;		case "93": namefromid := "UNKNOWN (" id ")"
-	;		case "94": namefromid := "UNKNOWN (" id ")"
-	;		case "95": namefromid := "UNKNOWN (" id ")"
-	;		case "96": namefromid := "UNKNOWN (" id ")"
-	;		case "97": namefromid := "UNKNOWN (" id ")"
-	;		case "98": namefromid := "UNKNOWN (" id ")"
-	;		case "99": namefromid := "UNKNOWN (" id ")"
-	;;		case "100": namefromid := "UNKNOWN (" id ")"
-	;	}
-	;}	
 	else {
 		namefromid := "UNKNOWN (" id ")"
 	}
