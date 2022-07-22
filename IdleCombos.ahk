@@ -5,12 +5,17 @@
 
 ; CHANGELOG
 
+;3.21
+;add valetine to dictionary
+;update reddem code results order
+;Add 'how to run' in README.md
+
 ;3.20
-;add working detection for Epic Games installation (thanks djravine)
-;update to Redeem Codes (thanks djravine)
-;autoomation to retrieve Redeem Codes via web (thanks djravine)
-;add minimum GUI windows sizes (thanks djravine)
-;other minor fixes (thanks djravine)
+;add working detection for Epic Games installation
+;update to Redeem Codes
+;autoomation to retrieve Redeem Codes via web
+;add minimum GUI windows sizes
+;other minor fixes
 
 ;3.10
 ;add working core 4 and party 4 (thanks Fmagdi)
@@ -76,7 +81,7 @@
 
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
-global VersionNumber := "3.20"
+global VersionNumber := "3.21"
 global CurrentDictionary := "2.10"
 
 ;Local File globals
