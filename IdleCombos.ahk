@@ -1007,21 +1007,6 @@ Redeem_Codes()
 		}
 		CodesPending := "Codes: " CodeNum "/" CodeTotal " - Loading Results..."
 		codemessage := ""
-		if !(usedcodes == "") {
-			codemessage := codemessage "You Already Used:`n" usedcodes "`n"
-		}
-		if !(someonescodes == "") {
-			codemessage := codemessage "Someone Else Has Used:`n" someonescodes "`n"
-		}
-		if !(expiredcodes == "") {
-			codemessage := codemessage "Expired:`n" expiredcodes "`n"
-		}
-		if !(invalidcodes == "") {
-			codemessage := codemessage "Invalid:`n" invalidcodes "`n"
-		}
-		if !(earlycodes == "") {
-			codemessage := codemessage "Cannot Redeem Yet:`n" earlycodes "`n"
-		}
 		if (codegolds > 0) {
 			codemessage := codemessage "Gold Chests:`n" codegolds "`n"
 		}
@@ -1044,6 +1029,21 @@ Redeem_Codes()
 		if !(codeepics == "") {
 			StringTrimRight, codeepics, codeepics, 2
 			codemessage := codemessage "Epic Consumables:`n" codeepics "`n"
+		}
+		if !(earlycodes == "") {
+			codemessage := codemessage "Cannot Redeem Yet:`n" earlycodes "`n"
+		}
+		if !(someonescodes == "") {
+			codemessage := codemessage "Someone Else Has Used:`n" someonescodes "`n"
+		}
+		if !(expiredcodes == "") {
+			codemessage := codemessage "Expired:`n" expiredcodes "`n"
+		}
+		if !(invalidcodes == "") {
+			codemessage := codemessage "Invalid:`n" invalidcodes "`n"
+		}
+		if !(usedcodes == "") {
+			codemessage := codemessage "You Already Used:`n" usedcodes "`n"
 		}
 		if (codemessage == "") {
 			codemessage := "Unknown or No Results."
