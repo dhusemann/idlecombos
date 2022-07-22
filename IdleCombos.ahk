@@ -833,7 +833,9 @@ Open_Codes:
 		Gui, CodeWindow:Add, Button, gRedeem_Codes, Submit
 		Gui, CodeWindow:Add, Button, x+35 gPaste, Paste
 		Gui, CodeWindow:Add, Button, x+35 gClose_Codes, Close
-		Gui, CodeWindow:Add, Text, w350 x20 y+5 vCodesPending, Codes: 0/1 - Waiting... (1 code per line)
+
+		; STATUS BAR
+		Gui, Add, StatusBar, vCodesOutputStatus, Codes: 0/1 - Waiting... (1 code per line)
 		return
 	}
 
@@ -843,14 +845,14 @@ Paste()
 		loop, parse, foundCodeString, `n, `r
 		  CodeTotal := a_index
 		GuiControl, , CodestoEnter, %foundCodeString%
-		GuiControl, , CodesPending, Codes: 0/%CodeTotal% - Waiting... (1 code per line)
+		GuiControl, , CodesOutputStatus, Codes: 0/%CodeTotal% - Waiting... (1 code per line)
 		return
 	}
 
 Delete()
 	{
 		GuiControl, , CodestoEnter,
-		GuiControl, , CodesPending, Codes: 0/0 - Waiting... (1 code per line)
+		GuiControl, , CodesOutputStatus, Codes: 0/0 - Waiting... (1 code per line)
 		return
 	}
 
@@ -893,7 +895,7 @@ Redeem_Codes()
 		CodeNum := 1
 		CodeTotal := CodeCount
 		CodesPending := "Codes: " CodeNum "/" CodeTotal " - Starting..."
-		GuiControl, , CodesPending, % CodesPending, w350 h210
+		GuiControl, , CodesOutputStatus, % CodesPending
 		usedcodes := ""
 		someonescodes := ""
 		expiredcodes := ""
@@ -1008,7 +1010,7 @@ Redeem_Codes()
 			}
 			sleep, 1000
 			CodesPending := "Codes: " CodeNum "/" CodeTotal " - Submitting..."
-			GuiControl, , CodesPending, % CodesPending, w350 h210
+			GuiControl, , CodesOutputStatus, % CodesPending
 		}
 		CodesPending := "Codes: " CodeNum "/" CodeTotal " - Loading Results..."
 		codemessage := ""
@@ -1053,12 +1055,12 @@ Redeem_Codes()
 		if (codemessage == "") {
 			codemessage := "Unknown or No Results."
 		}
-		GuiControl, , CodesPending, % CodesPending, w350 h210
+		GuiControl, , CodesOutputStatus, % CodesPending, w350 h210
 		GetUserDetails()
 		oMyGUI.Update()
 		Gui, CodeWindow: Default
 		CodesPending := "Codes: " CodeTotal "/" CodeTotal " - Completed!"
-		GuiControl, , CodesPending, % CodesPending, w350 h210
+		GuiControl, , CodesOutputStatus, % CodesPending
 		; MsgBox, , Results, % codemessage
 		ScrollBox(codemessage, "p b1 h200 w250", "Redeem Codes Results")
 		return
