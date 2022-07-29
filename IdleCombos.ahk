@@ -1701,7 +1701,7 @@ Hg_Blacksmith:
             GameInstallDir := GameInstallDirSteam
             GameClient := GameInstallDir GameClientExe
             WRLFile := GameInstallDir WRLFilePath
-            msgbox Steam install found
+            ;msgbox Steam install found
             return true
         }
         return false
@@ -1719,7 +1719,7 @@ Hg_Blacksmith:
                     GameInstallDir := GameInstallDirEpic
                     GameClient := GameClientEpicLauncher
                     WRLFile := GameInstallDir WRLFilePath
-                    msgbox Epic Games install found
+                    ;msgbox Epic Games install found
                     return true
                 }
             }
