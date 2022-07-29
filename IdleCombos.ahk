@@ -107,7 +107,7 @@ global WRLFilePath := "IdleDragons_Data\StreamingAssets\downloaded_files\webRequ
 
 ;detect and set game installation paths
 if ( setGameInstallEpic() == false ) {
-    setGameInstallSteam()
+	setGameInstallSteam()
 }
 
 global DictionaryFile := "https://raw.githubusercontent.com/djravine/idlecombos/master/idledict.ahk"
@@ -116,7 +116,6 @@ global LocalDictionary := "idledict.ahk"
 global ICSettingsFile := A_AppData
 StringTrimRight, ICSettingsFile, ICSettingsFile, 7
 ICSettingsFile := ICSettingsFile "LocalLow\Codename Entertainment\Idle Champions\localSettings.json"
-
 
 ;Settings globals
 global ServerName := "ps7"
@@ -835,54 +834,54 @@ Open_Codes:
 		return
 	}
 
-Paste()
+	Paste()
 	{
 		getChestCodes()
 		loop, parse, foundCodeString, `n, `r
-		  CodeTotal := a_index
+			CodeTotal := a_index
 		GuiControl, , CodestoEnter, %foundCodeString%
 		GuiControl, , CodesOutputStatus, Codes: 0/%CodeTotal% - Waiting... (1 code per line)
 		return
 	}
 
-Delete()
+	Delete()
 	{
 		GuiControl, , CodestoEnter,
 		GuiControl, , CodesOutputStatus, Codes: 0/0 - Waiting... (1 code per line)
 		return
 	}
 
-Open_Web_Codes_Page()
+	Open_Web_Codes_Page()
 	{
 		Run, %WebToolCodes%
 		return
 	}
 
-Get_Codes_Autoload()
+	Get_Codes_Autoload()
 	{
 		Open_Web_Codes_Page()
 		winwait, ALL active IDLE Champions combination🔒 codes
 		sleep, 1000
 		send, ^a
 		clipboard := ""
-  		send, ^c
+		send, ^c
 		ClipWait, 1
 		if WinExist("IdleCombos")
 			WinActivate
-			if WinExist("Redeem Codes")
-				WinActivate
+		if WinExist("Redeem Codes")
+			WinActivate
 		Paste()
 		return
 	}
 
-Get_Codes_Autoload_Run()
+	Get_Codes_Autoload_Run()
 	{
 		Get_Codes_Autoload()
 		Redeem_Codes()
 		return
 	}
 
-Redeem_Codes()
+	Redeem_Codes()
 	{
 		Gui, CodeWindow:Submit, NoHide
 		Gui, CodeWindow:Add, Text, x+45, Codes Remaining:
@@ -1082,13 +1081,13 @@ Close_Codes:
 		return
 	}
 
-Open_Web_Formation_Calc()
+	Open_Web_Formation_Calc()
 	{
 		Run, %WebToolFormation%
 		return
 	}
 
-Open_Web_Modron_Core_Calc()
+	Open_Web_Modron_Core_Calc()
 	{
 		Run, %WebToolModron%
 		return
@@ -1694,39 +1693,38 @@ Hg_Blacksmith:
 	}
 	;	fmagdi -stop
 
-    setGameInstallSteam()
-    {
-        ; Detect Steam install
-        if FileExist(GameInstallDirSteam) {
-            GameInstallDir := GameInstallDirSteam
-            GameClient := GameInstallDir GameClientExe
-            WRLFile := GameInstallDir WRLFilePath
-            ;msgbox Steam install found
-            return true
-        }
-        return false
-    }
+	setGameInstallSteam()
+	{
+		; Detect Steam install
+		if FileExist(GameInstallDirSteam) {
+			GameInstallDir := GameInstallDirSteam
+			GameClient := GameInstallDir GameClientExe
+			WRLFile := GameInstallDir WRLFilePath
+			;msgbox Steam install found
+			return true
+		}
+		return false
+	}
 
-    setGameInstallEpic()
-    {
-        ; Detect Epic Games install
-        if FileExist(GameClientEpic) {
-            FileRead, EpicJSONString, %GameClientEpic%
-            EpicJSONobj := JSON.parse(EpicJSONString)
-            for each, item in EpicJSONobj.InstallationList {
-                if item.AppName = GameIDEpic {
-                    GameInstallDirEpic := item.InstallLocation "\"
-                    GameInstallDir := GameInstallDirEpic
-                    GameClient := GameClientEpicLauncher
-                    WRLFile := GameInstallDir WRLFilePath
-                    ;msgbox Epic Games install found
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
+	setGameInstallEpic()
+	{
+		; Detect Epic Games install
+		if FileExist(GameClientEpic) {
+			FileRead, EpicJSONString, %GameClientEpic%
+			EpicJSONobj := JSON.parse(EpicJSONString)
+			for each, item in EpicJSONobj.InstallationList {
+				if item.AppName = GameIDEpic {
+					GameInstallDirEpic := item.InstallLocation "\"
+					GameInstallDir := GameInstallDirEpic
+					GameClient := GameClientEpicLauncher
+					WRLFile := GameInstallDir WRLFilePath
+					;msgbox Epic Games install found
+					return true
+				}
+			}
+		}
+		return false
+	}
 
 	FirstRun() {
 		MsgBox, 4, , Get User ID and Hash from webrequestlog.txt?
@@ -2491,37 +2489,37 @@ Hg_Blacksmith:
 		epiccount := ""
 		epicvalue := Round((1.02 ** EpicGearCount), 2)
 		if (UserDetails.details.reset_upgrade_levels.44) { ;Helm-Slow and Steady (X Epics)
-			epiccount := "Slow and Steady:`n    x" epicvalue " damage (" EpicGearCount " epics)`n"
+			epiccount := "Slow and Steady:`n x" epicvalue " damage (" EpicGearCount " epics)`n"
 		}
 
 		championcount := ""
 		championvalue := Round((1.02 ** ChampionsUnlockedCount), 2)
 		if (UserDetails.details.reset_upgrade_levels.72) { ;Helm-Familiar Faces (X Champions)
-			championcount := "Familiar Faces:`n    x" championvalue " damage (" ChampionsUnlockedCount " champions)`n"
+			championcount := "Familiar Faces:`n x" championvalue " damage (" ChampionsUnlockedCount " champions)`n"
 		}
 
 		championactivecount := ""
 		championactivevalue := Round((1.02 ** ChampionsActiveCount), 2)
 		if (UserDetails.details.reset_upgrade_levels.76) { ;Helm-Splitting the Party (X Champions)
-			championactivecount := "Splitting the Party:`n    x" championactivevalue " damage (" ChampionsActiveCount " active champions)`n"
+			championactivecount := "Splitting the Party:`n x" championactivevalue " damage (" ChampionsActiveCount " active champions)`n"
 		}
 
 		veterancount := ""
 		veteranvalue := Round(1 + (0.1 * UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c22), 2)
 		if (UserDetails.details.reset_upgrade_levels.56) { ;Tiamat-Veterans of Avernus (X Adventures)
-			veterancount := "Veterans of Avernus:`n    x" veteranvalue " damage (" UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c22 " adventures)`n"
+			veterancount := "Veterans of Avernus:`n x" veteranvalue " damage (" UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c22 " adventures)`n"
 		}
 
 		costumecount := ""
 		costumevalue := Round((1.20 ** CostumesUnlockedCount), 2)
 		if (UserDetails.details.reset_upgrade_levels.88) { ;Auril-Costume Party (X Skins)
-			costumecount := "Costume Party:`n    x" costumevalue " damage (" CostumesUnlockedCount " skins)`n"
+			costumecount := "Costume Party:`n x" costumevalue " damage (" CostumesUnlockedCount " skins)`n"
 		}
 
 		familiarcount := ""
 		familiarvalue := Round((1.20 ** FamiliarsUnlockedCount), 2)
 		if (UserDetails.details.reset_upgrade_levels.108) { ;Corellon-Familiar Stakes (X Familiars)
-			familiarcount := "Familiar Stakes:`n    x" familiarvalue " damage (" FamiliarsUnlockedCount " familiars)`n"
+			familiarcount := "Familiar Stakes:`n x" familiarvalue " damage (" FamiliarsUnlockedCount " familiars)`n"
 		}
 
 		BlessingInfo := "Blessing Details`n`n" epiccount championcount championactivecount veterancount costumecount familiarcount
@@ -3270,18 +3268,18 @@ ShowPityTimers() {
 
 getChestCodes() {
 	clipContents := clipboard
-	regexpPattern = P)\b(?<![A-Za-z0-9-/@#$`%^&!*])([A-Za-z0-9-@#$`%^&!*]{12,20})(?![A-Za-z0-9-/@#$`%^&!*])
-	foundCodeString := ""
-	while (clipContents ~= regexpPattern) {
-		foundPos := RegExMatch(clipContents, regexpPattern, foundLength)
-		foundCode := RegExReplace(SubStr(clipContents, foundPos, foundLength), "-")
-		clipContents := SubStr(clipContents, foundPos + foundLength)
-		if (InStr(foundCodeString, foundCode) = 0 && (StrLen(foundCode) = 12 || StrLen(foundCode) == 16)) {
-			foundCodeString .= foundCode . "`r`n"
-		}
+regexpPattern = P)\b(?<![A-Za-z0-9-/@#$`%^&!*])([A-Za-z0-9-@#$`%^&!*]{12,20})(?![A-Za-z0-9-/@#$`%^&!*])
+foundCodeString := ""
+while (clipContents ~= regexpPattern) {
+	foundPos := RegExMatch(clipContents, regexpPattern, foundLength)
+	foundCode := RegExReplace(SubStr(clipContents, foundPos, foundLength), "-")
+	clipContents := SubStr(clipContents, foundPos + foundLength)
+	if (InStr(foundCodeString, foundCode) = 0 && (StrLen(foundCode) = 12 || StrLen(foundCode) == 16)) {
+		foundCodeString .= foundCode . "`r`n"
 	}
-	foundCodeString := RegExReplace(foundCodeString, "`r`n$")
-	return foundCodeString
+}
+foundCodeString := RegExReplace(foundCodeString, "`r`n$")
+return foundCodeString
 }
 
 ;{ ScrollBox
@@ -3352,157 +3350,157 @@ ScrollBox(String := "", Options := "", Label := "")
 {
 	Static Gui_List, Gui_Index
 	DetectHiddenWindows, % (Setting_A_DetectHiddenWindows := A_DetectHiddenWindows) ? "On" :
-	SetWinDelay, % (Setting_A_WinDelay := A_WinDelay) ? 0 : 0
-	if !Gui_List
-		Gui_List := {}
-	if Label
-	{
-		Gui_Label := "ScrollBox_Gui_Label_" RegExReplace(Label, "i)[^0-9a-z#_@\$]", "")
-		Gui_Hwnd := Gui_List[Gui_Label]
-		Win_Hwnd := DllCall("GetParent", UInt, Gui_Hwnd)
-		if RegExMatch(RegExReplace(Options, "\{.*}"), "i)d")
-			Gui, %Gui_Label%:Destroy
-		else if WinExist("ahk_id " Win_Hwnd)
+		SetWinDelay, % (Setting_A_WinDelay := A_WinDelay) ? 0 : 0
+		if !Gui_List
+			Gui_List := {}
+		if Label
 		{
-			if String
-				GuiControl,,%Gui_Hwnd%, %String%
-			WinGetPos, WinX, WinY, WinW, WinH
-			if RegExMatch(Options, "i)x(\d+)", Match)
-				WinX := Match1
-			if RegExMatch(Options, "i)y(\d+)", Match)
-				WinY := Match1
-			if RegExMatch(Options, "i)w(\d+)", Match)
-				WinW := Match1
-			if RegExMatch(Options, "i)h(\d+)", Match)
-				WinH := Match1
-			Winmove, ahk_id %Win_Hwnd%,, WinX, WinY, WinW, WinH
-			if RegExMatch(Options, "i)h(?!\d)", Match)
-				Gui, %Gui_Label%:Hide
-			if RegExMatch(Options, "i)s", Match)
-				Gui, %Gui_Label%:Show
+			Gui_Label := "ScrollBox_Gui_Label_" RegExReplace(Label, "i)[^0-9a-z#_@\$]", "")
+			Gui_Hwnd := Gui_List[Gui_Label]
+			Win_Hwnd := DllCall("GetParent", UInt, Gui_Hwnd)
+			if RegExMatch(RegExReplace(Options, "\{.*}"), "i)d")
+				Gui, %Gui_Label%:Destroy
+			else if WinExist("ahk_id " Win_Hwnd)
+			{
+				if String
+					GuiControl,,%Gui_Hwnd%, %String%
+				WinGetPos, WinX, WinY, WinW, WinH
+				if RegExMatch(Options, "i)x(\d+)", Match)
+					WinX := Match1
+				if RegExMatch(Options, "i)y(\d+)", Match)
+					WinY := Match1
+				if RegExMatch(Options, "i)w(\d+)", Match)
+					WinW := Match1
+				if RegExMatch(Options, "i)h(\d+)", Match)
+					WinH := Match1
+				Winmove, ahk_id %Win_Hwnd%,, WinX, WinY, WinW, WinH
+				if RegExMatch(Options, "i)h(?!\d)", Match)
+					Gui, %Gui_Label%:Hide
+				if RegExMatch(Options, "i)s", Match)
+					Gui, %Gui_Label%:Show
+				DetectHiddenWindows, %Setting_A_DetectHiddenWindows%
+				SetWinDelay, %Setting_A_WinDelay%
+				return
+			}
+		}
+		else
+		{
+			Gui_Index ++
+			Gui_Label := "ScrollBox_Gui_Label_" Gui_Index
+		}
+		if (!String and !Options)
+		{
+			if Label
+			{
+				Gui_List.Delete(Gui_Label)
+				Gui, %Gui_Label%:Destroy
+			}
+			else
+			{
+				for key, element in Gui_List
+					Gui, %key%:Destroy
+				Gui_List := {}
+			}
 			DetectHiddenWindows, %Setting_A_DetectHiddenWindows%
 			SetWinDelay, %Setting_A_WinDelay%
 			return
 		}
-	}
-	else
-	{
-		Gui_Index ++
-		Gui_Label := "ScrollBox_Gui_Label_" Gui_Index
-	}
-	if (!String and !Options)
-	{
-		if Label
+		Gui %Gui_Label%:Default
+		Gui +LabelAllGui
+		Adjust1 := 10
+		ButtonPushed := -2
+		if RegExMatch(Options, "i)f(\d+)", Match)
 		{
-			Gui_List.Delete(Gui_Label)
-			Gui, %Gui_Label%:Destroy
+			Gui, Font, s%Match1%
+			Adjust1 := Match1
+		}
+		else if RegExMatch(Options, "i)f\{(.*)}", Match)
+		{
+			Options := RegExReplace(Options, "i)f\{.*}")
+			StringSplit, Match, Match1, `,
+			Gui, Font, %Match1%, % Trim(Match2)
+			RegExMatch(Match1, "i)s(\d+)", Adjust)
+		}
+		else
+			Gui, Font
+		Gui, Margin, 20, 20
+		Gui, +MinSize200x200 +Resize
+		Gui, Color, FFFFFF
+		Opt := "hwndGui_Hwnd ReadOnly -E0x200 "
+		if !(Options ~= "i)w(?!\d)")
+			Opt .= "+0x300000 -wrap "
+		if RegExMatch(Options, "i)h(\d+)", Match)
+			Opt .= "h" Match1 " ", Control := true 
+		if RegExMatch(Options, "i)w(\d+)", Match)
+			Opt .= "w" Match1 " ", Control := true
+		if (Options ~= "i)c")
+			Opt .= "center "
+		if (Options ~= "i)l")
+			Opt .= "left "
+		if (Options ~= "i)r")
+			Opt .= "right "
+		Loop
+		{
+			Pos ++
+			if (Pos := RegExMatch(Options, "i)t(\d+)", Match, Pos))
+				Opt .= "t" Match1 " "
+		} until !Pos
+		Opt_Show := "AutoSize "
+		if RegExMatch(Options, "i)x(\d+)", Match)
+			Opt_Show .= "x" Match1 " "
+		if RegExMatch(Options, "i)y(\d+)", Match)
+			Opt_Show .= "y" Match1 " "
+		if Control
+		{
+			Gui, Add, Edit, % Opt
+			GuiControl, , %Gui_Hwnd%, %String%
 		}
 		else
 		{
-			for key, element in Gui_List
-				Gui, %key%:Destroy
-			Gui_List := {}
+			if (StrLen(String) < 32000)	; Gui control cannot be created with more than 32k of text directly
+				Gui, Add, Edit, % Opt, %String%
+			else
+			{
+				Gui, Add, Edit, % Opt, % SubStr(String, 1, 32000)
+				GuiControl, , %Gui_Hwnd%, %String%
+			}
+		}
+		if RegExMatch(Options, "i)b(1|2)", Match)
+		{
+			Button := Match1
+			if (Button = 1)
+				Gui, Add, Button, gAllGuiButtonOK hwndScrollBox_Button1_Hwnd Default, OK
+			else
+			{
+				Gui, Add, Button, gAllGuiButtonYES hwndScrollBox_Button1_Hwnd Default, YES
+				Gui, Add, Button, gAllGuiButtonNO hwndScrollBox_Button2_Hwnd, % " NO "
+			}
+		}
+		Gui, Show, % Opt_Show, % Label ? Label : "ScrollBox"
+		Gui_List[Gui_Label] := Gui_Hwnd
+		Win_Hwnd := DllCall("GetParent", UInt, Gui_Hwnd)
+		WinGetPos,X,Y,W,H, ahk_id %Win_Hwnd%
+		WinMove, ahk_id %Win_Hwnd%,,X,Y,W-1,H-1 ; Move
+		WinMove, ahk_id %Win_Hwnd%,,X,Y,W,H ; And Move Back to Force Recalculation of Margins
+		if Button
+			ControlSend,,{Tab}{Tab}+{Tab}, ahk_id %Gui_Hwnd% ; Move to Button
+		else
+			ControlSend,,^{Home}, ahk_id %Gui_Hwnd% ; Unselect Text and Move to Top of Control
+		DllCall("HideCaret", "Int", Gui_Hwnd)
+		if ((Options ~= "i)p(?!\d)") or (!(Options ~= "i)p") and Button))
+			while (ButtonPushed = -2)
+			Sleep 50
+		else if RegExMatch(Options, "i)p(\d+)", Match)
+		{
+			TimeEnd := A_TickCount + Match1
+			while (A_TickCount < TimeEnd and ButtonPushed = -2)
+				Sleep 50
+			Gui_List.Delete(Gui_Label)
+			Gui, Destroy
 		}
 		DetectHiddenWindows, %Setting_A_DetectHiddenWindows%
 		SetWinDelay, %Setting_A_WinDelay%
-		return
-	}
-	Gui %Gui_Label%:Default
-	Gui +LabelAllGui
-	Adjust1 := 10
-	ButtonPushed := -2
-	if RegExMatch(Options, "i)f(\d+)", Match)
-	{
-		Gui, Font, s%Match1%
-		Adjust1 := Match1
-	}
-	else if RegExMatch(Options, "i)f\{(.*)}", Match)
-	{
-		Options := RegExReplace(Options, "i)f\{.*}")
-		StringSplit, Match, Match1, `,
-		Gui, Font, %Match1%, % Trim(Match2)
-		RegExMatch(Match1, "i)s(\d+)", Adjust)
-	}
-	else
-		Gui, Font
-	Gui, Margin, 20, 20
-	Gui, +MinSize200x200 +Resize
-	Gui, Color, FFFFFF
-	Opt := "hwndGui_Hwnd ReadOnly -E0x200  "
-	if !(Options ~= "i)w(?!\d)")
-		Opt .= "+0x300000 -wrap "
-	if RegExMatch(Options, "i)h(\d+)", Match)
-		Opt .= "h" Match1 " ", Control := true 
-	if RegExMatch(Options, "i)w(\d+)", Match)
-		Opt .= "w" Match1 " ", Control := true
-	if (Options ~= "i)c")
-		Opt .= "center "
-	if (Options ~= "i)l")
-		Opt .= "left "
-	if (Options ~= "i)r")
-		Opt .= "right "
-	Loop
-	{
-		Pos ++
-		if (Pos := RegExMatch(Options, "i)t(\d+)", Match, Pos))
-			Opt .= "t" Match1 " "
-	} until !Pos
-	Opt_Show := "AutoSize "
-	if RegExMatch(Options, "i)x(\d+)", Match)
-		Opt_Show .= "x" Match1 " "
-	if RegExMatch(Options, "i)y(\d+)", Match)
-		Opt_Show .= "y" Match1 " "
-	if Control
-	{
-		Gui, Add, Edit, % Opt
-		GuiControl, , %Gui_Hwnd%, %String%
-	}
-	else
-	{
-		if (StrLen(String) < 32000)	; Gui control cannot be created with more than 32k of text directly
-			Gui, Add, Edit, % Opt, %String%
-		else
-		{
-			Gui, Add, Edit, % Opt, % SubStr(String, 1, 32000)
-			GuiControl, , %Gui_Hwnd%, %String%
-		}
-	}
-	if RegExMatch(Options, "i)b(1|2)", Match)
-	{
-		Button := Match1
-		if (Button = 1)
-			Gui, Add, Button, gAllGuiButtonOK hwndScrollBox_Button1_Hwnd Default, OK
-		else
-		{
-			Gui, Add, Button, gAllGuiButtonYES hwndScrollBox_Button1_Hwnd Default, YES
-			Gui, Add, Button, gAllGuiButtonNO hwndScrollBox_Button2_Hwnd, % " NO "
-		}
-	}
-	Gui, Show, % Opt_Show, % Label ? Label : "ScrollBox"
-	Gui_List[Gui_Label] := Gui_Hwnd
-	Win_Hwnd := DllCall("GetParent", UInt, Gui_Hwnd)
-	WinGetPos,X,Y,W,H, ahk_id %Win_Hwnd%
-	WinMove, ahk_id %Win_Hwnd%,,X,Y,W-1,H-1 ; Move
-	WinMove, ahk_id %Win_Hwnd%,,X,Y,W,H ; And Move Back to Force Recalculation of Margins
-	if Button
-		ControlSend,,{Tab}{Tab}+{Tab}, ahk_id %Gui_Hwnd% ; Move to Button
-	else
-		ControlSend,,^{Home}, ahk_id %Gui_Hwnd% ; Unselect Text and Move to Top of Control
-	DllCall("HideCaret", "Int", Gui_Hwnd)
-	if ((Options ~= "i)p(?!\d)") or (!(Options ~= "i)p") and Button))
-		while (ButtonPushed = -2)
-			Sleep 50
-	else if RegExMatch(Options, "i)p(\d+)", Match)
-	{
-		TimeEnd := A_TickCount + Match1
-		while (A_TickCount < TimeEnd and ButtonPushed = -2)
-			Sleep 50
-		Gui_List.Delete(Gui_Label)
-		Gui, Destroy
-	}
-	DetectHiddenWindows, %Setting_A_DetectHiddenWindows%
-	SetWinDelay, %Setting_A_WinDelay%
-	Gui, 1:Default
+		Gui, 1:Default
 	return ButtonPushed
 
 	AllGuiSize:
@@ -3513,8 +3511,8 @@ ScrollBox(String := "", Options := "", Label := "")
 			{
 				EditWidth := A_GuiWidth - 20
 				EditHeight := A_GuiHeight - 20 - (Adjust1 * 3)
-				ButtonX := EditWidth / 2  - Adjust1
-				ButtonY := EditHeight + 20 + (Adjust1/6)   
+				ButtonX := EditWidth / 2 - Adjust1
+				ButtonY := EditHeight + 20 + (Adjust1/6) 
 				GuiControl, Move, %Resize_Gui_Hwnd%, W%EditWidth% H%EditHeight%
 				GuiControl, Move, %ScrollBox_Button1_Hwnd%, X%ButtonX% Y%ButtonY%
 			}
@@ -3523,7 +3521,7 @@ ScrollBox(String := "", Options := "", Label := "")
 				EditWidth := A_GuiWidth - 20
 				EditHeight := A_GuiHeight - 20 - (Adjust1 * 3)
 				Button1X := EditWidth / 4 - (Adjust1 * 2)
-				Button2X := 3 * EditWidth / 4  - (Adjust1 * 1.5)
+				Button2X := 3 * EditWidth / 4 - (Adjust1 * 1.5)
 				ButtonY := EditHeight + 20 + (Adjust1/6) 
 				GuiControl, Move, %Resize_Gui_Hwnd%, W%EditWidth% H%EditHeight%
 				GuiControl, Move, %ScrollBox_Button1_Hwnd%, X%Button1X% Y%ButtonY%
