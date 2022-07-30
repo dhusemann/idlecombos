@@ -171,20 +171,20 @@ ChampFromID(id) {
 			case "104": namefromid := "V (Soon)"
 			case "105": namefromid := "UNKNOWN (" id ")"
 			case "106": namefromid := "Blooshi"
-	;		case "107": namefromid := "UNKNOWN (" id ")"
-	;		case "108": namefromid := "UNKNOWN (" id ")"
-	;		case "109": namefromid := "UNKNOWN (" id ")"
-	;		case "110": namefromid := "UNKNOWN (" id ")"
-	;		case "111": namefromid := "UNKNOWN (" id ")"
-	;		case "112": namefromid := "UNKNOWN (" id ")"
-	;		case "113": namefromid := "UNKNOWN (" id ")"
-	;		case "114": namefromid := "UNKNOWN (" id ")"
-	;		case "115": namefromid := "UNKNOWN (" id ")"
-	;		case "116": namefromid := "UNKNOWN (" id ")"
-	;		case "117": namefromid := "UNKNOWN (" id ")"
-	;		case "118": namefromid := "UNKNOWN (" id ")"
-	;		case "119": namefromid := "UNKNOWN (" id ")"
-	;		case "120": namefromid := "UNKNOWN (" id ")"
+			;case "107": namefromid := "UNKNOWN (" id ")"
+			;case "108": namefromid := "UNKNOWN (" id ")"
+			;case "109": namefromid := "UNKNOWN (" id ")"
+			;case "110": namefromid := "UNKNOWN (" id ")"
+			;case "111": namefromid := "UNKNOWN (" id ")"
+			;case "112": namefromid := "UNKNOWN (" id ")"
+			;case "113": namefromid := "UNKNOWN (" id ")"
+			;case "114": namefromid := "UNKNOWN (" id ")"
+			;case "115": namefromid := "UNKNOWN (" id ")"
+			;case "116": namefromid := "UNKNOWN (" id ")"
+			;case "117": namefromid := "UNKNOWN (" id ")"
+			;case "118": namefromid := "UNKNOWN (" id ")"
+			;case "119": namefromid := "UNKNOWN (" id ")"
+			;case "120": namefromid := "UNKNOWN (" id ")"
 		}
 	}
 	else {
@@ -411,7 +411,7 @@ FeatFromID(id) {
 			case "744": namefromid := "Blooshi (Hey! Skull guy! Look how good I'm doing!)"
 			case "745": namefromid := "Tatyana (Health +30%)"
 		}
-		
+
 	}
 	else if (id < 726) {
 		switch id {
@@ -436,7 +436,7 @@ FeatFromID(id) {
 			;case "638": namefromid := "Brig (Harmonies Hype +40%)"
 			;case "638": namefromid := "Brig (Harmonies Hype +40%)"
 		}
-		
+
 	}
 
 	else {
@@ -938,15 +938,15 @@ ChestFromID(id) {
 			case "409": namefromid := "Gold Clockwork Chest"
 			case "410": namefromid := "Gold Marching Chest"
 			case "411": namefromid := "Gold Toolbox Chest"
-	;		case "412": namefromid := "Gold Elven Chest"
-	;		case "413": namefromid := "Gold Gold Piece Chest"
-	;		case "414": namefromid := "Gold Pouch Chest"
-	;		case "415": namefromid := "Gold Tarrasque Chest"
-	;		case "416": namefromid := "UNKNOWN (" id ")"
-	;		case "417": namefromid := "UNKNOWN (" id ")"
-	;		case "418": namefromid := "UNKNOWN (" id ")"
-	;		case "419": namefromid := "UNKNOWN (" id ")"
-	;		case "420": namefromid := "UNKNOWN (" id ")"
+			;case "412": namefromid := "Gold Elven Chest"
+			;case "413": namefromid := "Gold Gold Piece Chest"
+			;case "414": namefromid := "Gold Pouch Chest"
+			;case "415": namefromid := "Gold Tarrasque Chest"
+			;case "416": namefromid := "UNKNOWN (" id ")"
+			;case "417": namefromid := "UNKNOWN (" id ")"
+			;case "418": namefromid := "UNKNOWN (" id ")"
+			;case "419": namefromid := "UNKNOWN (" id ")"
+			;case "420": namefromid := "UNKNOWN (" id ")"
 		}
 	}
 	else {
