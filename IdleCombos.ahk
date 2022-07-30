@@ -342,6 +342,9 @@ class MyGui {
 		Menu, FileSubmenu, Add, &Launch Game Client, LaunchGame
 		Menu, FileSubmenu, Add, &Update UserDetails, GetUserDetails
 		Menu, FileSubmenu, Add
+		Menu, FileSubmenu, Add, Detect Game - Epic Games, detectGameInstallEpic
+		Menu, FileSubmenu, Add, Detect Game - Steam, detectGameInstallSteam
+		Menu, FileSubmenu, Add
 		Menu, FileSubmenu, Add, &Reload IdleCombos, Reload_Clicked
 		Menu, FileSubmenu, Add, E&xit IdleCombos, Exit_Clicked
 		Menu, IdleMenu, Add, &File, :FileSubmenu
@@ -1693,20 +1696,33 @@ Hg_Blacksmith:
 	}
 	;	fmagdi -stop
 
-	setGameInstallSteam()
+	detectGameInstallSteam()
+	{
+		setGameInstallSteam(true)
+	}
+
+	setGameInstallSteam( manual = false)
 	{
 		; Detect Steam install
 		if FileExist(GameInstallDirSteam) {
 			GameInstallDir := GameInstallDirSteam
 			GameClient := GameInstallDir GameClientExe
 			WRLFile := GameInstallDir WRLFilePath
-			;msgbox Steam install found
+			if manual
+				msgbox Steam install found
 			return true
 		}
+		if manual
+			msgbox Steam install NOT found
 		return false
 	}
 
-	setGameInstallEpic()
+	detectGameInstallEpic()
+	{
+		setGameInstallEpic(true)
+	}
+
+	setGameInstallEpic( manual = false)
 	{
 		; Detect Epic Games install
 		if FileExist(GameClientEpic) {
@@ -1718,11 +1734,14 @@ Hg_Blacksmith:
 					GameInstallDir := GameInstallDirEpic
 					GameClient := GameClientEpicLauncher
 					WRLFile := GameInstallDir WRLFilePath
-					;msgbox Epic Games install found
+					if manual
+						msgbox Epic Games install found
 					return true
 				}
 			}
 		}
+		if manual
+			msgbox Epic Games install NOT found
 		return false
 	}
 
