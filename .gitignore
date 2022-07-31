@@ -4,6 +4,7 @@ IdleCombos.ahk.bak
 # SETTINGS
 idlecombosettings.json
 userdetails.json
+advdefs.json
 
 # LOGS
 idlecombolog.txt
