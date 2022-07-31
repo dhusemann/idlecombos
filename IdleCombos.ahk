@@ -869,8 +869,6 @@ Open_Codes:
 		clipboard := ""
 		send, ^c
 		ClipWait, 1
-		if WinExist("IdleCombos")
-			WinActivate
 		if WinExist("Redeem Codes")
 			WinActivate
 		Paste()
