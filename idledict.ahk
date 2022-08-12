@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.10"
+global DictionaryVersion := "2.20"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -168,7 +168,7 @@ ChampFromID(id) {
 			case "101": namefromid := "Merilwen"
 			case "102": namefromid := "Nahara"
 			case "103": namefromid := "Valentine"
-			case "104": namefromid := "V (Soon)"
+			case "104": namefromid := "Voronika"
 			case "105": namefromid := "UNKNOWN (" id ")"
 			case "106": namefromid := "Blooshi"
 			;case "107": namefromid := "UNKNOWN (" id ")"
