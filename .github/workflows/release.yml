@@ -21,6 +21,8 @@ jobs:
       run: mkdir "$ARCHIVE_NAME" && cp *.ahk *.md "$ARCHIVE_NAME"
     - name: Archive Release TAR.GZ
       run: tar -czf "$ARCHIVE_NAME".tar.gz "$ARCHIVE_NAME"
+    - name: DEBUG
+      run: ls -al && cd "$ARCHIVE_NAME" && ls -al
     - name: Archive Release ZIP
       uses: thedoctor0/zip-release@main
       with:
