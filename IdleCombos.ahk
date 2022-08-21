@@ -81,7 +81,7 @@
 
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
-global VersionNumber := "3.21"
+global VersionNumber := "3.22"
 global CurrentDictionary := "2.20"
 
 ;Local File globals
@@ -1848,194 +1848,77 @@ Hg_Blacksmith:
 	}
 
 	ParseAdventureData() {
-		bginstance := 0
+		InstanceList := [{},{},{},{}]
+		CoreList := ["Modest","Strong","Fast","Magic"]
+		MagList := ["K","M","B","t"]
+		
+		for k, v in UserDetails.details.game_instances {
+			InstanceList[v.game_instance_id].current_adventure_id := v.current_adventure_id
+			InstanceList[v.game_instance_id].current_area := v.current_area
+			InstanceList[v.game_instance_id].Patron := PatronFromID(v.current_patron_id)
+			InstanceList[v.game_instance_id].ChampionsCount := 0
+			for l, w in v.formation
+				if (w > 0) {
+					InstanceList[v.game_instance_id].ChampionsCount += 1
+				}
+		}
+		for k, v in UserDetails.details.modron_saves {
+			InstanceList[v.instance_id].core := "Core: " Corelist[v.core_id]
+			if (v.properties.toggle_preferences.reset == true)
+				InstanceList[v.instance_id].core := InstanceList[v.instance_id].core " (Reset at " v.area_goal ")"
+			core_level := ceil((sqrt(36000000+8000*v.exp_total)-6000)/4000)
+			core_tolevel := v.exp_total-(2000*(core_level-1)**2+6000*(core_level-1))
+			core_levelxp := 4000*(core_level+1)
+			core_pcttolevel := Floor((core_tolevel / core_levelxp) * 100)
+			core_humxp := Format("{:.2f}",v.exp_total / (1000 ** Floor(log(v.exp_total)/3))) MagList[Floor(log(v.exp_total)/3)]
+			if (core_level > 15) 
+				core_level := core_level " - Max 15"
+			InstanceList[v.instance_id].core := InstanceList[v.instance_id].core "`nXP: " core_humxp " (Lv " core_level ")`n" core_tolevel "/" core_levelxp " (" core_pcttolevel "%)"
+		}
+		
 		ChampionsActiveCount := 0
-		for k, v in UserDetails.details.game_instances
-		if (v.game_instance_id == ActiveInstance) {
-			CurrentAdventure := v.current_adventure_id
-			CurrentArea := v.current_area
-			CurrentPatron := PatronFromID(v.current_patron_id)
-			CurrentChampions := 0
-			for l, w in v.formation
-			if (w > 0) {
-				CurrentChampions += 1
-			}
-			ChampionsActiveCount += CurrentChampions
-		}
-		else if (bginstance == 0){
-			BackgroundAdventure := v.current_adventure_id
-			BackgroundArea := v.current_area
-			BackgroundPatron := PatronFromID(v.current_patron_id)
-			BackgroundChampions := 0
-			for l, w in v.formation
-			if (w > 0) {
-				BackgroundChampions += 1
-			}
-			ChampionsActiveCount += BackgroundChampions
-			bginstance += 1
-		}
-		else if (bginstance == 1){
-			Background2Adventure := v.current_adventure_id
-			Background2Area := v.current_area
-			Background2Patron := PatronFromID(v.current_patron_id)
-			Background2Champions := 0
-			for l, w in v.formation
-			if (w > 0) {
-				Background2Champions += 1
-			}
-			ChampionsActiveCount += Background2Champions
-			bginstance += 1
-		}
-		else if (bginstance == 2){
-			Background3Adventure := v.current_adventure_id
-			Background3Area := v.current_area
-			Background3Patron := PatronFromID(v.current_patron_id)
-			Background3Champions := 0
-			for l, w in v.formation
-			if (w > 0) {
-				Background3Champions += 1
-			}
-			ChampionsActiveCount += Background3Champions
-		}
-
+		bginstance := 0
 		FGCore := "`n"
 		BGCore := "`n"
 		BG2Core := "`n"
 		BG3Core := "`n"
-		;		If (ActiveInstance == 1) {
-		;			bginstance := 2
-		;		}
-		;		Else {
-		;			bginstance := 1
-		;		}
 
-		bginstance := 0
-
-		for k, v in UserDetails.details.modron_saves
-		if (v.instance_id == ActiveInstance) {
-			if (v.core_id == 1) {
-				FGCore := "Core: Modest"
+		for k, v in InstanceList {
+			if (k == ActiveInstance) {
+				CurrentAdventure := v.current_adventure_id
+				CurrentArea := v.current_area
+				CurrentPatron := v.Patron
+				FGCore := v.core
+				CurrentChampions := v.ChampionsCount
+				ChampionsActiveCount += v.ChampionsCount
 			}
-			else if (v.core_id == 2) {
-				FGCore := "Core: Strong"
+			else if (bginstance == 0){
+				BackgroundAdventure := v.current_adventure_id
+				BackgroundArea := v.current_area
+				BackgroundPatron := v.Patron
+				BGCore := v.core
+				BackgroundChampions := v.ChampionsCount
+				ChampionsActiveCount += v.ChampionsCount
+				bginstance += 1
 			}
-			else if (v.core_id == 3) {
-				FGCore := "Core: Fast"
+			else if (bginstance == 1){
+				Background2Adventure := v.current_adventure_id
+				Background2Area := v.current_area
+				Background2Patron := v.Patron
+				BG2Core := v.core
+				Background2Champions := v.ChampionsCount
+				ChampionsActiveCount += v.ChampionsCount
+				bginstance += 1
 			}
-			else if (v.core_id == 4) {
-				FGCore := "Core: Magic"
+			else if (bginstance == 2){
+				Background3Adventure := v.current_adventure_id
+				Background3Area := v.current_area
+				Background3Patron := v.Patron
+				Background3Champions := v.ChampionsCount
+				ChampionsActiveCount += v.ChampionsCount
+				BG3Core := v.core
 			}
-
-			if (v.properties.toggle_preferences.reset == true) {
-				FGCore := FGCore " (Reset at " v.area_goal ")"
-			}
-			xptolevel := v.exp_total
-			corelevel := 1
-			levelxp := 8000
-			while (xptolevel > (levelxp - 1)) {
-				corelevel += 1
-				xptolevel -= levelxp
-				levelxp += 4000
-			}
-			if (corelevel > 15) {
-				corelevel := corelevel " - Max 15"
-			}
-			percenttolevel := Floor((xptolevel / levelxp) * 100)
-			FGCore := FGCore "`nXP: " v.exp_total " (Lv " corelevel ")`n" xptolevel "/" levelxp " (" percenttolevel "%)"
 		}
-		else if (bginstance == 0 and v.instance_id != 0) {
-			if (v.core_id == 1) {
-				BGCore := "Core: Modest"
-			}
-			else if (v.core_id == 2) {
-				BGCore := "Core: Strong"
-			}
-			else if (v.core_id == 3) {
-				BGCore := "Core: Fast"
-			}
-			else if (v.core_id == 4) {
-				BGCore := "Core: Magic"
-			}
-			if (v.properties.toggle_preferences.reset == true) {
-				BGCore := BGCore " (Reset at " v.area_goal ")"
-			}
-			xptolevel := v.exp_total
-			corelevel := 1
-			levelxp := 8000
-			while (xptolevel > (levelxp - 1)) {
-				corelevel += 1
-				xptolevel -= levelxp
-				levelxp += 4000
-			}
-			if (corelevel > 15) {
-				corelevel := corelevel " - Max 15"
-			}
-			percenttolevel := Floor((xptolevel / levelxp) * 100)
-			BGCore := BGCore "`nXP: " v.exp_total " (Lv " corelevel ")`n" xptolevel "/" levelxp " (" percenttolevel "%)"
-			bginstance += 1
-		}
-		else if (bginstance == 1 and v.instance_id != 0) {
-			if (v.core_id == 1) {
-				BG2Core := "Core: Modest"
-			}
-			else if (v.core_id == 2) {
-				BG2Core := "Core: Strong"
-			}
-			else if (v.core_id == 3) {
-				BG2Core := "Core: Fast"
-			}
-			else if (v.core_id == 4) {
-				BG2Core := "Core: Magic"
-			}
-			if (v.properties.toggle_preferences.reset == true) {
-				BG2Core := BG2Core " (Reset at " v.area_goal ")"
-			}
-			xptolevel := v.exp_total
-			corelevel := 1
-			levelxp := 8000
-			while (xptolevel > (levelxp - 1)) {
-				corelevel += 1
-				xptolevel -= levelxp
-				levelxp += 4000
-			}
-			if (corelevel > 15) {
-				corelevel := corelevel " - Max 15"
-			}
-			percenttolevel := Floor((xptolevel / levelxp) * 100)
-			BG2Core := BG2Core "`nXP: " v.exp_total " (Lv " corelevel ")`n" xptolevel "/" levelxp " (" percenttolevel "%)"
-			bginstance += 1
-		}
-		else if(bginstance == 2 and v.instance_id != 0){
-			if (v.core_id == 1) {
-				BG3Core := "Core: Modest"
-			}
-			else if (v.core_id == 2) {
-				BG3Core := "Core: Strong"
-			}
-			else if (v.core_id == 3) {
-				BG3Core := "Core: Fast"
-			}
-			else if (v.core_id == 4) {
-				BG3Core := "Core: Magic"
-			}
-			if (v.properties.toggle_preferences.reset == true) {
-				BG3Core := BG3Core " (Reset at " v.area_goal ")"
-			}
-			xptolevel := v.exp_total
-			corelevel := 1
-			levelxp := 8000
-			while (xptolevel > (levelxp - 1)) {
-				corelevel += 1
-				xptolevel -= levelxp
-				levelxp += 4000
-			}
-			if (corelevel > 15) {
-				corelevel := corelevel " - Max 15"
-			}
-			percenttolevel := Floor((xptolevel / levelxp) * 100)
-			BG3Core := BG3Core "`nXP: " v.exp_total " (Lv " corelevel ")`n" xptolevel "/" levelxp " (" percenttolevel "%)"
-		}
-		;
 	}
 
 	ParseTimestamps() {
