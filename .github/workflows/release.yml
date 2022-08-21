@@ -20,11 +20,13 @@ jobs:
       with:
         type: 'zip'
         filename: 'release.zip'
+        exclusions: '*.git* *.github* *.vscode* *.json *.zip *.tar.gz'
     - name: Archive Release TAR.GZ
       uses: thedoctor0/zip-release@main
       with:
         type: 'tar'
         filename: 'release.tar.gz'
+        exclusions: '*.git* *.github* *.vscode* *.json *.zip *.tar.gz'
     - uses: ncipollo/release-action@v1
       with:
         allowUpdates: true
