@@ -1,0 +1,23 @@
+on:
+  push:
+    # tags:
+    #   - 'v*'
+    branch:
+      - 'githubActions'
+
+name: Create Release
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: "*"
+        draft: true
+        generateReleaseNotes: true
+        token: ${{ secrets.YOUR_GITHUB_TOKEN }}
