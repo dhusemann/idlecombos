@@ -29,7 +29,9 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         allowUpdates: true
-        artifacts: "$ARCHIVE_NAME.zip,$ARCHIVE_NAME.tar.gz"
+        artifacts: "*.zip,*.tar.gz"
         draft: true
+        removeArtifacts: true
+        replacesArtifacts: true
         tag: "TEST"
         token: ${{ secrets.GITHUB_TOKEN }}
