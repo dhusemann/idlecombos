@@ -20,4 +20,4 @@ jobs:
         artifacts: "*"
         draft: true
         generateReleaseNotes: true
-        token: ${{ secrets.YOUR_GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
