@@ -20,4 +20,5 @@ jobs:
         artifacts: "*"
         draft: true
         generateReleaseNotes: true
+        tag: "TEST"
         token: ${{ secrets.GITHUB_TOKEN }}
