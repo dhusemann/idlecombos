@@ -15,10 +15,20 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v2
+    - name: Archive Release ZIP
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: 'release.zip'
+    - name: Archive Release TAR.GZ
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'tar'
+        filename: 'release.tar.gz'
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "*"
+        allowUpdates: true
+        artifacts: "release.zip,release.tar.gz"
         draft: true
-        generateReleaseNotes: true
         tag: "TEST"
         token: ${{ secrets.GITHUB_TOKEN }}
