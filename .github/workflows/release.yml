@@ -1,9 +1,7 @@
 on:
   push:
-    # tags:
-    #   - 'v*'
-    branch:
-      - 'githubActions'
+    tags:
+      - 'v*'
 
 name: Create Release
 
@@ -23,8 +21,6 @@ jobs:
       run: tar -czf "$ARCHIVE_NAME".tar.gz "$ARCHIVE_NAME"
     - name: Archive Release ZIP
       run: zip -r "$ARCHIVE_NAME".zip "$ARCHIVE_NAME"
-    - name: DEBUG
-      run: ls -al && cd "$ARCHIVE_NAME" && ls -al
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
@@ -33,5 +29,4 @@ jobs:
         draft: true
         removeArtifacts: true
         replacesArtifacts: true
-        tag: "TEST"
         token: ${{ secrets.GITHUB_TOKEN }}
