@@ -1,0 +1,32 @@
+on:
+  push:
+    tags:
+      - 'v*'
+
+name: Create Release
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ARCHIVE_NAME: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v2
+    - name: Make Release Folder
+      run: mkdir "$ARCHIVE_NAME" && cp *.ahk *.md "$ARCHIVE_NAME"
+    - name: Archive Release TAR.GZ
+      run: tar -czf "$ARCHIVE_NAME".tar.gz "$ARCHIVE_NAME"
+    - name: Archive Release ZIP
+      run: zip -r "$ARCHIVE_NAME".zip "$ARCHIVE_NAME"
+    - name: Upload Release
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        artifacts: "*.zip,*.tar.gz"
+        draft: true
+        removeArtifacts: true
+        replacesArtifacts: true
+        token: ${{ secrets.GITHUB_TOKEN }}
