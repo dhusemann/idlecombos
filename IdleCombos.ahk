@@ -96,7 +96,7 @@
 
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
-global VersionNumber := "3.23"
+global VersionNumber := "3.24"
 global CurrentDictionary := "2.20"
 
 ;Local File globals
