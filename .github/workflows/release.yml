@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      ARCHIVE_NAME: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}
+      ARCHIVE_NAME: ${{ github.event.repository.name }}-${{github.ref_name}}
     permissions:
       contents: write
     steps:
