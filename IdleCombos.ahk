@@ -5,9 +5,18 @@
 
 ; CHANGELOG
 
+;3.23
+;update performance parsing in adventure list (thanks Fmagdi)
+;automatic workflow to make releases
+
+;3.22
+;add voronika to dictionary
+;add menu items to detect game folder
+;code syntax formatting
+
 ;3.21
 ;add valetine to dictionary
-;update reddem code results order
+;update redeem code results order
 ;Add 'how to run' in README.md
 
 ;3.20
@@ -81,7 +90,7 @@
 
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
-global VersionNumber := "3.22"
+global VersionNumber := "3.23"
 global CurrentDictionary := "2.20"
 
 ;Local File globals
