@@ -5,6 +5,11 @@
 
 ; CHANGELOG
 
+;3.24
+;add menu item to show User Details: UID, Hash, Platform
+;update message boxes to have selectable text
+;add web tool - SoulReaver Data Viewer
+
 ;3.23
 ;update performance parsing in adventure list (thanks Fmagdi)
 ;automatic workflow to make releases
@@ -104,6 +109,7 @@ global RedeemCodeLogFile := "redeemcodelog.json"
 global JournalFile := "journal.json"
 global CurrentSettings := []
 global GameInstallDir := ""
+global GamePlatform := ""
 global GameClient := ""
 global GameClientExe := "IdleDragons.exe"
 global GameInstallDirSteam := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
@@ -235,9 +241,12 @@ global ZarielRequires := ""
 global ZarielCosts := ""
 ;Web Tools globals
 
-global WebToolFormation := "https://ic.byteglow.com/formation"
-global WebToolModron := "https://ic.byteglow.com/modron"
 global WebToolCodes := "https://incendar.com/idlechampions_codes.php#123"
+global WebToolGameViewer := "http://idlechampions.soulreaver.usermd.net"
+global WebToolDataViewer := "https://idle.kleho.ru"
+global WebToolUtilities := "https://ic.byteglow.com"
+global WebToolUtilitiesModron := WebToolUtilities "/modron"
+global WebToolUtilitiesFormation := WebToolUtilities "/formation"
 
 ;GUI globals
 global oMyGUI := ""
@@ -389,8 +398,11 @@ class MyGui {
 
 		Menu, ToolsSubmenu, Add, &Briv Stack Calculator, Briv_Calc
 
-		Menu, WebToolsSubmenu, Add, &Formation Calc, Open_Web_Formation_Calc
-		Menu, WebToolsSubmenu, Add, &Modron Core Calc, Open_Web_Modron_Core_Calc
+		Menu, WebToolsSubmenu, Add, &Data Viewer - Kleho, Open_Web_Data_Viewer
+		Menu, WebToolsSubmenu, Add, &Game Viewer - SoulReaver, Open_Web_Game_Viewer
+		Menu, WebToolsSubmenu, Add, &Utilities - ByteGlow, Open_Web_Utilities
+		Menu, WebToolsSubmenu, Add, &Utilities - Modron Core Calc, Open_Web_Utilities_Modron
+		Menu, WebToolsSubmenu, Add, &Utilities - Formation Calc, Open_Web_Utilities_Formation
 		Menu, ToolsSubmenu, Add, &Web Tools, :WebToolsSubmenu
 
 		Menu, IdleMenu, Add, &Tools, :ToolsSubmenu
@@ -400,7 +412,8 @@ class MyGui {
 		Menu, HelpSubmenu, Add, Download &Journal, Get_Journal
 		Menu, HelpSubmenu, Add, CNE &Support Ticket, Open_Ticket
 		Menu, HelpSubmenu, Add
-		Menu, HelpSubmenu, Add, &List Champ IDs, List_ChampIDs
+		Menu, HelpSubmenu, Add, List &User Details, List_UserDetails
+		Menu, HelpSubmenu, Add, List &Champ IDs, List_ChampIDs
 		Menu, HelpSubmenu, Add, &About IdleCombos, About_Clicked
 		Menu, HelpSubmenu, Add, &Update Dictionary, Update_Dictionary
 		Menu, HelpSubmenu, Add, &Discord Support Server, Discord_Clicked
@@ -834,7 +847,7 @@ Open_Codes:
 		; GUI
 		Gui, CodeWindow:New
 		Gui, Menu, MyMenuBar
-		Gui, CodeWindow:-Resize -MaximizeBox +MinSize
+		Gui, CodeWindow:+ToolWindow -Resize -MaximizeBox +MinSize
 		Gui, CodeWindow:Show, w230 h240, Codes
 		Gui, CodeWindow:Add, Edit, r12 vCodestoEnter w190 x20 y20, IDLE-CHAM-PION-SNOW
 		Gui, CodeWindow:Add, Button, gRedeem_Codes, Submit
@@ -1091,15 +1104,33 @@ Close_Codes:
 		return
 	}
 
-	Open_Web_Formation_Calc()
+Open_Web_Game_Viewer()
 	{
-		Run, %WebToolFormation%
+		Run, %WebToolGameViewer%
 		return
 	}
 
-	Open_Web_Modron_Core_Calc()
+Open_Web_Data_Viewer()
 	{
-		Run, %WebToolModron%
+		Run, %WebToolDataViewer%
+		return
+	}
+
+Open_Web_Utilities()
+	{
+		Run, %WebToolUtilities%
+		return
+	}
+
+Open_Web_Utilities_Formation()
+	{
+		Run, %WebToolUtilitiesFormation%
+		return
+	}
+
+Open_Web_Utilities_Modron()
+	{
+		Run, %WebToolUtilitiesModron%
 		return
 	}
 
@@ -1715,6 +1746,7 @@ Hg_Blacksmith:
 			GameInstallDir := GameInstallDirSteam
 			GameClient := GameInstallDir GameClientExe
 			WRLFile := GameInstallDir WRLFilePath
+			GamePlatform := "Steam"
 			if manual
 				msgbox Steam install found
 			return true
@@ -1741,6 +1773,7 @@ Hg_Blacksmith:
 					GameInstallDir := GameInstallDirEpic
 					GameClient := GameClientEpicLauncher
 					WRLFile := GameInstallDir WRLFilePath
+					GamePlatform := "Epic Game Store"
 					if manual
 						msgbox Epic Games install found
 					return true
@@ -2535,6 +2568,16 @@ Hg_Blacksmith:
 			return
 		}
 
+	List_UserDetails:
+		{
+			userdetailslist := "User ID: " UserID "`n"
+			userdetailslist := userdetailslist "User Hash : " UserHash "`n"
+			userdetailslist := userdetailslist "Platform: " GamePlatform "`n"
+			;MsgBox, , User Details, % userdetailslist
+			CustomMsgBox("User Details",userdetailslist,"Fixedsys")
+			return	
+		}
+
 	List_ChampIDs:
 		{
 			champnamelen := 0
@@ -2556,7 +2599,7 @@ Hg_Blacksmith:
 				id += 1
 			}
 			;MsgBox, , Champ ID List, % champidlist
-			CustomMsgBox("Champion IDs and Names",champidlist,"Courier New","Blue")
+			CustomMsgBox("Champion IDs and Names",champidlist,"Fixedsys")
 			return	
 		}
 
@@ -2566,18 +2609,20 @@ Hg_Blacksmith:
 			Gui,66:Color,%WindowColor%
 
 			Gui,66:Font,%FontOptions%,%Font%
-			Gui,66:Add,Text,,%Message%
+			Gui,66:Add,Edit,ReadOnly,%Message%
 			Gui,66:Font
 
-			GuiControlGet,Text,66:Pos,Static1
+			GuiControlGet,Edit,66:Pos,Static1
 
-			Gui,66:Add,Button,% "Default y+10 w75 g66OK xp+" (TextW / 2) - 38 ,OK
+			Gui,66:Add,Button,% "Default y+10 w75 g66OK xp+" (TextW / 2) - 38,OK
 
+			Gui,66:+ToolWindow
 			Gui,66:-MinimizeBox
 			Gui,66:-MaximizeBox
 
 			SoundPlay,*-1
 			Gui,66:Show,,%Title%
+			ControlFocus,OK,%Title%
 
 			Gui,66:+LastFound
 			WinWaitClose
@@ -3333,7 +3378,7 @@ ScrollBox(String := "", Options := "", Label := "")
 		else
 			Gui, Font
 		Gui, Margin, 20, 20
-		Gui, +MinSize200x200 +Resize
+		Gui, +ToolWindow +MinSize200x200 +Resize
 		Gui, Color, FFFFFF
 		Opt := "hwndGui_Hwnd ReadOnly -E0x200 "
 		if !(Options ~= "i)w(?!\d)")
