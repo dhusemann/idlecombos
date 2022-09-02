@@ -331,10 +331,10 @@ if (CurrentSettings.user_id && CurrentSettings.hash) {
 	UserIDSteam := CurrentSettings.user_id_steam
 	UserHash := CurrentSettings.hash
 	InstanceID := CurrentSettings.instance_id
-	SB_SetText("User ID & Hash ready.")
+	SB_SetText("✅ User ID & Hash Ready")
 }
 else {
-	SB_SetText("User ID & Hash not found!")
+	SB_SetText("❌ User ID & Hash not found!")
 }
 ;Loading current settings
 ServerName := CurrentSettings.servername
@@ -733,14 +733,14 @@ Crash_Toggle:
 			case "Crash Protect`nDisabled": {
 				CrashProtectStatus := "Crash Protect`nEnabled"
 				oMyGUI.Update()
-				SB_SetText("Crash Protect has been enabled!")
+				SB_SetText("✅ Crash Protect has been enabled!")
 				CrashProtect()
 			}
 			case "Crash Protect`nEnabled": {
 				CrashProtectStatus := "Crash Protect`nDisabled"
 				CrashCount := 0
 				oMyGUI.Update()
-				SB_SetText("Crash Protect has been disabled.")
+				SB_SetText("✅ Crash Protect has been disabled.")
 			}
 		}
 		return
@@ -755,7 +755,7 @@ CrashProtect() {
 			Sleep 2500
 			Run, %GameClient%
 			++CrashCount
-			SB_SetText("Crash Protect has restarted your client.")
+			SB_SetText("✅ Crash Protect has restarted your client.")
 			UpdateLogTime()
 			FileAppend, (%CurrentTime%) Restarts since enabling Crash Protect: %CrashCount%`n, %OutputLogFile%
 			FileRead, OutputText, %OutputLogFile%
@@ -779,7 +779,7 @@ Save_Settings:
 		newsettings := JSON.stringify(CurrentSettings)
 		FileDelete, %SettingsFile%
 		FileAppend, %newsettings%, %SettingsFile%
-		SB_SetText("Settings have been saved.")
+		SB_SetText("✅ Settings have been saved.")
 		return
 	}
 
@@ -869,7 +869,7 @@ Open_Codes:
 		Gui, CodeWindow:Add, Button, x+35 gClose_Codes, Close
 
 		; STATUS BAR
-		Gui, Add, StatusBar, vCodesOutputStatus, Codes: 0/1 - Waiting... (1 code per line)
+		Gui, Add, StatusBar, vCodesOutputStatus, ❗ Codes: 0/1 - Waiting... (1 code per line)
 		return
 	}
 
@@ -879,14 +879,17 @@ Open_Codes:
 		loop, parse, foundCodeString, `n, `r
 			CodeTotal := a_index
 		GuiControl, , CodestoEnter, %foundCodeString%
-		GuiControl, , CodesOutputStatus, Codes: 0/%CodeTotal% - Waiting... (1 code per line)
+		if ( CodeTotal == "") {
+			CodeTotal := "0"
+		}
+		GuiControl, , CodesOutputStatus, ❗ Codes: 0/%CodeTotal% - Waiting... (1 code per line)
 		return
 	}
 
 	Delete()
 	{
 		GuiControl, , CodestoEnter,
-		GuiControl, , CodesOutputStatus, Codes: 0/0 - Waiting... (1 code per line)
+		GuiControl, , CodesOutputStatus, ❗ Codes: 0/0 - Waiting... (1 code per line)
 		return
 	}
 
@@ -926,7 +929,7 @@ Open_Codes:
 		CodeCount := CodeList.Length()
 		CodeNum := 1
 		CodeTotal := CodeCount
-		CodesPending := "Codes: " CodeNum "/" CodeTotal " - Starting..."
+		CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Starting..."
 		GuiControl, , CodesOutputStatus, % CodesPending
 		usedcodes := ""
 		someonescodes := ""
@@ -1041,10 +1044,10 @@ Open_Codes:
 				}
 			}
 			sleep, 1000
-			CodesPending := "Codes: " CodeNum "/" CodeTotal " - Submitting..."
+			CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Submitting..."
 			GuiControl, , CodesOutputStatus, % CodesPending
 		}
-		CodesPending := "Codes: " CodeNum "/" CodeTotal " - Loading Results..."
+		CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Loading Results..."
 		codemessage := ""
 		if (codegolds > 0) {
 			codemessage := codemessage "Gold Chests:`n" codegolds "`n"
@@ -1091,7 +1094,7 @@ Open_Codes:
 		GetUserDetails()
 		oMyGUI.Update()
 		Gui, CodeWindow: Default
-		CodesPending := "Codes: " CodeTotal "/" CodeTotal " - Completed!"
+		CodesPending := "✅ Codes: " CodeTotal "/" CodeTotal " - Completed! 😎"
 		GuiControl, , CodesOutputStatus, % CodesPending
 		; MsgBox, , Results, % codemessage
 		ScrollBox(codemessage, "p b1 h200 w250", "Redeem Codes Results")
@@ -1165,7 +1168,7 @@ Buy_Extra_Chests(chestid,extracount) {
 	chestparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&chest_type_id=" chestid "&count="
 	gemsspent := 0
 	while (extracount > 0) {
-		SB_SetText("Chests remaining to purchase: " extracount)
+		SB_SetText("⌛ Chests remaining to purchase: " extracount)
 		if (extracount < 101) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams extracount)
 			extracount -= extracount
@@ -1182,7 +1185,7 @@ Buy_Extra_Chests(chestid,extracount) {
 			FileRead, OutputText, %OutputLogFile%
 			oMyGUI.Update()
 			GetUserDetails()
-			SB_SetText("Chests remaining: " count " (Error: " chestresults.failure_reason ")")
+			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
 		}
 		gemsspent += chestresults.currency_spent
@@ -1191,7 +1194,7 @@ Buy_Extra_Chests(chestid,extracount) {
 	UpdateLogTime()
 	FileAppend, (%CurrentTime%) Gems spent: %gemsspent%`n, %OutputLogFile%
 	FileRead, OutputText, %OutputLogFile%
-	SB_SetText("Chest purchase completed.")
+	SB_SetText("✅ Chest purchase completed.")
 	return gemsspent
 }
 
@@ -1230,7 +1233,7 @@ Buy_Chests(chestid) {
 				rawresults := ServerCall("alphachests", chestparams)
 				MsgBox % rawresults
 				GetUserDetails()
-				SB_SetText("Ai yi yi, Zordon!")
+				SB_SetText("✨ Ai yi yi, Zordon!")
 				return
 			}
 			if (count > maxbuy) {
@@ -1247,7 +1250,7 @@ Buy_Chests(chestid) {
 	chestparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&chest_type_id=" chestid "&count="
 	gemsspent := 0
 	while (count > 0) {
-		SB_SetText("Chests remaining to purchase: " count)
+		SB_SetText("⌛ Chests remaining to purchase: " count)
 		if (count < 101) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams count)
 			count -= count
@@ -1264,7 +1267,7 @@ Buy_Chests(chestid) {
 			FileRead, OutputText, %OutputLogFile%
 			oMyGUI.Update()
 			GetUserDetails()
-			SB_SetText("Chests remaining: " count " (Error: " chestresults.failure_reason ")")
+			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
 		}
 		gemsspent += chestresults.currency_spent
@@ -1275,7 +1278,7 @@ Buy_Chests(chestid) {
 	FileRead, OutputText, %OutputLogFile%
 	oMyGUI.Update()
 	GetUserDetails()
-	SB_SetText("Chest purchase completed.")
+	SB_SetText("✅ Chest purchase completed.")
 	return
 }
 
@@ -1335,7 +1338,7 @@ Open_Chests(chestid) {
 	chestresults_cumulative := {}
 
 	while (count > 0) {
-		SB_SetText("Chests remaining to open: " count)
+		SB_SetText("⌛ Chests remaining to open: " count)
 		if (count < 100) {
 			rawresults := ServerCall("opengenericchest", chestparams count)
 			Sleep, 500
@@ -1384,7 +1387,7 @@ Open_Chests(chestid) {
 			FileRead, OutputText, %OutputLogFile%
 			oMyGUI.Update()
 			GetUserDetails()
-			SB_SetText("Chests remaining: " count " (Error)")
+			SB_SetText("⌛ Chests remaining: " count " (Error)")
 			return
 		}
 		for k, v in chestresults.loot_details {
@@ -1457,7 +1460,7 @@ Open_Chests(chestid) {
 	FileRead, OutputText, %OutputLogFile%
 	oMyGUI.Update()
 	GetUserDetails()
-	SB_SetText("Chest opening completed.")
+	SB_SetText("✅ Chest opening completed.")
 	return
 }
 
@@ -1546,7 +1549,7 @@ UseBlacksmith(buffid) {
 	slot5lvs := 0
 	slot6lvs := 0
 	while (count > 0) {
-		SB_SetText("Contracts remaining to use: " count)
+		SB_SetText("⌛ Contracts remaining to use: " count)
 		if (count < 50) {
 			rawresults := ServerCall("useserverbuff", bscontractparams count)
 			count -= count
@@ -1585,7 +1588,7 @@ UseBlacksmith(buffid) {
 			FileRead, OutputText, %OutputLogFile%
 			oMyGUI.Update()
 			GetUserDetails()
-			SB_SetText("Contracts remaining: " count " (Error)")
+			SB_SetText("⌛ Contracts remaining: " count " (Error)")
 			return
 		}
 		rawactions := JSON.stringify(blacksmithresults.actions)
@@ -1617,7 +1620,7 @@ UseBlacksmith(buffid) {
 	FileRead, OutputText, %OutputLogFile%
 	oMyGUI.Update()
 	GetUserDetails()
-	SB_SetText("Blacksmith use completed.")
+	SB_SetText("✅ Blacksmith use completed.")
 	return
 }
 
@@ -1652,7 +1655,7 @@ LoadAdventure() {
 	advparams := DummyData "&patron_tier=0&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" ActiveInstance "&adventure_id=" advtoload "&patron_id=" patrontoload
 	sResult := ServerCall("setcurrentobjective", advparams)
 	GetUserDetails()
-	SB_SetText("Selected adventure has been loaded.")
+	SB_SetText("✅ Selected adventure has been loaded.")
 	return
 }
 
@@ -1674,7 +1677,7 @@ EndAdventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" ActiveInstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("Current adventure has been ended.")
+	SB_SetText("✅ Current adventure has been ended.")
 	return
 }
 
@@ -1697,7 +1700,7 @@ EndBGAdventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" bginstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("Background adventure has been ended.")
+	SB_SetText("✅ Background adventure has been ended.")
 	return
 }
 
@@ -1720,7 +1723,7 @@ EndBG2Adventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" bginstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("Background2 adventure has been ended.")
+	SB_SetText("✅ Background2 adventure has been ended.")
 	return
 }
 
@@ -1743,7 +1746,7 @@ EndBG3Adventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" bginstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("Background3 adventure has been ended.")
+	SB_SetText("✅ Background3 adventure has been ended.")
 	return
 }
 ;	fmagdi -stop
@@ -1850,7 +1853,7 @@ FirstRun() {
 	FileAppend, (%CurrentTime%) IdleCombos setup completed.`n, %OutputLogFile%
 	FileRead, OutputText, %OutputLogFile%
 	oMyGUI.Update()
-	SB_SetText("User ID & Hash ready.")
+	SB_SetText("✅ User ID & Hash Ready")
 }
 
 UpdateLogTime() {
@@ -1900,7 +1903,7 @@ GetIDFromWRL() {
 
 GetUserDetails() {
 	Gui, MyWindow:Default
-	SB_SetText("Please wait a moment...")
+	SB_SetText("⌛ Loading... Please wait...")
 	getuserparams := DummyData "&include_free_play_objectives=true&instance_key=1&user_id=" UserID "&hash=" UserHash
 	rawdetails := ServerCall("getuserdetails", getuserparams)
 	FileDelete, %UserDetailsFile%
@@ -1921,7 +1924,7 @@ GetUserDetails() {
 	CheckAchievements()
 	CheckBlessings()
 	oMyGUI.Update()
-	SB_SetText("User details available.")
+	SB_SetText("✅ Loaded and Ready 😎")
 	CheckPatronProgress()
 	return
 }
@@ -2559,13 +2562,13 @@ ServerCall(callname, parameters) {
 LaunchGame() {
 	if (Not WinExist("ahk_exe IdleDragons.exe")) {
 		Run, %GameClient%
-		SB_SetText("Game client starting...")
+		SB_SetText("⌛ Game client starting...")
 		WinWait, "ahk_exe IdleDragons.exe"
-		SB_SetText("Game client has started!")
+		SB_SetText("✅ Game client has started!")
 	}
 	else {
 		if !FirstRun {
-			SB_SetText("Game client is already running!")
+			SB_SetText("✅ Game client is already running!")
 		}
 	}
 	return
@@ -2593,7 +2596,7 @@ Get_Journal:
 		pagenum := 1
 		FileDelete, %JournalFile%
 		while !(pagenum > pagecount) {
-			SB_SetText("Journal pages remaining to download: " ((pagecount - pagenum) + 1))
+			SB_SetText("⌛ Journal pages remaining to download: " ((pagecount - pagenum) + 1))
 			rawresults := ServerCall("getPlayHistory", journalparams pagenum)
 			FileAppend, %rawresults%`n, %JournalFile%
 			pagenum += 1
@@ -2603,7 +2606,7 @@ Get_Journal:
 		FileAppend, % "(" CurrentTime ") Journal pages downloaded: " (pagenum - 1) "`n", %OutputLogFile%
 		FileRead, OutputText, %OutputLogFile%
 		oMyGUI.Update()
-		SB_SetText("Journal download completed.")
+		SB_SetText("✅ Journal download completed")
 		return
 	}
 
@@ -2749,7 +2752,7 @@ SetUIScale() {
 	FileAppend, % "(" CurrentTime ") UI Scale changed to " newuiscale "`n", %OutputLogFile%
 	FileRead, OutputText, %OutputLogFile%
 	oMyGUI.Update()
-	SB_SetText("UI Scale changed to " newuiscale)
+	SB_SetText("✅ UI Scale changed to " newuiscale)
 }
 
 SetFramerate() {
@@ -2782,7 +2785,7 @@ SetFramerate() {
 	FileAppend, % "(" CurrentTime ") Framerate changed to " newframerate "`n", %OutputLogFile%
 	FileRead, OutputText, %OutputLogFile%
 	oMyGUI.Update()
-	SB_SetText("Framerate changed to " newframerate)
+	SB_SetText("✅ Framerate changed to " newframerate)
 }
 
 SetParticles() {
@@ -2815,11 +2818,11 @@ SetParticles() {
 	FileAppend, % "(" CurrentTime ") Paticles changed to " newparticles "`n", %OutputLogFile%
 	FileRead, OutputText, %OutputLogFile%
 	oMyGUI.Update()
-	SB_SetText("Particles changed to " newparticles)
+	SB_SetText("✅ Particles changed to " newparticles)
 }
 
 SimulateBriv(i) {
-	SB_SetText("Calculating...")
+	SB_SetText("⌛ Calculating...")
 	;Original version by Gladio Stricto - pastebin.com/Rd8wWSVC
 	;Copied from updated version - github.com/Deatho0ne
 	chance := ((BrivSlot4 / 100) + 1) * 0.25
@@ -2867,7 +2870,7 @@ SimulateBriv(i) {
 	multiplier := 0.1346894362, additve := 41.86396406
 	roughTime := Round(((multiplier * avgStacks) + additve), 2)
 	message = With Briv skip %skipLevels% until zone %BrivZone%`n(%trueChance%`% chance to skip %skipLevels% zones)`n`n%i% simulations produced an average:`n%avgSkips% skips (%avgSkipped% zones skipped)`n%avgZones% end zone`n%avgSkipRate%`% true skip rate`n%avgStacks% required stacks with`n%roughTime% time in secs to build said stacks very rough guess
-	SB_SetText("Calculation has completed.")
+	SB_SetText("✅ Calculation has completed.")
 	Return message
 }
 
