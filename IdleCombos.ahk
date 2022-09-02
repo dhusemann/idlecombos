@@ -2133,8 +2133,8 @@ ParsePatronData() {
 							case "weekly_challenge_porgress": MirtChallenges := vv.count
 						}
 					}
-					MirtRequires := "Mirt Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
-					MirtCosts := "Mirt Coins:  "  Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
+					MirtRequires := "Mirt Influence: " SubStr( "          " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)], -9)
+					MirtCosts := "Mirt Coins: " SubStr( "          " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)], -9)
 				}
 			}
 			case 2: {
@@ -2167,8 +2167,8 @@ ParsePatronData() {
 							case "weekly_challenge_porgress": VajraChallenges := vv.count
 						}
 					}
-					VajraRequires := "Vajra Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
-					VajraCosts := "Vajra Coins:  "  Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
+					VajraRequires := "Vajra Influence: " SubStr( "          " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)], -9)
+					VajraCosts := "Vajra Coins: " SubStr( "          " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)], -9)
 				}
 			}
 			case 3: {
@@ -2207,8 +2207,8 @@ ParsePatronData() {
 							case "weekly_challenge_porgress": StrahdChallenges := vv.count
 						}
 					}
-					StrahdRequires := "Strahd Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
-					StrahdCosts := "Strahd Coins:  "  Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
+					StrahdRequires := "Strahd Influence: " SubStr( "          " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)], -9)
+					StrahdCosts := "Strahd Coins: " SubStr( "          " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)], -9)
 				}
 			}
 			case 4: {
@@ -2241,8 +2241,8 @@ ParsePatronData() {
 							case "weekly_challenge_porgress": ZarielChallenges := vv.count
 						}
 					}
-					ZarielRequires := "Zariel Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
-					ZarielCosts := "Zariel Coins:  " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
+					ZarielRequires := "Zariel Influence: " SubStr( "          " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)], -9)
+					ZarielCosts := "Zariel Coins: " SubStr( "          " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)], -9)
 				}
 			}
 		}
@@ -2318,7 +2318,7 @@ ParseChampData() {
 	}
 
 	if (UserDetails.details.stats.zorbu_lifelong_hits_beast || UserDetails.details.stats.zorbu_lifelong_hits_undead || UserDetails.details.stats.zorbu_lifelong_hits_drow) {
-		ChampDetails := ChampDetails "Zorbu Kills:`n(Humanoid)`t" UserDetails.details.stats.zorbu_lifelong_hits_humanoid "`n(Beast)`t`t" UserDetails.details.stats.zorbu_lifelong_hits_beast "`n(Undead)`t" UserDetails.details.stats.zorbu_lifelong_hits_undead "`n(Drow)`t`t" UserDetails.details.stats.zorbu_lifelong_hits_drow "`n`n"
+		ChampDetails := ChampDetails "Zorbu Kills:`n - Humanoid: `t" UserDetails.details.stats.zorbu_lifelong_hits_humanoid "`n - Beast: `t`t" UserDetails.details.stats.zorbu_lifelong_hits_beast "`n - Undead: `t" UserDetails.details.stats.zorbu_lifelong_hits_undead "`n - Drow: `t`t" UserDetails.details.stats.zorbu_lifelong_hits_drow "`n`n"
 	}
 
 	if (UserDetails.details.stats.dhani_monsters_painted) {
