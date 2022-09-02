@@ -439,7 +439,7 @@ class MyGui {
 		Gui, MyWindow:Add, Button, x%col2_x% y%row_y% w60 gReload_Clicked, Reload
 		Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 gExit_Clicked, Exit
 
-		Gui, MyWindow:Add, Tab3, x%col1_x% y%row_y% w400 h250, Summary|Adventures|Inventory||Patrons|Champions|Settings|Log|
+		Gui, MyWindow:Add, Tab3, x%col1_x% y%row_y% w400 h250, Summary|Adventures|Inventory|Patrons|Champions|Settings|Log|
 		Gui, Tab
 
 		row_y := row_y + 25
@@ -685,7 +685,7 @@ class MyGui {
 		GuiControl, MyWindow:, ZarielChallenges, % ZarielChallenges, w250 h210
 		GuiControl, MyWindow:, ZarielFPCurrency, % ZarielFPCurrency, w250 h210
 		GuiControl, MyWindow:, ZarielRequires, % ZarielRequires, w250 h210
-		GuiControl, MyWindow:, ZarielCosts, % ZarielCosts, w250 h210		
+		GuiControl, MyWindow:, ZarielCosts, % ZarielCosts, w250 h210
 		;champions
 		GuiControl, MyWindow:, ChampDetails, % ChampDetails, w250 h210
 		;settings
@@ -2093,125 +2093,152 @@ ParseInventoryData() {
 }
 
 ParsePatronData() {
-	for k, v in UserDetails.details.patrons
-		switch v.patron_id
-	{
-		case 1: {
-			if v.unlocked == False {
-				MirtVariants := "Locked"
-				MirtFPCurrency := "Requires:"
-				MirtChallenges := "Costs:"
-				MirtRequires := UserDetails.details.stats.total_hero_levels "/2000 Item Levels && " TotalChamps "/20 Champs"
-				if ((UserDetails.details.stats.total_hero_levels > 1999) && (TotalChamps > 19)) {
-					Gui, Font, cGreen
-					GuiControl, Font, MirtFPCurrency
-				}
-				MirtCosts := CurrentTGPs "/3 TGPs && " CurrentSilvers "/10 Silver Chests"
-				if ((CurrentTGPs > 2) && (CurrentSilvers > 9)) {
-					Gui, Font, cGreen
-					GuiControl, Font, MirtChallenges
-				}
-			}
-			else for kk, vv in v.progress_bars
-				switch vv.id
-			{
-			case "variants_completed":
-				MirtVariantTotal := vv.goal
-				MirtCompleted := vv.count
-				MirtVariants := MirtCompleted " / " MirtVariantTotal
-				case "free_play_limit": MirtFPCurrency := vv.count
-				case "weekly_challenge_porgress": MirtChallenges := vv.count
-			}
-		}
-		case 2: {
-			if v.unlocked == False {
-				VajraVariants := "Locked"
-				VajraFPCurrency := "Requires:"
-				VajraChallenges := "Costs:"
-				VajraRequires := UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c15 "/15 WD:DH Advs && " TotalChamps "/30 Champs"
-				if ((UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c15 > 14) && (TotalChamps > 29)) {
-					Gui, Font, cGreen
-					GuiControl, Font, VajraFPCurrency
-				}
-				VajraCosts := CurrentGems "/2500 Gems && " CurrentSilvers "/15 Silver Chests"
-				if ((CurrentGems > 2499) && (CurrentSilvers > 14)) {
-					Gui, Font, cGreen
-					GuiControl, Font, VajraChallenges
+	MagList := ["K","M","B","t"]
+	for k, v in UserDetails.details.patrons {
+		switch v.patron_id {
+			case 1: {
+				if v.unlocked == False {
+					MirtVariants := "Locked"
+					MirtFPCurrency := "Requires:"
+					MirtChallenges := "Costs:"
+					MirtRequires := UserDetails.details.stats.total_hero_levels "/2000 Item Levels && " TotalChamps "/20 Champs"
+					if ((UserDetails.details.stats.total_hero_levels > 1999) && (TotalChamps > 19)) {
+						Gui, Font, cGreen
+						GuiControl, Font, MirtFPCurrency
+					}
+					if (CurrentTGPs == "") {
+						CurrentTGPs := 0
+					}
+					if (CurrentSilvers == "") {
+						CurrentSilvers := 0
+					}
+					MirtCosts := CurrentTGPs "/3 TGPs && " CurrentSilvers "/10 Silver Chests"
+					if ((CurrentTGPs > 2) && (CurrentSilvers > 9)) {
+						Gui, Font, cGreen
+						GuiControl, Font, MirtChallenges
+					}
+				} else {
+					for kk, vv in v.progress_bars {
+						switch vv.id {
+							case "variants_completed":
+								MirtVariantTotal := vv.goal
+								MirtCompleted := vv.count
+								MirtVariants := MirtCompleted " / " MirtVariantTotal
+							case "free_play_limit": MirtFPCurrency := vv.count
+							case "weekly_challenge_porgress": MirtChallenges := vv.count
+						}
+					}
+					MirtRequires := "Mirt Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
+					MirtCosts := "Mirt Coins:  "  Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
 				}
 			}
-			else for kk, vv in v.progress_bars
-				switch vv.id
-			{
-			case "variants_completed":
-				VajraVariantTotal := vv.goal
-				VajraCompleted := vv.count
-				VajraVariants := VajraCompleted " / " VajraVariantTotal
-				case "free_play_limit": VajraFPCurrency := vv.count
-				case "weekly_challenge_porgress": VajraChallenges := vv.count
-			}
-		}
-		case 3: {
-			if v.unlocked == False {
-				StrahdVariants := "Locked"
-				StrahdFPCurrency := "Requires:"
-				StrahdChallenges := "Costs:"
-				StrahdRequiresAdventure := UserDetails.details.stats.highest_area_completed_ever_c413
-				if (StrahdRequiresAdventure = "") {
-					StrahdRequiresAdventure := "0"
-				}
-				StrahdRequires := StrahdRequiresAdventure "/250 in Adventure 413 && " TotalChamps "/40 Champs"
-				if ((StrahdRequiresAdventure > 249) && (TotalChamps > 39)) {
-					Gui, Font, cGreen
-					GuiControl, Font, StrahdFPCurrency
-				}
-				if (CurrentSilvers = "") {
-					CurrentSilvers := "0"
-				}
-				if (CurrentLgBounties = "") {
-					CurrentLgBounties := "0"
-				}
-				StrahdCosts := CurrentLgBounties "/10 Lg Bounties && " CurrentSilvers "/20 Silver Chests"
-				if ((CurrentLgBounties > 9) && (CurrentSilvers > 19)) {
-					Gui, Font, cGreen
-					GuiControl, Font, StrahdChallenges
+			case 2: {
+				if v.unlocked == False {
+					VajraVariants := "Locked"
+					VajraFPCurrency := "Requires:"
+					VajraChallenges := "Costs:"
+					VajraRequiresAdventure := UserDetails.details.stats.completed_adventures_variants_and_patron_variants_c15
+					if (VajraRequiresAdventure = "") {
+						VajraRequiresAdventure := "0"
+					}
+					VajraRequires := VajraRequiresAdventure "/15 WD:DH Advs && " TotalChamps "/30 Champs"
+					if ((VajraRequiresAdventure > 14) && (TotalChamps > 29)) {
+						Gui, Font, cGreen
+						GuiControl, Font, VajraFPCurrency
+					}
+					VajraCosts := CurrentGems "/2500 Gems && " CurrentSilvers "/15 Silver Chests"
+					if ((CurrentGems > 2499) && (CurrentSilvers > 14)) {
+						Gui, Font, cGreen
+						GuiControl, Font, VajraChallenges
+					}
+				} else {
+					for kk, vv in v.progress_bars {
+						switch vv.id {
+							case "variants_completed":
+								VajraVariantTotal := vv.goal
+								VajraCompleted := vv.count
+								VajraVariants := VajraCompleted " / " VajraVariantTotal
+							case "free_play_limit": VajraFPCurrency := vv.count
+							case "weekly_challenge_porgress": VajraChallenges := vv.count
+						}
+					}
+					VajraRequires := "Vajra Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
+					VajraCosts := "Vajra Coins:  "  Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
 				}
 			}
-			else for kk, vv in v.progress_bars
-				switch vv.id
-			{
-			case "variants_completed":
-				StrahdVariantTotal := vv.goal
-				StrahdCompleted := vv.count
-				StrahdVariants := StrahdCompleted " / " StrahdVariantTotal
-				case "free_play_limit": StrahdFPCurrency := vv.count
-				case "weekly_challenge_porgress": StrahdChallenges := vv.count
-			}
-		}
-		case 4: {
-			if v.unlocked == False {
-				ZarielVariants := "Locked"
-				ZarielFPCurrency := "Requires:"
-				ZarielChallenges := "Costs:"
-				ZarielRequires := UserDetails.details.stats.highest_area_completed_ever_c873 "/575 in Adventure 873 && " TotalChamps "/50 Champs"
-				if ((UserDetails.details.stats.highest_area_completed_ever_c873 > 574) && (TotalChamps > 49)) {
-					Gui, Font, cGreen
-					GuiControl, Font, ZarielFPCurrency
+			case 3: {
+				if v.unlocked == False {
+					StrahdVariants := "Locked"
+					StrahdFPCurrency := "Requires:"
+					StrahdChallenges := "Costs:"
+					StrahdRequiresAdventure := UserDetails.details.stats.highest_area_completed_ever_c413
+					if (StrahdRequiresAdventure = "") {
+						StrahdRequiresAdventure := "0"
+					}
+					StrahdRequires := StrahdRequiresAdventure "/250 in Adv 413 && " TotalChamps "/40 Champs"
+					if ((StrahdRequiresAdventure > 249) && (TotalChamps > 39)) {
+						Gui, Font, cGreen
+						GuiControl, Font, StrahdFPCurrency
+					}
+					if (CurrentSilvers = "") {
+						CurrentSilvers := "0"
+					}
+					if (CurrentLgBounties = "") {
+						CurrentLgBounties := "0"
+					}
+					StrahdCosts := CurrentLgBounties "/10 Lg Bounties && " CurrentSilvers "/20 Silver Chests"
+					if ((CurrentLgBounties > 9) && (CurrentSilvers > 19)) {
+						Gui, Font, cGreen
+						GuiControl, Font, StrahdChallenges
+					}
+				} else {
+					for kk, vv in v.progress_bars {
+						switch vv.id {
+							case "variants_completed":
+								StrahdVariantTotal := vv.goal
+								StrahdCompleted := vv.count
+								StrahdVariants := StrahdCompleted " / " StrahdVariantTotal
+							case "free_play_limit": StrahdFPCurrency := vv.count
+							case "weekly_challenge_porgress": StrahdChallenges := vv.count
+						}
+					}
+					StrahdRequires := "Strahd Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
+					StrahdCosts := "Strahd Coins:  "  Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
 				}
-				ZarielCosts := CurrentSilvers "/50 Silver Chests"
-				if (CurrentSilvers > 49) {
-					Gui, Font, cGreen
-					GuiControl, Font, ZarielChallenges
-				}
 			}
-			else for kk, vv in v.progress_bars
-				switch vv.id
-			{
-			case "variants_completed":
-				ZarielVariantTotal := vv.goal
-				ZarielCompleted := vv.count
-				ZarielVariants := ZarielCompleted " / " ZarielVariantTotal
-				case "free_play_limit": ZarielFPCurrency := vv.count
-				case "weekly_challenge_porgress": ZarielChallenges := vv.count
+			case 4: {
+				if v.unlocked == False {
+					ZarielVariants := "Locked"
+					ZarielFPCurrency := "Requires:"
+					ZarielChallenges := "Costs:"
+					ZarielRequiresAdventure := UserDetails.details.stats.highest_area_completed_ever_c873
+					if (ZarielRequiresAdventure = "") {
+						ZarielRequiresAdventure := "0"
+					}
+					ZarielRequires := ZarielRequiresAdventure "/575 in Adv 873 && " TotalChamps "/50 Champs"
+					if ((ZarielRequiresAdventure > 574) && (TotalChamps > 49)) {
+						Gui, Font, cGreen
+						GuiControl, Font, ZarielFPCurrency
+					}
+					ZarielCosts := CurrentSilvers "/50 Silver Chests"
+					if (CurrentSilvers > 49) {
+						Gui, Font, cGreen
+						GuiControl, Font, ZarielChallenges
+					}
+				} else {
+					for kk, vv in v.progress_bars {
+						switch vv.id {
+							case "variants_completed":
+								ZarielVariantTotal := vv.goal
+								ZarielCompleted := vv.count
+								ZarielVariants := ZarielCompleted " / " ZarielVariantTotal
+							case "free_play_limit": ZarielFPCurrency := vv.count
+							case "weekly_challenge_porgress": ZarielChallenges := vv.count
+						}
+					}
+					ZarielRequires := "Zariel Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
+					ZarielCosts := "Zariel Coins:  " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
+				}
 			}
 		}
 	}
