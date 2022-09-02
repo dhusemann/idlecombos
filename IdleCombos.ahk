@@ -180,7 +180,7 @@ global Background3Adventure := ""
 global Background3Area := ""
 global Background3Patron := ""
 global Background3Champions := ""
-global AchievementInfo := "This page intentionally left blank.`n`n`n`n`n`n`n"
+global AchievementInfo := "Welcome to IdleCombos!`n`nPlease setup you game client`nor update your user details.`n`n`n`n`n`n`n"
 global BlessingInfo := "`n`n`n`n`n`n"
 global ChampDetails := ""
 global TotalChamps := 0
@@ -2300,6 +2300,7 @@ ParseLootData() {
 
 ParseChampData() {
 	TotalChamps := 0
+	MagList := ["K","M","B","t"]
 	for k, v in UserDetails.details.heroes
 	if (v.owned == 1) {
 		TotalChamps += 1
@@ -2307,26 +2308,38 @@ ParseChampData() {
 	;
 	ChampDetails := ""
 	if (UserDetails.details.stats.black_viper_total_gems) {
-		ChampDetails := ChampDetails "Black Viper Red Gems: " UserDetails.details.stats.black_viper_total_gems "`n`n"
+		ViperGemsValue := UserDetails.details.stats.black_viper_total_gems
+		ViperGems := SubStr( "          " Format("{:.2f}",ViperGemsValue / (1000 ** Floor(log(ViperGemsValue)/3))) MagList[Floor(log(ViperGemsValue)/3)], -9)
+		ChampDetails := ChampDetails "Black Viper Red Gems: " ViperGems "`n`n"
 	}
 	if (UserDetails.details.stats.total_paid_up_front_gold) {
-		morgaengold := SubStr(UserDetails.details.stats.total_paid_up_front_gold, 1, 4)
-		epos := InStr(UserDetails.details.stats.total_paid_up_front_gold, "E")
-		morgaengold := morgaengold SubStr(UserDetails.details.stats.total_paid_up_front_gold, epos)
-		ChampDetails := ChampDetails "M" Chr(244) "rg" Chr(230) "n Gold Collected: " morgaengold "`n`n"
+		MorgaenGold := SubStr(UserDetails.details.stats.total_paid_up_front_gold, 1, 4)
+		ePos := InStr(UserDetails.details.stats.total_paid_up_front_gold, "E")
+		MorgaenGold := morgaengold SubStr(UserDetails.details.stats.total_paid_up_front_gold, epos)
+		ChampDetails := ChampDetails "M" Chr(244) "rg" Chr(230) "n Gold Collected:   " MorgaenGold "`n`n"
 	}
 	if (UserDetails.details.stats.torogar_lifetime_zealot_stacks) {
-		torostacks := UserDetails.details.stats.torogar_lifetime_zealot_stacks
-		ChampDetails := ChampDetails "Torogar Zealot Stacks: " torostacks "`n`n"
+		TorogarStacksValue := UserDetails.details.stats.torogar_lifetime_zealot_stacks
+		TorogarStacks := SubStr( "          " Format("{:.2f}",TorogarStacksValue / (1000 ** Floor(log(TorogarStacksValue)/3))) MagList[Floor(log(TorogarStacksValue)/3)], -9)
+		ChampDetails := ChampDetails "Torogar Zealot Stacks: " TorogarStacks "`n`n"
 	}
 
-	if (UserDetails.details.stats.zorbu_lifelong_hits_beast || UserDetails.details.stats.zorbu_lifelong_hits_undead || UserDetails.details.stats.zorbu_lifelong_hits_drow) {
-		ChampDetails := ChampDetails "Zorbu Kills:`n - Humanoid: `t" UserDetails.details.stats.zorbu_lifelong_hits_humanoid "`n - Beast: `t`t" UserDetails.details.stats.zorbu_lifelong_hits_beast "`n - Undead: `t" UserDetails.details.stats.zorbu_lifelong_hits_undead "`n - Drow: `t`t" UserDetails.details.stats.zorbu_lifelong_hits_drow "`n`n"
+	if (UserDetails.details.stats.zorbu_lifelong_hits_humanoid || UserDetails.details.stats.zorbu_lifelong_hits_beast || UserDetails.details.stats.zorbu_lifelong_hits_undead || UserDetails.details.stats.zorbu_lifelong_hits_drow) {
+		ZorbuHitsHumanoidValue := UserDetails.details.stats.zorbu_lifelong_hits_humanoid
+		ZorbuHitsHumanoid := SubStr( "          " Format("{:.2f}",ZorbuHitsHumanoidValue / (1000 ** Floor(log(ZorbuHitsHumanoidValue)/3))) MagList[Floor(log(ZorbuHitsHumanoidValue)/3)], -9)
+		ZorbuHitsBeastValue := UserDetails.details.stats.zorbu_lifelong_hits_beast
+		ZorbuHitsBeast := SubStr( "          " Format("{:.2f}",ZorbuHitsBeastValue / (1000 ** Floor(log(ZorbuHitsBeastValue)/3))) MagList[Floor(log(ZorbuHitsBeastValue)/3)], -9)
+		ZorbuHitsUndeadValue := UserDetails.details.stats.zorbu_lifelong_hits_undead
+		ZorbuHitsUndead := SubStr( "          " Format("{:.2f}",ZorbuHitsUndeadValue / (1000 ** Floor(log(ZorbuHitsUndeadValue)/3))) MagList[Floor(log(ZorbuHitsUndeadValue)/3)], -9)
+		ZorbuHitsDrowValue := UserDetails.details.stats.zorbu_lifelong_hits_drow
+		ZorbuHitsDrow := SubStr( "          " Format("{:.2f}",ZorbuHitsDrowValue / (1000 ** Floor(log(ZorbuHitsDrowValue)/3))) MagList[Floor(log(ZorbuHitsDrowValue)/3)], -9)
+		ChampDetails := ChampDetails "Zorbu Kills:`n - Humanoid: " ZorbuHitsHumanoid "`n - Beast:       " ZorbuHitsBeast "`n - Undead:    " ZorbuHitsUndead "`n - Drow:         " ZorbuHitsDrow "`n`n"
 	}
 
 	if (UserDetails.details.stats.dhani_monsters_painted) {
-		dhanipaint := UserDetails.details.stats.dhani_monsters_painted
-		ChampDetails := ChampDetails "D'hani Paints: " dhanipaint "`n`n"
+		DhaniPaintValue := UserDetails.details.stats.dhani_monsters_painted
+		DhaniPaint := SubStr( "          " Format("{:.2f}",DhaniPaintValue / (1000 ** Floor(log(DhaniPaintValue)/3))) MagList[Floor(log(DhaniPaintValue)/3)], -9)
+		ChampDetails := ChampDetails "D'hani Paints: " DhaniPaint "`n`n"
 	}
 
 }	
