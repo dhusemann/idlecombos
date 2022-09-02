@@ -5,6 +5,11 @@
 
 ; CHANGELOG
 
+;3.25
+;patron tab bugs fixed
+;patron tab added current influence and coins
+;remove old files
+
 ;3.24
 ;add menu item to show User Details: UID, Hash, Platform
 ;update message boxes to have selectable text so we can copy and paste
@@ -96,7 +101,7 @@
 
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
-global VersionNumber := "3.24"
+global VersionNumber := "3.25"
 global CurrentDictionary := "2.20"
 
 ;Local File globals
