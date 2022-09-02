@@ -265,7 +265,7 @@ global OutputStatus := "Welcome to IdleCombos v" VersionNumber
 global CurrentTime := ""
 global CrashProtectStatus := "Crash Protect`nDisabled"
 global CrashCount := 0
-global LastUpdated := "No data loaded."
+global LastUpdated := "No data loaded"
 global TrayIcon := systemroot "\system32\imageres.dll"
 global LastBSChamp := ""
 global foundCodeString := ""
@@ -740,7 +740,7 @@ Crash_Toggle:
 				CrashProtectStatus := "Crash Protect`nDisabled"
 				CrashCount := 0
 				oMyGUI.Update()
-				SB_SetText("✅ Crash Protect has been disabled.")
+				SB_SetText("✅ Crash Protect has been disabled")
 			}
 		}
 		return
@@ -755,7 +755,7 @@ CrashProtect() {
 			Sleep 2500
 			Run, %GameClient%
 			++CrashCount
-			SB_SetText("✅ Crash Protect has restarted your client.")
+			SB_SetText("✅ Crash Protect has restarted your client")
 			UpdateLogTime()
 			FileAppend, (%CurrentTime%) Restarts since enabling Crash Protect: %CrashCount%`n, %OutputLogFile%
 			FileRead, OutputText, %OutputLogFile%
@@ -779,7 +779,7 @@ Save_Settings:
 		newsettings := JSON.stringify(CurrentSettings)
 		FileDelete, %SettingsFile%
 		FileAppend, %newsettings%, %SettingsFile%
-		SB_SetText("✅ Settings have been saved.")
+		SB_SetText("✅ Settings have been saved")
 		return
 	}
 
@@ -808,7 +808,7 @@ Open_Silver:
 			return
 		}
 		else {
-			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests."
+			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests"
 			return 
 			;MsgBox, 4, , % "Note: It's recommended to close the game client before opening chests.`nWould you like to continue anyway?"
 			;IfMsgBox, Yes
@@ -830,7 +830,7 @@ Open_Gold:
 			return
 		}
 		else {
-			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests."
+			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests"
 			return
 			;MsgBox, 4, , % "Note: It's recommended to close the game client before opening chests.`nWould you like to continue anyway?`n`n(Feats earned using this app do not count towards the related achievement.)"
 			;IfMsgBox, Yes
@@ -953,7 +953,7 @@ Open_Codes:
 			sCode := RegExReplace(CurrentCode, "&", Replacement := "%26")
 			sCode := RegExReplace(sCode, "#", Replacement := "%23")
 			if !UserID {
-				MsgBox % "Need User ID & Hash."
+				MsgBox % "Need User ID & Hash"
 				FirstRun()
 			}
 			codeparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&code=" sCode
@@ -1088,7 +1088,7 @@ Open_Codes:
 			codemessage := codemessage "You Already Used:`n" usedcodes "`n"
 		}
 		if (codemessage == "") {
-			codemessage := "Unknown or No Results."
+			codemessage := "Unknown or No Results"
 		}
 		GuiControl, , CodesOutputStatus, % CodesPending, w350 h210
 		GetUserDetails()
@@ -1194,13 +1194,13 @@ Buy_Extra_Chests(chestid,extracount) {
 	UpdateLogTime()
 	FileAppend, (%CurrentTime%) Gems spent: %gemsspent%`n, %OutputLogFile%
 	FileRead, OutputText, %OutputLogFile%
-	SB_SetText("✅ Chest purchase completed.")
+	SB_SetText("✅ Chest purchase completed")
 	return gemsspent
 }
 
 Buy_Chests(chestid) {
 	if !UserID {
-		MsgBox % "Need User ID & Hash."
+		MsgBox % "Need User ID & Hash"
 		FirstRun()
 	}
 	if !CurrentGems {
@@ -1284,7 +1284,7 @@ Buy_Chests(chestid) {
 
 Open_Chests(chestid) {
 	if !UserID {
-		MsgBox % "Need User ID & Hash."
+		MsgBox % "Need User ID & Hash"
 		FirstRun()
 	}
 	if (!CurrentGolds && !CurrentSilvers && !CurrentGems) {
@@ -1460,7 +1460,7 @@ Open_Chests(chestid) {
 	FileRead, OutputText, %OutputLogFile%
 	oMyGUI.Update()
 	GetUserDetails()
-	SB_SetText("✅ Chest opening completed.")
+	SB_SetText("✅ Chest opening completed")
 	return
 }
 
@@ -1496,7 +1496,7 @@ Hg_Blacksmith:
 
 UseBlacksmith(buffid) {
 	if !UserID {
-		MsgBox % "Need User ID & Hash."
+		MsgBox % "Need User ID & Hash"
 		FirstRun()
 	}
 	switch buffid
@@ -1527,12 +1527,12 @@ UseBlacksmith(buffid) {
 	if ErrorLevel
 		return
 	while !(heroid is number) {
-		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number.", , 200, 180, , , , , %LastBSChamp%
+		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number", , 200, 180, , , , , %LastBSChamp%
 		if ErrorLevel
 			return
 	}
 	while !((heroid > 0) && (heroid < 107)) {
-		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number.", , 200, 180, , , , , %LastBSChamp%
+		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number", , 200, 180, , , , , %LastBSChamp%
 		if ErrorLevel
 			return
 	}
@@ -1620,7 +1620,7 @@ UseBlacksmith(buffid) {
 	FileRead, OutputText, %OutputLogFile%
 	oMyGUI.Update()
 	GetUserDetails()
-	SB_SetText("✅ Blacksmith use completed.")
+	SB_SetText("✅ Blacksmith use completed")
 	return
 }
 
@@ -1655,7 +1655,7 @@ LoadAdventure() {
 	advparams := DummyData "&patron_tier=0&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" ActiveInstance "&adventure_id=" advtoload "&patron_id=" patrontoload
 	sResult := ServerCall("setcurrentobjective", advparams)
 	GetUserDetails()
-	SB_SetText("✅ Selected adventure has been loaded.")
+	SB_SetText("✅ Selected adventure has been loaded")
 	return
 }
 
@@ -1677,7 +1677,7 @@ EndAdventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" ActiveInstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("✅ Current adventure has been ended.")
+	SB_SetText("✅ Current adventure has been ended")
 	return
 }
 
@@ -1700,7 +1700,7 @@ EndBGAdventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" bginstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("✅ Background adventure has been ended.")
+	SB_SetText("✅ Background adventure has been ended")
 	return
 }
 
@@ -1723,7 +1723,7 @@ EndBG2Adventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" bginstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("✅ Background2 adventure has been ended.")
+	SB_SetText("✅ Background2 adventure has been ended")
 	return
 }
 
@@ -1746,7 +1746,7 @@ EndBG3Adventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" bginstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("✅ Background3 adventure has been ended.")
+	SB_SetText("✅ Background3 adventure has been ended")
 	return
 }
 ;	fmagdi -stop
@@ -2590,7 +2590,7 @@ LaunchGame() {
 Get_Journal:
 	{
 		if !UserID {
-			MsgBox % "Need User ID & Hash."
+			MsgBox % "Need User ID & Hash"
 			FirstRun()
 		}
 		if (InstanceID = 0) {
@@ -2648,7 +2648,7 @@ Discord_Clicked:
 			return
 		}
 		else {
-			MsgBox % "Dictionary file up to date."
+			MsgBox % "Dictionary file up to date"
 		}
 		return
 	}
@@ -2883,7 +2883,7 @@ SimulateBriv(i) {
 	multiplier := 0.1346894362, additve := 41.86396406
 	roughTime := Round(((multiplier * avgStacks) + additve), 2)
 	message = With Briv skip %skipLevels% until zone %BrivZone%`n(%trueChance%`% chance to skip %skipLevels% zones)`n`n%i% simulations produced an average:`n%avgSkips% skips (%avgSkipped% zones skipped)`n%avgZones% end zone`n%avgSkipRate%`% true skip rate`n%avgStacks% required stacks with`n%roughTime% time in secs to build said stacks very rough guess
-	SB_SetText("✅ Calculation has completed.")
+	SB_SetText("✅ Calculation has completed")
 	Return message
 }
 
@@ -2947,7 +2947,7 @@ KlehoImage()
 IncompleteVariants()
 {
 	if !FileExist("advdefs.json") {
-		MsgBox % "Downloading adventure defines."
+		MsgBox % "Downloading adventure defines"
 		AdventureList()
 	}
 	idtocheck := 0
@@ -3104,7 +3104,7 @@ AdventureList() {
 	testvar := testvar "}"
 	FileDelete, advdefs.json
 	FileAppend, %testvar%, advdefs.json
-	MsgBox % "advdefs.json saved to file."
+	MsgBox % "advdefs.json saved to file"
 	return
 }
 
