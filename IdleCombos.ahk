@@ -275,18 +275,7 @@ global foundCodeString := ""
 
 ;BEGIN:	default run commands
 if FileExist(TrayIcon) {
-	if (SubStr(A_OSVersion, 1, 2) == 10) {
-		Menu, Tray, Icon, %TrayIcon%
-	}
-	else if (A_OSVersion == "WIN_8") {
-		Menu, Tray, Icon, %TrayIcon%
-	}
-	else if (A_OSVersion == "WIN_7") {
-		Menu, Tray, Icon, %TrayIcon%
-	}
-	else if (A_OSVersion == "WIN_VISTA") {
-		Menu, Tray, Icon, %TrayIcon%
-	} ; WIN_8.1, WIN_2003, WIN_XP, WIN_2000, WIN_NT4, WIN_95, WIN_98, WIN_ME
+	Menu, Tray, Icon, %TrayIcon%
 }
 UpdateLogTime()
 FileAppend, (%CurrentTime%) IdleCombos v%VersionNumber% started.`n, %OutputLogFile%
