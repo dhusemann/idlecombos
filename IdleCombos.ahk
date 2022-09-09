@@ -273,79 +273,12 @@ global TrayIcon := IconFile
 global LastBSChamp := ""
 global foundCodeString := ""
 
-;BEGIN:	default run commands
+;IdleChampions Icon
 if FileExist(TrayIcon) {
 	Menu, Tray, Icon, %TrayIcon%
 }
-UpdateLogTime()
-FileAppend, (%CurrentTime%) IdleCombos v%VersionNumber% started.`n, %OutputLogFile%
-FileRead, OutputText, %OutputLogFile%
-if (!oMyGUI) {
-	oMyGUI := new MyGui()
-}
-;First run checks and setup
-if !FileExist(SettingsFile) {
-	FileAppend, %NewSettings%, %SettingsFile%
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) Settings file "idlecombosettings.json" created.`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
-}
-FileRead, rawsettings, %SettingsFile%
-CurrentSettings := JSON.parse(rawsettings)
-; MsgBox, % CurrentSettings.Count()
-; MsgBox, % CurrentSettings.user_id
-if !(CurrentSettings.Count() == SettingsCheckValue) {
-	FileDelete, %SettingsFile%
-	FileAppend, %NewSettings%, %SettingsFile%
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) Settings file "idlecombosettings.json" created.`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	FileRead, rawsettings, %SettingsFile%
-	CurrentSettings := JSON.parse(rawsettings)
-	oMyGUI.Update()
-	MsgBox, Your settings file has been deleted due to an update to IdleCombos. Please verify that your settings are set as preferred.
-}
-if FileExist(A_ScriptDir "\webRequestLog.txt") {
-	MsgBox, 4, , % "WRL File detected. Use file?"
-	IfMsgBox, Yes
-	{
-		WRLFile := A_ScriptDir "\webRequestLog.txt"
-		FirstRun()
-	}
-}
-if !(CurrentSettings.firstrun) {
-	FirstRun()
-}
-if (CurrentSettings.user_id && CurrentSettings.hash) {
-	UserID := CurrentSettings.user_id
-	UserIDEpic := CurrentSettings.user_id_epic
-	UserIDSteam := CurrentSettings.user_id_steam
-	UserHash := CurrentSettings.hash
-	InstanceID := CurrentSettings.instance_id
-	SB_SetText("✅ User ID & Hash Ready")
-}
-else {
-	SB_SetText("❌ User ID & Hash not found!")
-}
-;Loading current settings
-ServerName := CurrentSettings.servername
-GetDetailsonStart := CurrentSettings.getdetailsonstart
-LaunchGameonStart := CurrentSettings.launchgameonstart
-AlwaysSaveChests := CurrentSettings.alwayssavechests
-AlwaysSaveContracts := CurrentSettings.alwayssavecontracts
-AlwaysSaveCodes := CurrentSettings.alwayssavecodes
-NoSaveSetting := CurrentSettings.NoSaveSetting
-if (GetDetailsonStart == "1") {
-	GetUserDetails()
-}
-if (LaunchGameonStart == "1") {
-	LaunchGame()
-}
-oMyGUI.Update()
-SendMessage, 0x115, 7, 0, Edit1, A
-return
-;END:	default run commands
+
+oMyGUI := new MyGui()
 
 ;BEGIN: GUI Defs
 class MyGui {
@@ -588,7 +521,72 @@ class MyGui {
 
 		Gui, Tab, Log
 		Gui, MyWindow:Add, Edit, r12 vOutputText ReadOnly w360, %OutputText%
+
 		this.Show()
+
+		UpdateLogTime()
+		FileAppend, (%CurrentTime%) IdleCombos v%VersionNumber% started.`n, %OutputLogFile%
+		FileRead, OutputText, %OutputLogFile%
+		
+		;First run checks and setup
+		if !FileExist(SettingsFile) {
+			FileAppend, %NewSettings%, %SettingsFile%
+			UpdateLogTime()
+			FileAppend, (%CurrentTime%) Settings file "idlecombosettings.json" created.`n, %OutputLogFile%
+			FileRead, OutputText, %OutputLogFile%
+			this.Update()
+		}
+		FileRead, rawsettings, %SettingsFile%
+		CurrentSettings := JSON.parse(rawsettings)
+		if !(CurrentSettings.Count() == SettingsCheckValue) {
+			FileDelete, %SettingsFile%
+			FileAppend, %NewSettings%, %SettingsFile%
+			UpdateLogTime()
+			FileAppend, (%CurrentTime%) Settings file "idlecombosettings.json" created.`n, %OutputLogFile%
+			FileRead, OutputText, %OutputLogFile%
+			FileRead, rawsettings, %SettingsFile%
+			CurrentSettings := JSON.parse(rawsettings)
+			this.Update()
+			MsgBox, Your settings file has been deleted due to an update to IdleCombos. Please verify that your settings are set as preferred.
+		}
+		if FileExist(A_ScriptDir "\webRequestLog.txt") {
+			MsgBox, 4, , % "WRL File detected. Use file?"
+			IfMsgBox, Yes
+			{
+				WRLFile := A_ScriptDir "\webRequestLog.txt"
+				FirstRun()
+			}
+		}
+		if !(CurrentSettings.firstrun) {
+			FirstRun()
+		}
+		if (CurrentSettings.user_id && CurrentSettings.hash) {
+			UserID := CurrentSettings.user_id
+			UserIDEpic := CurrentSettings.user_id_epic
+			UserIDSteam := CurrentSettings.user_id_steam
+			UserHash := CurrentSettings.hash
+			InstanceID := CurrentSettings.instance_id
+			SB_SetText("✅ User ID & Hash Ready")
+		}
+		else {
+			SB_SetText("❌ User ID & Hash not found!")
+		}
+		;Loading current settings
+		ServerName := CurrentSettings.servername
+		GetDetailsonStart := CurrentSettings.getdetailsonstart
+		LaunchGameonStart := CurrentSettings.launchgameonstart
+		AlwaysSaveChests := CurrentSettings.alwayssavechests
+		AlwaysSaveContracts := CurrentSettings.alwayssavecontracts
+		AlwaysSaveCodes := CurrentSettings.alwayssavecodes
+		NoSaveSetting := CurrentSettings.NoSaveSetting
+		if (GetDetailsonStart == "1") {
+			GetUserDetails()
+		}
+		if (LaunchGameonStart == "1") {
+			LaunchGame()
+		}
+		this.Update()
+		SendMessage, 0x115, 7, 0, Edit1, A
 	}
 
 	Show() {
