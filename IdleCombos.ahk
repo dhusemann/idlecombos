@@ -114,6 +114,8 @@ global BlacksmithLogFile := "blacksmithlog.json"
 global RedeemCodeLogFile := "redeemcodelog.json"
 global JournalFile := "journal.json"
 global CurrentSettings := []
+global IconFilename := "IdleDragons.exe"
+global IconFile := ""
 global GameInstallDir := ""
 global GamePlatform := ""
 global GameClient := ""
@@ -132,6 +134,7 @@ global WRLFilePath := "IdleDragons_Data\StreamingAssets\downloaded_files\webRequ
 if ( setGameInstallEpic() == false ) {
 	setGameInstallSteam()
 }
+global IconFile := GameInstallDir IconFilename
 
 global DictionaryFile := "https://raw.githubusercontent.com/djravine/idlecombos/master/idledict.ahk"
 global LocalDictionary := "idledict.ahk"
@@ -266,23 +269,23 @@ global CurrentTime := ""
 global CrashProtectStatus := "Crash Protect`nDisabled"
 global CrashCount := 0
 global LastUpdated := "No data loaded"
-global TrayIcon := systemroot "\system32\imageres.dll"
+global TrayIcon := IconFile
 global LastBSChamp := ""
 global foundCodeString := ""
 
 ;BEGIN:	default run commands
 if FileExist(TrayIcon) {
 	if (SubStr(A_OSVersion, 1, 2) == 10) {
-		Menu, Tray, Icon, %TrayIcon%, 300
+		Menu, Tray, Icon, %TrayIcon%
 	}
 	else if (A_OSVersion == "WIN_8") {
-		Menu, Tray, Icon, %TrayIcon%, 284
+		Menu, Tray, Icon, %TrayIcon%
 	}
 	else if (A_OSVersion == "WIN_7") {
-		Menu, Tray, Icon, %TrayIcon%, 78
+		Menu, Tray, Icon, %TrayIcon%
 	}
 	else if (A_OSVersion == "WIN_VISTA") {
-		Menu, Tray, Icon, %TrayIcon%, 77
+		Menu, Tray, Icon, %TrayIcon%
 	} ; WIN_8.1, WIN_2003, WIN_XP, WIN_2000, WIN_NT4, WIN_95, WIN_98, WIN_ME
 }
 UpdateLogTime()
@@ -862,7 +865,7 @@ Open_Codes:
 		Gui, CodeWindow:New
 		Gui, Menu, MyMenuBar
 		Gui, CodeWindow:+ToolWindow -Resize -MaximizeBox +MinSize
-		Gui, CodeWindow:Show, w230 h240, Codes
+		Gui, CodeWindow:Show, w230 h240, 📜 Codes
 		Gui, CodeWindow:Add, Edit, r12 vCodestoEnter w190 x20 y20, IDLE-CHAM-PION-SNOW
 		Gui, CodeWindow:Add, Button, gRedeem_Codes, Submit
 		Gui, CodeWindow:Add, Button, x+35 gPaste, Paste
