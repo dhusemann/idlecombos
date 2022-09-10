@@ -264,7 +264,7 @@ global WebToolUtilitiesFormation := WebToolUtilities "/formation"
 
 ;GUI globals
 global oMyGUI := ""
-global OutputText := "Log"
+global OutputText := ""
 global OutputStatus := "Welcome to IdleCombos v" VersionNumber
 global CurrentTime := ""
 global CrashProtectStatus := "Crash Protect`nDisabled"
@@ -528,7 +528,7 @@ class MyGui {
 		;First run checks and setup
 		if !FileExist(SettingsFile) {
 			FileAppend, %NewSettings%, %SettingsFile%
-			Log("Settings file 'idlecombosettings.json' created")
+			LogFile("Settings file '" SettingsFile "' created")
 			this.Update()
 		}
 		FileRead, rawsettings, %SettingsFile%
@@ -536,14 +536,14 @@ class MyGui {
 		if !(CurrentSettings.Count() == SettingsCheckValue) {
 			FileDelete, %SettingsFile%
 			FileAppend, %NewSettings%, %SettingsFile%
-			Log("Settings file 'idlecombosettings.json' created")
+			LogFile("Settings file '" SettingsFile "' created")
 			FileRead, rawsettings, %SettingsFile%
 			CurrentSettings := JSON.parse(rawsettings)
 			this.Update()
 			MsgBox, Your settings file has been deleted due to an update to IdleCombos. Please verify that your settings are set as preferred.
 		}
 
-		Log("IdleCombos v" VersionNumber " started.")
+		LogFile("IdleCombos v" VersionNumber " started.")
 
 		if FileExist(A_ScriptDir "\webRequestLog.txt") {
 			MsgBox, 4, , % "WRL File detected. Use file?"
@@ -578,7 +578,7 @@ class MyGui {
 		NoSaveSetting := CurrentSettings.nosavesetting
 		LogEnabled := CurrentSettings.logenabled
 
-		Log("Settings file 'idlecombosettings.json' loaded")
+		LogFile("Settings file '" SettingsFile "' loaded")
 
 		if (GetDetailsonStart == "1") {
 			GetUserDetails()
@@ -748,7 +748,7 @@ CrashProtect() {
 			++CrashCount
 			SB_SetText("✅ Crash Protect has restarted your client")
 			oMyGUI.Update()
-			Log("Restarts since enabling Crash Protect: " CrashCount)
+			LogFile("Restarts since enabling Crash Protect: " CrashCount)
 			Sleep 10000
 		}
 	}
@@ -769,7 +769,7 @@ Save_Settings:
 		newsettings := JSON.stringify(CurrentSettings)
 		FileDelete, %SettingsFile%
 		FileAppend, %newsettings%, %SettingsFile%
-		Log("Settings have been saved")
+		LogFile("Settings have been saved")
 		SB_SetText("✅ Settings have been saved")
 		return
 	}
@@ -914,7 +914,7 @@ Open_Codes:
 
 	Redeem_Codes()
 	{
-		Log("Redeem Code Started")
+		LogFile("Redeem Code Started")
 		Gui, CodeWindow:Submit, NoHide
 		Gui, CodeWindow:Add, Text, x+45, Codes Remaining:
 		CodeList := StrSplit(CodestoEnter, "`n")
@@ -1090,7 +1090,7 @@ Open_Codes:
 		GuiControl, , CodesOutputStatus, % CodesPending
 		; MsgBox, , Results, % codemessage
 		ScrollBox(codemessage, "p b1 h200 w250", "Redeem Codes Results")
-		Log("Redeem Code Finished")
+		LogFile("Redeem Code Finished")
 		return
 	}
 
@@ -1173,7 +1173,7 @@ Buy_Extra_Chests(chestid,extracount) {
 		chestresults := JSON.parse(rawresults)
 		if (chestresults.success == "0") {
 			MsgBox % "Error: " rawresults
-			Log("Gems spent: " gemsspent)
+			LogFile("Gems spent: " gemsspent)
 			GetUserDetails()
 			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
@@ -1181,7 +1181,7 @@ Buy_Extra_Chests(chestid,extracount) {
 		gemsspent += chestresults.currency_spent
 		Sleep 1000
 	}
-	Log("Gems spent: " gemsspent)
+	LogFile("Gems spent: " gemsspent)
 	SB_SetText("✅ Chest purchase completed")
 	return gemsspent
 }
@@ -1250,7 +1250,7 @@ Buy_Chests(chestid) {
 		chestresults := JSON.parse(rawresults)
 		if (chestresults.success == "0") {
 			MsgBox % "Error: " rawresults
-			Log("Gems spent: " gemsspent)
+			LogFile("Gems spent: " gemsspent)
 			GetUserDetails()
 			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
@@ -1258,7 +1258,7 @@ Buy_Chests(chestid) {
 		gemsspent += chestresults.currency_spent
 		Sleep 1000
 	}
-	Log("Gems spent: " gemsspent)
+	LogFile("Gems spent: " gemsspent)
 	GetUserDetails()
 	SB_SetText("✅ Chest purchase completed.")
 	return
@@ -1364,7 +1364,7 @@ Open_Chests(chestid) {
 				}
 			}
 			MsgBox % "Error: " rawresults
-			Log("Chests Opened: " Floor(chestsopened))
+			LogFile("Chests Opened: " Floor(chestsopened))
 			GetUserDetails()
 			SB_SetText("⌛ Chests remaining: " count " (Error)")
 			return
@@ -1423,7 +1423,7 @@ Open_Chests(chestid) {
 				chestsopened += (extraspent/50)
 			}
 			MsgBox % "New Shinies:`n" newshinies
-			Log("Silver Chests Opened: " Floor(chestsopened))
+			LogFile("Silver Chests Opened: " Floor(chestsopened))
 		}
 		case "2": {
 			chestsopened := (CurrentGolds - chestresults.chests_remaining)
@@ -1431,7 +1431,7 @@ Open_Chests(chestid) {
 				chestsopened += (extraspent/500)
 			}
 			MsgBox % "New Feats:`n" newfeats "`nNew Shinies:`n" newshinies
-			Log("Gold Chests Opened: " Floor(chestsopened))
+			LogFile("Gold Chests Opened: " Floor(chestsopened))
 		}
 	}
 	GetUserDetails()
@@ -1558,7 +1558,7 @@ UseBlacksmith(buffid) {
 				case 34: contractsused := (CurrentLgBS - blacksmithresults.buffs_remaining)
 				case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 			}
-			Log("Contracts Used: " Floor(contractsused))
+			LogFile("Contracts Used: " Floor(contractsused))
 			GetUserDetails()
 			SB_SetText("⌛ Contracts remaining: " count " (Error)")
 			return
@@ -1587,7 +1587,7 @@ UseBlacksmith(buffid) {
 		case 34: contractsused := (CurrentLgBS - blacksmithresults.buffs_remaining)
 		case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 	}
-	Log("Contracts used on " ChampFromID(heroid) ": " Floor(contractsused))
+	LogFile("Contracts used on " ChampFromID(heroid) ": " Floor(contractsused))
 	GetUserDetails()
 	SB_SetText("✅ Blacksmith use completed")
 	return
@@ -1782,7 +1782,7 @@ FirstRun() {
 	IfMsgBox, Yes
 	{
 		GetIdFromWRL()
-		Log("User ID: " UserID " & Hash: " UserHash " detected in WRL")
+		LogFile("User ID: " UserID " & Hash: " UserHash " detected in WRL")
 	}
 	else
 	{
@@ -1803,7 +1803,7 @@ FirstRun() {
 			InputBox, UserHash, hash, Please enter your "hash" value., , 250, 125
 			if ErrorLevel
 				return
-			Log("User ID: " UserID " & Hash: " UserHash " manually entered")
+			LogFile("User ID: " UserID " & Hash: " UserHash " manually entered")
 		}
 	}
 	CurrentSettings.user_id := UserID
@@ -1814,7 +1814,7 @@ FirstRun() {
 	newsettings := JSON.stringify(CurrentSettings)
 	FileDelete, %SettingsFile%
 	FileAppend, %newsettings%, %SettingsFile%
-	Log("IdleCombos Setup Completed")
+	LogFile("IdleCombos Setup Completed")
 	SB_SetText("✅ User ID & Hash Ready")
 }
 
@@ -1822,7 +1822,7 @@ UpdateLogTime() {
 	FormatTime, CurrentTime, , yyyy-MM-dd HH:mm:ss
 }
 
-Log(LogMessage) {
+LogFile(LogMessage) {
 	if (LogEnabled) {
 		OutputLogFile := LogFileName
 		if (LogMessage) {
@@ -2541,7 +2541,7 @@ ServerCall(callname, parameters) {
 		data := WR.ResponseText
 		WR.Close()
 	}
-	Log("Server request: " callname)
+	LogFile("API Call: " callname)
 	return data
 }
 
@@ -2550,6 +2550,7 @@ LaunchGame() {
 		Run, %GameClient%
 		SB_SetText("⌛ Game client starting...")
 		WinWait, "ahk_exe IdleDragons.exe"
+		LogFile("Game Client Launched")
 		SB_SetText("✅ Game client has started!")
 	}
 	else {
@@ -2588,7 +2589,7 @@ Get_Journal:
 			pagenum += 1
 			sleep 1000
 		}
-		Log("Journal pages downloaded: " (pagenum - 1))
+		LogFile("Journal pages downloaded: " (pagenum - 1))
 		SB_SetText("✅ Journal download completed")
 		return
 	}
@@ -2731,7 +2732,7 @@ SetUIScale() {
 	MsgBox % newicsettings
 	FileDelete, %ICSettingsFile%
 	FileAppend, %newicsettings%, %ICSettingsFile%
-	Log("UI Scale changed to " newuiscale)
+	LogFile("UI Scale changed to " newuiscale)
 	SB_SetText("✅ UI Scale changed to " newuiscale)
 }
 
@@ -2761,7 +2762,7 @@ SetFramerate() {
 	MsgBox % newicsettings
 	FileDelete, %ICSettingsFile%
 	FileAppend, %newicsettings%, %ICSettingsFile%
-	Log("Framerate changed to " newframerate)
+	LogFile("Framerate changed to " newframerate)
 	SB_SetText("✅ Framerate changed to " newframerate)
 }
 
@@ -2791,7 +2792,7 @@ SetParticles() {
 	MsgBox % newicsettings
 	FileDelete, %ICSettingsFile%
 	FileAppend, %newicsettings%, %ICSettingsFile%
-	Log("Paticles changed to " newparticles)
+	LogFile("Paticles changed to " newparticles)
 	SB_SetText("✅ Particles changed to " newparticles)
 }
 
