@@ -105,8 +105,8 @@ global VersionNumber := "3.25"
 global CurrentDictionary := "2.20"
 
 ;Local File globals
-;global OutputLogFile := "idlecombolog.txt"
 global OutputLogFile := ""
+global LogFileName := "idlecombolog.txt"
 global SettingsFile := "idlecombosettings.json"
 global UserDetailsFile := "userdetails.json"
 global ChestOpenLogFile := "chestopenlog.json"
@@ -152,8 +152,9 @@ global AlwaysSaveChests := 0
 global AlwaysSaveContracts := 0
 global AlwaysSaveCodes := 0
 global NoSaveSetting := 0
-global SettingsCheckValue := 13 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"servername":"ps7","firstrun":0,"user_id":0,"user_id_epic":0,"user_id_steam":0,"hash":0,"instance_id":0,"getdetailsonstart":0,"launchgameonstart":0,"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1, "NoSaveSetting":0})
+global LogEnabled := 0
+global SettingsCheckValue := 14 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"servername":"ps7","firstrun":0,"user_id":0,"user_id_epic":0,"user_id_steam":0,"hash":0,"instance_id":0,"getdetailsonstart":0,"launchgameonstart":0,"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1, "nosavesetting":0, "logenabled":0})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -263,7 +264,7 @@ global WebToolUtilitiesFormation := WebToolUtilities "/formation"
 
 ;GUI globals
 global oMyGUI := ""
-global OutputText := "Test"
+global OutputText := "Log"
 global OutputStatus := "Welcome to IdleCombos v" VersionNumber
 global CurrentTime := ""
 global CrashProtectStatus := "Crash Protect`nDisabled"
@@ -285,8 +286,7 @@ class MyGui {
 	Width := "550"
 	Height := "275" ;"250"
 
-	__New()
-	{
+	__New() {
 		Gui, MyWindow:New
 		Gui, MyWindow:+Resize -MaximizeBox +MinSize
 
@@ -509,8 +509,9 @@ class MyGui {
 		Gui, MyWindow:Add, Text, vChampDetails x15 y33 w300 h180, % ChampDetails
 
 		Gui, Tab, Settings
-		Gui, MyWindow:Add, Text,, Server Name:
-		Gui, MyWindow:Add, Edit, vServerName w50
+		Gui, MyWindow:Add, Text, x15 y+10+p w95, Server Name:
+		Gui, MyWindow:Add, Edit, vServerName x85 y33 w50
+		Gui, MyWindow:Add, Checkbox, vLogEnabled x15 y+5+p, Logging Enabled?
 		Gui, MyWindow:Add, CheckBox, vGetDetailsonStart, Get User Details on start?
 		Gui, MyWindow:Add, CheckBox, vLaunchGameonStart, Launch game client on start?
 		Gui, MyWindow:Add, CheckBox, vAlwaysSaveChests, Always save Chest Open Results to file?
@@ -520,13 +521,9 @@ class MyGui {
 		Gui, MyWindow:Add, Button, gSave_Settings, Save Settings
 
 		Gui, Tab, Log
-		Gui, MyWindow:Add, Edit, r12 vOutputText ReadOnly w360, %OutputText%
+		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w375, %OutputText%
 
 		this.Show()
-
-		UpdateLogTime()
-		FileAppend, (%CurrentTime%) IdleCombos v%VersionNumber% started.`n, %OutputLogFile%
-		FileRead, OutputText, %OutputLogFile%
 		
 		;First run checks and setup
 		if !FileExist(SettingsFile) {
@@ -578,7 +575,8 @@ class MyGui {
 		AlwaysSaveChests := CurrentSettings.alwayssavechests
 		AlwaysSaveContracts := CurrentSettings.alwayssavecontracts
 		AlwaysSaveCodes := CurrentSettings.alwayssavecodes
-		NoSaveSetting := CurrentSettings.NoSaveSetting
+		NoSaveSetting := CurrentSettings.nosavesetting
+		LogEnabled := CurrentSettings.logenabled
 		if (GetDetailsonStart == "1") {
 			GetUserDetails()
 		}
@@ -587,6 +585,11 @@ class MyGui {
 		}
 		this.Update()
 		SendMessage, 0x115, 7, 0, Edit1, A
+
+		UpdateLogTime()
+		FileAppend, (%CurrentTime%) IdleCombos v%VersionNumber% started.`n, %OutputLogFile%
+		FileRead, OutputText, %OutputLogFile%
+		Log("IdleCombos v" VersionNumber " started.")
 	}
 
 	Show() {
@@ -691,6 +694,7 @@ class MyGui {
 		GuiControl, MyWindow:, AlwaysSaveContracts, % AlwaysSaveContracts, w250 h210
 		GuiControl, MyWindow:, AlwaysSaveCodes, % AlwaysSaveCodes, w250 h210
 		GuiControl, MyWindow:, NoSaveSetting, % NoSaveSetting, w250 h210
+		GuiControl, MyWindow:, LogEnabled, % LogEnabled, w250 h210
 		;this.Show() - removed
 	}
 }
@@ -766,9 +770,11 @@ Save_Settings:
 		CurrentSettings.alwayssavecontracts := AlwaysSaveContracts
 		CurrentSettings.alwayssavecodes := AlwaysSaveCodes
 		CurrentSettings.nosavesetting := NoSaveSetting
+		CurrentSettings.logenabled := LogEnabled
 		newsettings := JSON.stringify(CurrentSettings)
 		FileDelete, %SettingsFile%
 		FileAppend, %newsettings%, %SettingsFile%
+		Log("Settings have been saved")
 		SB_SetText("✅ Settings have been saved")
 		return
 	}
@@ -1848,6 +1854,20 @@ FirstRun() {
 
 UpdateLogTime() {
 	FormatTime, CurrentTime, , yyyy-MM-dd HH:mm:ss
+}
+
+Log(LogMessage) {
+	if (LogEnabled) {
+		OutputLogFile := LogFileName
+		if (LogMessage) {
+			UpdateLogTime()
+			FileAppend, (%CurrentTime%) %LogMessage% `n, %OutputLogFile%
+			FileRead, OutputText, %OutputLogFile%
+			oMyGUI.Update()
+		}
+	} else {
+		OutputLogFile := ""
+	}
 }
 
 GetIDFromWRL() {
