@@ -528,9 +528,7 @@ class MyGui {
 		;First run checks and setup
 		if !FileExist(SettingsFile) {
 			FileAppend, %NewSettings%, %SettingsFile%
-			UpdateLogTime()
-			FileAppend, (%CurrentTime%) Settings file "idlecombosettings.json" created.`n, %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
+			Log("Settings file 'idlecombosettings.json' created")
 			this.Update()
 		}
 		FileRead, rawsettings, %SettingsFile%
@@ -538,14 +536,15 @@ class MyGui {
 		if !(CurrentSettings.Count() == SettingsCheckValue) {
 			FileDelete, %SettingsFile%
 			FileAppend, %NewSettings%, %SettingsFile%
-			UpdateLogTime()
-			FileAppend, (%CurrentTime%) Settings file "idlecombosettings.json" created.`n, %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
+			Log("Settings file 'idlecombosettings.json' created")
 			FileRead, rawsettings, %SettingsFile%
 			CurrentSettings := JSON.parse(rawsettings)
 			this.Update()
 			MsgBox, Your settings file has been deleted due to an update to IdleCombos. Please verify that your settings are set as preferred.
 		}
+
+		Log("IdleCombos v" VersionNumber " started.")
+
 		if FileExist(A_ScriptDir "\webRequestLog.txt") {
 			MsgBox, 4, , % "WRL File detected. Use file?"
 			IfMsgBox, Yes
@@ -568,6 +567,7 @@ class MyGui {
 		else {
 			SB_SetText("❌ User ID & Hash not found!")
 		}
+
 		;Loading current settings
 		ServerName := CurrentSettings.servername
 		GetDetailsonStart := CurrentSettings.getdetailsonstart
@@ -577,6 +577,9 @@ class MyGui {
 		AlwaysSaveCodes := CurrentSettings.alwayssavecodes
 		NoSaveSetting := CurrentSettings.nosavesetting
 		LogEnabled := CurrentSettings.logenabled
+
+		Log("Settings file 'idlecombosettings.json' loaded")
+
 		if (GetDetailsonStart == "1") {
 			GetUserDetails()
 		}
@@ -585,11 +588,6 @@ class MyGui {
 		}
 		this.Update()
 		SendMessage, 0x115, 7, 0, Edit1, A
-
-		UpdateLogTime()
-		FileAppend, (%CurrentTime%) IdleCombos v%VersionNumber% started.`n, %OutputLogFile%
-		FileRead, OutputText, %OutputLogFile%
-		Log("IdleCombos v" VersionNumber " started.")
 	}
 
 	Show() {
@@ -635,7 +633,6 @@ class MyGui {
 		GuiControl, MyWindow:, Background3Area, % Background3Area, w250 h210
 		GuiControl, MyWindow:, Background3Patron, % Background3Patron, w250 h210
 		GuiControl, MyWindow:, Background3Champions, % Background3Champions, w250 h210
-
 		GuiControl, MyWindow:, FGCore, % FGCore, w250 h210
 		GuiControl, MyWindow:, BGCore, % BGCore, w250 h210
 		GuiControl, MyWindow:, BG2Core, % BG2Core, w250 h210
@@ -750,10 +747,8 @@ CrashProtect() {
 			Run, %GameClient%
 			++CrashCount
 			SB_SetText("✅ Crash Protect has restarted your client")
-			UpdateLogTime()
-			FileAppend, (%CurrentTime%) Restarts since enabling Crash Protect: %CrashCount%`n, %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
 			oMyGUI.Update()
+			Log("Restarts since enabling Crash Protect: " CrashCount)
 			Sleep 10000
 		}
 	}
@@ -919,6 +914,7 @@ Open_Codes:
 
 	Redeem_Codes()
 	{
+		Log("Redeem Code Started")
 		Gui, CodeWindow:Submit, NoHide
 		Gui, CodeWindow:Add, Text, x+45, Codes Remaining:
 		CodeList := StrSplit(CodestoEnter, "`n")
@@ -1094,6 +1090,7 @@ Open_Codes:
 		GuiControl, , CodesOutputStatus, % CodesPending
 		; MsgBox, , Results, % codemessage
 		ScrollBox(codemessage, "p b1 h200 w250", "Redeem Codes Results")
+		Log("Redeem Code Finished")
 		return
 	}
 
@@ -1176,10 +1173,7 @@ Buy_Extra_Chests(chestid,extracount) {
 		chestresults := JSON.parse(rawresults)
 		if (chestresults.success == "0") {
 			MsgBox % "Error: " rawresults
-			UpdateLogTime()
-			FileAppend, (%CurrentTime%) Gems spent: %gemsspent%`n, %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
-			oMyGUI.Update()
+			Log("Gems spent: " gemsspent)
 			GetUserDetails()
 			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
@@ -1187,9 +1181,7 @@ Buy_Extra_Chests(chestid,extracount) {
 		gemsspent += chestresults.currency_spent
 		Sleep 1000
 	}
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) Gems spent: %gemsspent%`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
+	Log("Gems spent: " gemsspent)
 	SB_SetText("✅ Chest purchase completed")
 	return gemsspent
 }
@@ -1258,10 +1250,7 @@ Buy_Chests(chestid) {
 		chestresults := JSON.parse(rawresults)
 		if (chestresults.success == "0") {
 			MsgBox % "Error: " rawresults
-			UpdateLogTime()
-			FileAppend, (%CurrentTime%) Gems spent: %gemsspent%`n, %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
-			oMyGUI.Update()
+			Log("Gems spent: " gemsspent)
 			GetUserDetails()
 			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
@@ -1269,10 +1258,7 @@ Buy_Chests(chestid) {
 		gemsspent += chestresults.currency_spent
 		Sleep 1000
 	}
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) Gems spent: %gemsspent%`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
+	Log("Gems spent: " gemsspent)
 	GetUserDetails()
 	SB_SetText("✅ Chest purchase completed.")
 	return
@@ -1378,10 +1364,7 @@ Open_Chests(chestid) {
 				}
 			}
 			MsgBox % "Error: " rawresults
-			UpdateLogTime()
-			FileAppend, % "(" CurrentTime ") Chests Opened: " Floor(chestsopened) "`n", %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
-			oMyGUI.Update()
+			Log("Chests Opened: " Floor(chestsopened))
 			GetUserDetails()
 			SB_SetText("⌛ Chests remaining: " count " (Error)")
 			return
@@ -1440,8 +1423,7 @@ Open_Chests(chestid) {
 				chestsopened += (extraspent/50)
 			}
 			MsgBox % "New Shinies:`n" newshinies
-			UpdateLogTime()
-			FileAppend, % "(" CurrentTime ") Silver Chests Opened: " Floor(chestsopened) "`n", %OutputLogFile%
+			Log("Silver Chests Opened: " Floor(chestsopened))
 		}
 		case "2": {
 			chestsopened := (CurrentGolds - chestresults.chests_remaining)
@@ -1449,12 +1431,9 @@ Open_Chests(chestid) {
 				chestsopened += (extraspent/500)
 			}
 			MsgBox % "New Feats:`n" newfeats "`nNew Shinies:`n" newshinies
-			UpdateLogTime()
-			FileAppend, % "(" CurrentTime ") Gold Chests Opened: " Floor(chestsopened) "`n", %OutputLogFile%
+			Log("Gold Chests Opened: " Floor(chestsopened))
 		}
 	}
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
 	GetUserDetails()
 	SB_SetText("✅ Chest opening completed")
 	return
@@ -1579,10 +1558,7 @@ UseBlacksmith(buffid) {
 				case 34: contractsused := (CurrentLgBS - blacksmithresults.buffs_remaining)
 				case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 			}
-			UpdateLogTime()
-			FileAppend, % "(" CurrentTime ") Contracts Used: " Floor(contractsused) "`n", %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
-			oMyGUI.Update()
+			Log("Contracts Used: " Floor(contractsused))
 			GetUserDetails()
 			SB_SetText("⌛ Contracts remaining: " count " (Error)")
 			return
@@ -1611,10 +1587,7 @@ UseBlacksmith(buffid) {
 		case 34: contractsused := (CurrentLgBS - blacksmithresults.buffs_remaining)
 		case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 	}
-	UpdateLogTime()
-	FileAppend, % "(" CurrentTime ") Contracts used on " ChampFromID(heroid) ": " Floor(contractsused) "`n", %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
+	Log("Contracts used on " ChampFromID(heroid) ": " Floor(contractsused))
 	GetUserDetails()
 	SB_SetText("✅ Blacksmith use completed")
 	return
@@ -1809,8 +1782,7 @@ FirstRun() {
 	IfMsgBox, Yes
 	{
 		GetIdFromWRL()
-		UpdateLogTime()
-		FileAppend, (%CurrentTime%) User ID: %UserID% & Hash: %UserHash% detected in WRL.`n, %OutputLogFile%
+		Log("User ID: " UserID " & Hash: " UserHash " detected in WRL")
 	}
 	else
 	{
@@ -1831,12 +1803,9 @@ FirstRun() {
 			InputBox, UserHash, hash, Please enter your "hash" value., , 250, 125
 			if ErrorLevel
 				return
-			UpdateLogTime()
-			FileAppend, (%CurrentTime%) User ID: %UserID% & Hash: %UserHash% manually entered.`n, %OutputLogFile%
+			Log("User ID: " UserID " & Hash: " UserHash " manually entered")
 		}
 	}
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
 	CurrentSettings.user_id := UserID
 	CurrentSettings.user_id_epic := UserIDEpic
 	CurrentSettings.user_id_steam := UserIDSteam
@@ -1845,10 +1814,7 @@ FirstRun() {
 	newsettings := JSON.stringify(CurrentSettings)
 	FileDelete, %SettingsFile%
 	FileAppend, %newsettings%, %SettingsFile%
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) IdleCombos setup completed.`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
+	Log("IdleCombos Setup Completed")
 	SB_SetText("✅ User ID & Hash Ready")
 }
 
@@ -1861,7 +1827,7 @@ Log(LogMessage) {
 		OutputLogFile := LogFileName
 		if (LogMessage) {
 			UpdateLogTime()
-			FileAppend, (%CurrentTime%) %LogMessage% `n, %OutputLogFile%
+			FileAppend, [%CurrentTime%] %LogMessage% `n, %OutputLogFile%
 			FileRead, OutputText, %OutputLogFile%
 			oMyGUI.Update()
 		}
@@ -2575,10 +2541,7 @@ ServerCall(callname, parameters) {
 		data := WR.ResponseText
 		WR.Close()
 	}
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) Server request: "%callname%"`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
+	Log("Server request: " callname)
 	return data
 }
 
@@ -2625,10 +2588,7 @@ Get_Journal:
 			pagenum += 1
 			sleep 1000
 		}
-		UpdateLogTime()
-		FileAppend, % "(" CurrentTime ") Journal pages downloaded: " (pagenum - 1) "`n", %OutputLogFile%
-		FileRead, OutputText, %OutputLogFile%
-		oMyGUI.Update()
+		Log("Journal pages downloaded: " (pagenum - 1))
 		SB_SetText("✅ Journal download completed")
 		return
 	}
@@ -2771,10 +2731,7 @@ SetUIScale() {
 	MsgBox % newicsettings
 	FileDelete, %ICSettingsFile%
 	FileAppend, %newicsettings%, %ICSettingsFile%
-	UpdateLogTime()
-	FileAppend, % "(" CurrentTime ") UI Scale changed to " newuiscale "`n", %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
+	Log("UI Scale changed to " newuiscale)
 	SB_SetText("✅ UI Scale changed to " newuiscale)
 }
 
@@ -2804,10 +2761,7 @@ SetFramerate() {
 	MsgBox % newicsettings
 	FileDelete, %ICSettingsFile%
 	FileAppend, %newicsettings%, %ICSettingsFile%
-	UpdateLogTime()
-	FileAppend, % "(" CurrentTime ") Framerate changed to " newframerate "`n", %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
+	Log("Framerate changed to " newframerate)
 	SB_SetText("✅ Framerate changed to " newframerate)
 }
 
@@ -2837,10 +2791,7 @@ SetParticles() {
 	MsgBox % newicsettings
 	FileDelete, %ICSettingsFile%
 	FileAppend, %newicsettings%, %ICSettingsFile%
-	UpdateLogTime()
-	FileAppend, % "(" CurrentTime ") Paticles changed to " newparticles "`n", %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
+	Log("Paticles changed to " newparticles)
 	SB_SetText("✅ Particles changed to " newparticles)
 }
 
