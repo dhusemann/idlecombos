@@ -528,7 +528,7 @@ class MyGui {
 		;First run checks and setup
 		if !FileExist(SettingsFile) {
 			FileAppend, %NewSettings%, %SettingsFile%
-			LogFile("Settings file '" SettingsFile "' created")
+			LogFile("Settings File: '" SettingsFile "' - Created")
 			this.Update()
 		}
 		FileRead, rawsettings, %SettingsFile%
@@ -536,14 +536,12 @@ class MyGui {
 		if !(CurrentSettings.Count() == SettingsCheckValue) {
 			FileDelete, %SettingsFile%
 			FileAppend, %NewSettings%, %SettingsFile%
-			LogFile("Settings file '" SettingsFile "' created")
+			LogFile("Settings File: '" SettingsFile "' - Created")
 			FileRead, rawsettings, %SettingsFile%
 			CurrentSettings := JSON.parse(rawsettings)
 			this.Update()
 			MsgBox, Your settings file has been deleted due to an update to IdleCombos. Please verify that your settings are set as preferred.
 		}
-
-		LogFile("IdleCombos v" VersionNumber " started.")
 
 		if FileExist(A_ScriptDir "\webRequestLog.txt") {
 			MsgBox, 4, , % "WRL File detected. Use file?"
@@ -578,7 +576,8 @@ class MyGui {
 		NoSaveSetting := CurrentSettings.nosavesetting
 		LogEnabled := CurrentSettings.logenabled
 
-		LogFile("Settings file '" SettingsFile "' loaded")
+		LogFile("IdleCombos v" VersionNumber " started.")
+		LogFile("Settings File: '" SettingsFile "' - Loaded")
 
 		if (GetDetailsonStart == "1") {
 			GetUserDetails()
