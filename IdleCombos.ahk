@@ -12,7 +12,7 @@
 ;update icon
 ;change to init loading class
 ;emojis on status bars
-;champions tab using human readible numbers
+;champions tab using human readable numbers
 ;patron tab spacing
 
 ;3.25
