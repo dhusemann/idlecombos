@@ -5,6 +5,16 @@
 
 ; CHANGELOG
 
+;3.26
+;overhaul logging system
+;major manual syntax cleanup
+;fix double user details loading bug
+;update icon
+;change to init loading class
+;emojis on status bars
+;champions tab using human readible numbers
+;patron tab spacing
+
 ;3.25
 ;patron tab bugs fixed
 ;patron tab added current influence and coins
@@ -101,7 +111,7 @@
 
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
-global VersionNumber := "3.25"
+global VersionNumber := "3.26"
 global CurrentDictionary := "2.20"
 
 ;Local File globals
