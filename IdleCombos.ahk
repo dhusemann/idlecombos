@@ -935,8 +935,7 @@ Open_Codes:
 		codetgps := 0
 		codepolish := 0
 		tempsavesetting := 0
-		for k, v in CodeList
-		{
+		for k, v in CodeList {
 			v := StrReplace(v, "`r")
 			v := StrReplace(v, "`n")
 			v := Trim(v)
@@ -972,59 +971,48 @@ Open_Codes:
 			}
 			if (coderesults.failure_reason == "You have already redeemed this combination.") {
 				usedcodes := usedcodes sCode "`n"
-			}
-			else if (coderesults.failure_reason == "Someone has already redeemed this combination.") {
+			} else if (coderesults.failure_reason == "Someone has already redeemed this combination.") {
 				someonescodes := someonescodes sCode "`n"
-			}
-			else if (coderesults.failure_reason == "This offer has expired") {
+			} else if (coderesults.failure_reason == "This offer has expired") {
 				expiredcodes := expiredcodes sCode "`n"
-			}
-			else if (coderesults.failure_reason == "You can not yet redeem this combination.") {
+			} else if (coderesults.failure_reason == "You can not yet redeem this combination.") {
 				earlycodes := earlycodes sCode "`n"
-			}
-			else if (coderesults.failure_reason == "This is not a valid combination.") {
+			} else if (coderesults.failure_reason == "This is not a valid combination.") {
 				invalidcodes := invalidcodes sCode "`n"
-			}
-			else for kk, vv in codeloot
-			{
-				if (vv.chest_type_id == "2") {
-					codegolds += vv.count
-				}
-				else if (vv.chest_type_id == "37") {
-					codesupplys += vv.count
-				}
-				else if (vv.chest_type_id == "1") {
-					codesilvers += vv.count
-				}
-				else if (vv.chest_type_id) {
-					otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
-				}
-				else if (vv.add_time_gate_key_piece) {
-					codetgps += vv.count
-				}
-				else if (vv.add_inventory_buff_id) {
-					switch vv.add_inventory_buff_id
-					{
-						case 4: codeepics := codeepics "STR (" vv.count "), "
-						case 8: codeepics := codeepics "GF (" vv.count "), "
-						case 16: codeepics := codeepics "HP (" vv.count "), "
-						case 20: codeepics := codeepics "Bounty (" vv.count "), "
-						case 34: codeepics := codeepics "BS (" vv.count "), "
-						case 35: codeepics := codeepics "Spec (" vv.count "), "
-						case 40: codeepics := codeepics "FB (" vv.count "), "
-						case 77: codeepics := codeepics "Spd (" vv.count "), "
-						case 36: codepolish += vv.count
-						default: codeepics := codeepics vv.add_inventory_buff_id " (" vv.count "), "
+			} else {
+				for kk, vv in codeloot {
+					if (vv.chest_type_id == "2") {
+						codegolds += vv.count
+					} else if (vv.chest_type_id == "37") {
+						codesupplys += vv.count
+					} else if (vv.chest_type_id == "1") {
+						codesilvers += vv.count
+					} else if (vv.chest_type_id) {
+						otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
+					} else if (vv.add_time_gate_key_piece) {
+						codetgps += vv.count
+					} else if (vv.add_inventory_buff_id) {
+						switch vv.add_inventory_buff_id {
+							case 4: codeepics := codeepics "STR (" vv.count "), "
+							case 8: codeepics := codeepics "GF (" vv.count "), "
+							case 16: codeepics := codeepics "HP (" vv.count "), "
+							case 20: codeepics := codeepics "Bounty (" vv.count "), "
+							case 34: codeepics := codeepics "BS (" vv.count "), "
+							case 35: codeepics := codeepics "Spec (" vv.count "), "
+							case 40: codeepics := codeepics "FB (" vv.count "), "
+							case 77: codeepics := codeepics "Spd (" vv.count "), "
+							case 36: codepolish += vv.count
+							default: codeepics := codeepics vv.add_inventory_buff_id " (" vv.count "), "
+						}
 					}
 				}
-			}
+			} 
 			CodeCount := % (CodeCount-1)
 			CodeNum := % (CodeTotal-CodeCount)
 			if (CurrentSettings.alwayssavecodes || tempsavesetting) {
 				FileAppend, %sCode%`n, %RedeemCodeLogFile%
 				FileAppend, %rawresults%`n, %RedeemCodeLogFile%
-			}
-			else if !(CurrentSettings.nosavesetting) {
+			} else if !(CurrentSettings.nosavesetting) {
 				MsgBox, 4, , "Save to File?"
 				IfMsgBox, Yes
 				{
@@ -1162,8 +1150,7 @@ Buy_Extra_Chests(chestid,extracount) {
 		if (extracount < 101) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams extracount)
 			extracount -= extracount
-		}
-		else {
+		} else {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams "100")
 			extracount -= 100
 		}
@@ -1242,8 +1229,7 @@ Buy_Chests(chestid) {
 		if (count < 101) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams count)
 			count -= count
-		}
-		else {
+		} else {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams "100")
 			count -= 100
 		}
@@ -1276,8 +1262,7 @@ Open_Chests(chestid) {
 			GetUserDetails()
 		}
 	}
-	switch chestid
-	{
+	switch chestid {
 		case 1: {
 			InputBox, count, Opening Chests, % "How many Silver Chests?`n(Owned: " CurrentSilvers ")`n(Max: " (CurrentSilvers + Floor(CurrentGems/50)) ")", , 200, 180
 			if ErrorLevel
@@ -1327,16 +1312,14 @@ Open_Chests(chestid) {
 			rawresults := ServerCall("opengenericchest", chestparams count)
 			Sleep, 500
 			count -= count
-		}
-		else {
+		} else {
 			rawresults := ServerCall("opengenericchest", chestparams 99)
 			Sleep, 500
 			count -= 99
 		}
 		if (CurrentSettings.alwayssavechests || tempsavesetting) {
 			FileAppend, %rawresults%`n, %ChestOpenLogFile%
-		}
-		else {
+		} else {
 			if !CurrentSettings.nosavesetting {
 				InputBox, dummyvar, Chest Results, Save to File?, , 250, 150, , , , , % rawresults
 				dummyvar := ""
@@ -1348,8 +1331,7 @@ Open_Chests(chestid) {
 		}
 		chestresults := JSON.parse(rawresults)
 		if ((chestresults.success == "0") || (chestresults.loot_details == "0")) {
-			switch chestid
-			{
+			switch chestid {
 				case "1": {
 					chestsopened := (CurrentSilvers - chestresults.chests_remaining)
 					if (extraspent) {
@@ -1377,48 +1359,41 @@ Open_Chests(chestid) {
 				newfeats := newfeats lastfeat
 			}
 			if (v.gilded) {
-				if ( !IsObject( chestresults_cumulative[ v.hero_id ] ) )
-				{
+				if ( !IsObject( chestresults_cumulative[ v.hero_id ] ) ) {
 					chestresults_cumulative[ v.hero_id ] := {}
 					chestresults_cumulative[ v.hero_id ][ v.slot_id ] := {}
 					chestresults_cumulative[ v.hero_id ][ v.slot_id ][ gilded_count ] := 1
 					if (v.disenchant_amount == 125)
 						chestresults_cumulative[ v.hero_id ][ v.slot_id ][ disenchant_amount ] := v.disenchant_amount
-				}
-				else if ( !IsObject( chestresults_cumulative[ v.hero_id ][ v.slot_id ] ) )
-				{
+				} else if ( !IsObject( chestresults_cumulative[ v.hero_id ][ v.slot_id ] ) ) {
 					chestresults_cumulative[ v.hero_id ][ v.slot_id ] := {}
 					chestresults_cumulative[ v.hero_id ][ v.slot_id ][ gilded_count ] := 1
 					if (v.disenchant_amount == 125)
 						chestresults_cumulative[ v.hero_id ][ v.slot_id ][ disenchant_amount ] := v.disenchant_amount
-				}
-				Else
-				{
+				} else {
 					chestresults_cumulative[ v.hero_id ][ v.slot_id ][ gilded_count ] += 1
 					if (v.disenchant_amount == 125)
 						chestresults_cumulative[ v.hero_id ][ v.slot_id ][ disenchant_amount ] += v.disenchant_amount
 				}
-
 			}
 		}
 	}
 
-	for k, v in chestresults_cumulative
-	{
-		for k2, v2 in v
-		{
-			if ( v2.gilded_count <= 1 )
+	for k, v in chestresults_cumulative {
+		for k2, v2 in v {
+			if ( v2.gilded_count <= 1 ) {
 				lastshiny := ( ChampFromID( k ) " (Slot " k2 ")" )
-			else
+			} else {
 				lastshiny := ( ChampFromID( k ) " (Slot " k2 " x " v2.gilded_count ")" )
-			if ( v2.disenchant_amount )
+			}
+			if ( v2.disenchant_amount ) {
 				lastshiny .= " +" v2.disenchant_amount
+			}
 			newshinies .= lastshiny "`n"
 		}
 	}
 	tempsavesetting := 0
-	switch chestid
-	{
+	switch chestid {
 		case "1": {
 			chestsopened := (CurrentSilvers - chestresults.chests_remaining)
 			if (extraspent) {
@@ -1476,8 +1451,7 @@ UseBlacksmith(buffid) {
 		MsgBox % "Need User ID & Hash"
 		FirstRun()
 	}
-	switch buffid
-	{
+	switch buffid {
 		case 31: currentcontracts := CurrentTinyBS
 		case 32: currentcontracts := CurrentSmBS
 		case 33: currentcontracts := CurrentMdBS
@@ -1534,15 +1508,13 @@ UseBlacksmith(buffid) {
 		if (count < 50) {
 			rawresults := ServerCall("useserverbuff", bscontractparams count)
 			count -= count
-		}
-		else {
+		} else {
 			rawresults := ServerCall("useserverbuff", bscontractparams "50")
 			count -= 50
 		}
 		if (CurrentSettings.alwayssavecontracts || tempsavesetting) {
 			FileAppend, %rawresults%`n, %BlacksmithLogFile%
-		}
-		else {
+		} else {
 			if !CurrentSettings.nosavesetting {
 				InputBox, dummyvar, Contracts Results, Save to File?, , 250, 150, , , , , % rawresults
 				dummyvar := ""
@@ -1556,8 +1528,7 @@ UseBlacksmith(buffid) {
 		if ((blacksmithresults.success == "0") || (blacksmithresults.okay == "0")) {
 			MsgBox % ChampFromID(heroid) " levels gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
 			MsgBox % "Error: " rawresults
-			switch buffid
-			{
+			switch buffid {
 				case 31: contractsused := (CurrentTinyBS - blacksmithresults.buffs_remaining)
 				case 32: contractsused := (CurrentSmBS - blacksmithresults.buffs_remaining)
 				case 33: contractsused := (CurrentMdBS - blacksmithresults.buffs_remaining)
@@ -1571,10 +1542,8 @@ UseBlacksmith(buffid) {
 		}
 		rawactions := JSON.stringify(blacksmithresults.actions)
 		blacksmithactions := JSON.parse(rawactions)
-		for k, v in blacksmithactions
-		{
-			switch v.slot_id
-			{
+		for k, v in blacksmithactions {
+			switch v.slot_id {
 				case 1: slot1lvs += v.amount
 				case 2: slot2lvs += v.amount
 				case 3: slot3lvs += v.amount
@@ -1661,8 +1630,7 @@ EndAdventure() {
 EndBGAdventure() {
 	if (ActiveInstance == "1") {
 		bginstance := 2
-	}
-	else {
+	} else {
 		bginstance := 1
 	}
 	while (BackgroundAdventure == "-1" or BackgroundAdventure == "") {
@@ -1684,8 +1652,7 @@ EndBGAdventure() {
 EndBG2Adventure() {
 	if (ActiveInstance == "3" or ActiveInstance == "4") {
 		bginstance := 2
-	}
-	else {
+	} else {
 		bginstance := 3
 	}
 	while (Background2Adventure == "-1" or Background2Adventure == "") {
@@ -1707,8 +1674,7 @@ EndBG2Adventure() {
 EndBG3Adventure() {
 	if (ActiveInstance == "4") {
 		bginstance := 3
-	}
-	else {
+	} else {
 		bginstance := 4
 	}
 	while (Background3Adventure == "-1" or Background3Adventure == "") {
@@ -1728,13 +1694,11 @@ EndBG3Adventure() {
 }
 ;	fmagdi -stop
 
-detectGameInstallSteam()
-{
+detectGameInstallSteam() {
 	setGameInstallSteam(true)
 }
 
-setGameInstallSteam( manual = false)
-{
+setGameInstallSteam( manual = false) {
 	; Detect Steam install
 	if FileExist(GameInstallDirSteam) {
 		GameInstallDir := GameInstallDirSteam
@@ -1753,13 +1717,11 @@ setGameInstallSteam( manual = false)
 	return false
 }
 
-detectGameInstallEpic()
-{
+detectGameInstallEpic() {
 	setGameInstallEpic(true)
 }
 
-setGameInstallEpic( manual = false)
-{
+setGameInstallEpic( manual = false) {
 	; Detect Epic Games install
 	if FileExist(GameClientEpic) {
 		FileRead, EpicJSONString, %GameClientEpic%
@@ -1771,7 +1733,7 @@ setGameInstallEpic( manual = false)
 				GameClient := GameClientEpicLauncher
 				WRLFile := GameInstallDir WRLFilePath
 				GamePlatform := "Epic Game Store"
-				if manual{
+				if manual {
 					msgbox Epic Games install found
 					FirstRun()
 					GetUserDetails()
@@ -1920,10 +1882,11 @@ ParseAdventureData() {
 		InstanceList[v.game_instance_id].current_area := v.current_area
 		InstanceList[v.game_instance_id].Patron := PatronFromID(v.current_patron_id)
 		InstanceList[v.game_instance_id].ChampionsCount := 0
-		for l, w in v.formation
+		for l, w in v.formation {
 			if (w > 0) {
 				InstanceList[v.game_instance_id].ChampionsCount += 1
 			}
+		}
 	}
 	for k, v in UserDetails.details.modron_saves {
 		InstanceList[v.instance_id].core := "Core: " Corelist[v.core_id]
@@ -1954,8 +1917,7 @@ ParseAdventureData() {
 			FGCore := v.core
 			CurrentChampions := v.ChampionsCount
 			ChampionsActiveCount += v.ChampionsCount
-		}
-		else if (bginstance == 0){
+		} else if (bginstance == 0){
 			BackgroundAdventure := v.current_adventure_id
 			BackgroundArea := v.current_area
 			BackgroundPatron := v.Patron
@@ -1963,8 +1925,7 @@ ParseAdventureData() {
 			BackgroundChampions := v.ChampionsCount
 			ChampionsActiveCount += v.ChampionsCount
 			bginstance += 1
-		}
-		else if (bginstance == 1){
+		} else if (bginstance == 1){
 			Background2Adventure := v.current_adventure_id
 			Background2Area := v.current_area
 			Background2Patron := v.Patron
@@ -1972,8 +1933,7 @@ ParseAdventureData() {
 			Background2Champions := v.ChampionsCount
 			ChampionsActiveCount += v.ChampionsCount
 			bginstance += 1
-		}
-		else if (bginstance == 2){
+		} else if (bginstance == 2){
 			Background3Adventure := v.current_adventure_id
 			Background3Area := v.current_area
 			Background3Patron := v.Patron
@@ -2011,8 +1971,7 @@ ParseTimestamps() {
 	if (UserDetails.details.stats.time_gate_key_next_time < UserDetails.current_time) {
 		Gui, Font, cGreen
 		GuiControl, Font, NextTGPDrop
-	}
-	else {
+	} else {
 		Gui, Font, cBlack
 		GuiControl, Font, NextTGPDrop
 	}
@@ -2026,18 +1985,18 @@ ParseInventoryData() {
 	CurrentSilvers := UserDetails.details.chests.1
 	CurrentTGPs := UserDetails.details.stats.time_gate_key_pieces
 	AvailableTGs := "= " Floor(CurrentTGPs/6) " Time Gates"
-	for k, v in UserDetails.details.buffs
-		switch v.buff_id
-	{
-		case 17: CurrentTinyBounties := v.inventory_amount
-		case 18: CurrentSmBounties := v.inventory_amount
-		case 19: CurrentMdBounties := v.inventory_amount
-		case 20: CurrentLgBounties := v.inventory_amount
-		case 31: CurrentTinyBS := v.inventory_amount
-		case 32: CurrentSmBS := v.inventory_amount
-		case 33: CurrentMdBS := v.inventory_amount
-		case 34: CurrentLgBS := v.inventory_amount
-		case 1797: CurrentHgBS := v.inventory_amount
+	for k, v in UserDetails.details.buffs {
+		switch v.buff_id {
+			case 17: CurrentTinyBounties := v.inventory_amount
+			case 18: CurrentSmBounties := v.inventory_amount
+			case 19: CurrentMdBounties := v.inventory_amount
+			case 20: CurrentLgBounties := v.inventory_amount
+			case 31: CurrentTinyBS := v.inventory_amount
+			case 32: CurrentSmBS := v.inventory_amount
+			case 33: CurrentMdBS := v.inventory_amount
+			case 34: CurrentLgBS := v.inventory_amount
+			case 1797: CurrentHgBS := v.inventory_amount
+		}
 	}
 	if (CurrentTinyBounties = "") {
 		CurrentTinyBounties := 0
@@ -2073,8 +2032,7 @@ ParseInventoryData() {
 		AvailableTokens := "= " tokencount " Tokens`t(" Round(tokencount/2500, 2) " FPs)"
 		CurrentTokens := "+ " tokentotal " Current`t(" Round(tokentotal/2500, 2) " FPs)"
 		AvailableFPs := "(Total: " (tokentotal+tokencount) " = " Round((tokentotal + tokencount)/2500, 2) " Free Plays)"
-	}
-	else {
+	} else {
 		AvailableTokens := "= " tokencount " Tokens"
 		CurrentTokens := "(" Round(tokencount/2500, 2) " Free Plays)"
 	}
@@ -2273,18 +2231,20 @@ ParseLootData() {
 	}
 	BrivSlot4 += brivenchant*0.4
 	BrivSlot4 *= 1+(brivgild*0.5)
-	for k, v in UserDetails.details.modron_saves
-	if (v.instance_id == ActiveInstance) {
-		BrivZone := v.area_goal
+	for k, v in UserDetails.details.modron_saves {
+		if (v.instance_id == ActiveInstance) {
+			BrivZone := v.area_goal
+		}
 	}
 }
 
 ParseChampData() {
 	TotalChamps := 0
 	MagList := ["K","M","B","t"]
-	for k, v in UserDetails.details.heroes
-	if (v.owned == 1) {
-		TotalChamps += 1
+	for k, v in UserDetails.details.heroes {
+		if (v.owned == 1) {
+			TotalChamps += 1
+		}
 	}
 	;
 	ChampDetails := ""
@@ -2330,24 +2290,21 @@ CheckPatronProgress() {
 		if (MirtFPCurrency = "5000") {
 			Gui, Font, cGreen
 			GuiControl, Font, MirtFPCurrency
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, MirtFPCurrency
 		}
 		if (MirtChallenges = "10") {
 			Gui, Font, cGreen
 			GuiControl, Font, MirtChallenges
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, MirtChallenges
 		}
 		if (MirtCompleted = MirtVariantTotal) {
 			Gui, Font, cGreen
 			GuiControl, Font, MirtVariants
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, MirtVariants
 		}
@@ -2356,24 +2313,21 @@ CheckPatronProgress() {
 		if (VajraFPCurrency = "5000") {
 			Gui, Font, cGreen
 			GuiControl, Font, VajraFPCurrency
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, VajraFPCurrency
 		}
 		if (VajraChallenges = "10") {
 			Gui, Font, cGreen
 			GuiControl, Font, VajraChallenges
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, VajraChallenges
 		}
 		if (VajraCompleted = VajraVariantTotal) {
 			Gui, Font, cGreen
 			GuiControl, Font, VajraVariants
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, VajraVariants
 		}
@@ -2382,24 +2336,21 @@ CheckPatronProgress() {
 		if (StrahdChallenges = "10") {
 			Gui, Font, cGreen
 			GuiControl, Font, StrahdChallenges
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, StrahdChallenges
 		}
 		if (StrahdFPCurrency = "5000") {
 			Gui, Font, cGreen
 			GuiControl, Font, StrahdFPCurrency
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, StrahdFPCurrency
 		}
 		if (StrahdCompleted = StrahdVariantTotal) {
 			Gui, Font, cGreen
 			GuiControl, Font, StrahdVariants
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, StrahdVariants
 		}
@@ -2408,24 +2359,21 @@ CheckPatronProgress() {
 		if (ZarielChallenges = "10") {
 			Gui, Font, cGreen
 			GuiControl, Font, ZarielChallenges
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, ZarielChallenges
 		}
 		if (ZarielFPCurrency = "5000") {
 			Gui, Font, cGreen
 			GuiControl, Font, ZarielFPCurrency
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, ZarielFPCurrency
 		}
 		if (ZarielCompleted = ZarielVariantTotal) {
 			Gui, Font, cGreen
 			GuiControl, Font, ZarielVariants
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, ZarielVariants
 		}
@@ -2557,8 +2505,7 @@ LaunchGame() {
 		WinWait, "ahk_exe IdleDragons.exe"
 		LogFile("Game Client Launched")
 		SB_SetText("✅ Game client has started!")
-	}
-	else {
+	} else {
 		if !FirstRun {
 			SB_SetText("✅ Game client is already running!")
 		}
@@ -2603,8 +2550,7 @@ Open_Ticket:
 	{
 		if (GamePlatform = "Steam"){
 			Run, % "https://help.idlechampions.com/?page=help&steam_user_id=" UserIDSteam "&steam_hash=" GameHashSteam "&user_id=" UserID
-		}
-		else if (GamePlatform = "Epic Game Store") {
+		} else if (GamePlatform = "Epic Game Store") {
 			Run, % "https://help.idlechampions.com/?page=help&network=epicgames&epic_games_user_id=" UserIDEpic "&epic_games_hash=" GameHashEpic "&language_id=1&user_id=" UserIDEpic
 		}
 		return
@@ -2622,8 +2568,7 @@ Discord_Clicked:
 			UrlDownloadToFile, %DictionaryFile%, %LocalDictionary%
 			Reload
 			return
-		}
-		else {
+		} else {
 			MsgBox % "Dictionary file up to date"
 		}
 		return
@@ -2654,15 +2599,15 @@ List_ChampIDs:
 		while (id < 121) {
 			champname := ChampFromID(id)
 			StringLen, champnamelen, champname
-			while (champnamelen < 16)
-			{
+			while (champnamelen < 16) {
 				champname := champname " "
 				champnamelen += 1
 			}
-			if (!mod(id, 4))
+			if (!mod(id, 4)) {
 				champidlist := champidlist id ": " champname "`n"
-			else
+			} else {
 				champidlist := champidlist id ": " champname "`t"
+			}
 			id += 1
 		}
 		;MsgBox, , Champ ID List, % champidlist
@@ -2727,8 +2672,7 @@ SetUIScale() {
 	for k, v in CurrentICSettings {
 		if (k == "UIScale") {
 			newicsettings := newicsettings """" k """:" newuiscale ","
-		}
-		else {
+		} else {
 			newicsettings := newicsettings """" k """:" v ","
 		}
 	}
@@ -2757,8 +2701,7 @@ SetFramerate() {
 	for k, v in CurrentICSettings {
 		if (k == "TargetFramerate") {
 			newicsettings := newicsettings """" k """:" newframerate ","
-		}
-		else {
+		} else {
 			newicsettings := newicsettings """" k """:" v ","
 		}
 	}
@@ -2787,8 +2730,7 @@ SetParticles() {
 	for k, v in CurrentICSettings {
 		if (k == "PercentOfParticlesSpawned") {
 			newicsettings := newicsettings """" k """:" newparticles ","
-		}
-		else {
+		} else {
 			newicsettings := newicsettings """" k """:" v ","
 		}
 	}
@@ -2838,10 +2780,11 @@ SimulateBriv(i) {
 		totalSkips += skips
 	}
 	;chance := Round(chance, 2)
-	if skipLevels < 3
+	if (skipLevels < 3) {
 		trueChance := Round(trueChance * 100, 2)
-	else
+	} else {
 		trueChance := Round(chance * 100, 2)
+	}
 	avgSkips := Round(totalSkips / i, 2)
 	avgSkipped := Round(avgSkips * skipLevels, 2)
 	avgZones := Round(totalLevels / i, 2)
@@ -2869,8 +2812,7 @@ KlehoImage()
 			}
 		}
 		campaignid := KlehoFromID(currenttimegate)
-	}
-	else if !((campaignid < 3) or (campaignid == 15) or (campaignid > 21)) {
+	} else if !((campaignid < 3) or (campaignid == 15) or (campaignid > 21)) {
 		for k, v in UserDetails.details.game_instances {
 			if (v.game_instance_id == ActiveInstance) {
 				campaignid := campaignid "a" JSON.stringify(v.defines.adventure_defines[1].requirements[1].adventure_id)
@@ -2883,8 +2825,7 @@ KlehoImage()
 			for kk, vv in v.formation {
 				if (vv > 0) {
 					kleholink := kleholink vv "_"
-				}
-				else {
+				} else {
 					kleholink := kleholink "_"
 				}
 			}
@@ -2928,8 +2869,7 @@ IncompleteVariants()
 	}
 	if (idtocheck == 0) {
 		IncompleteBase()
-	}
-	else {
+	} else {
 		IncompletePatron(idtocheck)
 	}
 	return
@@ -3123,13 +3063,11 @@ GearReport() {
 				currentcount := 0
 				currentchamplevel := (v.enchant + 1)
 				currentcount += 1
-			}
-			else {
+			} else {
 				currentchamplevel += (v.enchant + 1)
 				currentcount += 1
 			}
-		}
-		else if ((lastchamp = 13) or (lastchamp = 18) or (lastchamp = 30) or (lastchamp = 67) or (lastchamp = 68) or (lastchamp = 86) or (lastchamp = 87) or (lastchamp = 88) or (lastchamp = 106)){
+		} else if ((lastchamp = 13) or (lastchamp = 18) or (lastchamp = 30) or (lastchamp = 67) or (lastchamp = 68) or (lastchamp = 86) or (lastchamp = 87) or (lastchamp = 88) or (lastchamp = 106)){
 			totalcorelevels += (v.enchant + 1)
 			totalcoreitems += 1
 			if (lastshiny) {
@@ -3148,13 +3086,11 @@ GearReport() {
 				currentcount := 0
 				currentchamplevel := (v.enchant + 1)
 				currentcount += 1
-			}
-			else {
+			} else {
 				currentchamplevel += (v.enchant + 1)
 				currentcount += 1
 			}
-		}
-		else {
+		} else {
 			totaleventlevels += (v.enchant + 1)
 			totaleventitems += 1
 			if (lastshiny) {
@@ -3173,8 +3109,7 @@ GearReport() {
 				currentcount := 0
 				currentchamplevel := (v.enchant + 1)
 				currentcount += 1
-			}
-			else {
+			} else {
 				currentchamplevel += (v.enchant + 1)
 				currentcount += 1
 			}
@@ -3239,8 +3174,7 @@ ShowPityTimers() {
 	while (chestsforepic < 11) {
 		if (chestsforepic == 1) {
 			pitylist := pitylist "Epic in Next Chest for:`n "
-		}
-		else {
+		} else {
 			pitylist := pitylist "Epic in next " chestsforepic " Chests for:`n "
 		}
 		currentchamp := 14
@@ -3267,8 +3201,7 @@ ShowPityTimers() {
 		}
 		if !(currentcount) {
 			pitylist := pitylist "(None)`n"
-		}
-		else {
+		} else {
 			StringTrimRight, pitylist, pitylist, 2
 			pitylist := pitylist "`n"
 		}
