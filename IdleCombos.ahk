@@ -966,8 +966,7 @@ Open_Codes:
 					coderesults := JSON.parse(rawresults)
 					rawloot := JSON.stringify(coderesults.loot_details)
 					codeloot := JSON.parse(rawloot)
-				}
-				else {
+				} else {
 					return
 				}
 			}
@@ -1151,7 +1150,6 @@ Clear_Log:
 			FileDelete, %OutputLogFile%
 			OutputText := ""
 			oMyGUI.Update()
-			return
 		}
 		return
 	}
@@ -1192,13 +1190,12 @@ Buy_Chests(chestid) {
 	}
 	if !CurrentGems {
 		MsgBox, 4, , No gems detected. Check server for user details?
-			IfMsgBox, Yes
+		IfMsgBox, Yes
 		{
 			GetUserDetails()
 		}
 	}
-	switch chestid
-	{
+	switch chestid {
 		case 1: {
 			maxbuy := Floor(CurrentGems/50)
 			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 200, 180
@@ -1206,8 +1203,10 @@ Buy_Chests(chestid) {
 				return
 			if (count > maxbuy) {
 				MsgBox, 4, , Insufficient gems detected for purchase.`nContinue anyway?
-					IfMsgBox No
-				return
+				IfMsgBox, No
+				{
+					return
+				}
 			}
 		}
 		case 2: {
@@ -1225,8 +1224,10 @@ Buy_Chests(chestid) {
 			}
 			if (count > maxbuy) {
 				MsgBox, 4, , Insufficient gems detected for purchase.`nContinue anyway?
-					IfMsgBox No
-				return
+				IfMsgBox, No
+				{
+					return
+				}
 			}
 		}
 		default: {
@@ -1270,7 +1271,7 @@ Open_Chests(chestid) {
 	}
 	if (!CurrentGolds && !CurrentSilvers && !CurrentGems) {
 		MsgBox, 4, , No chests or gems detected. Check server for user details?
-			IfMsgBox, Yes
+		IfMsgBox, Yes
 		{
 			GetUserDetails()
 		}
@@ -1285,8 +1286,9 @@ Open_Chests(chestid) {
 				MsgBox, 4, , % "Spend " ((count - CurrentSilvers)*50) " gems to purchase " (count - CurrentSilvers) " chests before opening?"
 				extracount := (count - CurrentSilvers)
 				IfMsgBox, Yes
-				extraspent := Buy_Extra_Chests(1,extracount)
-				else {
+				{
+					extraspent := Buy_Extra_Chests(1,extracount)
+				} else {
 					return
 				}
 			}
@@ -1299,8 +1301,9 @@ Open_Chests(chestid) {
 				MsgBox, 4, , % "Spend " ((count - CurrentGolds)*500) " gems to purchase " (count - CurrentGolds) " chests before opening?"
 				extracount := (count - CurrentGolds)
 				IfMsgBox, Yes
-				extraspent := Buy_Extra_Chests(2,extracount)
-				else {
+				{
+					extraspent := Buy_Extra_Chests(2,extracount)
+				} else {
 					return
 				}
 			}
@@ -1484,17 +1487,19 @@ UseBlacksmith(buffid) {
 	if !(currentcontracts) {
 		MsgBox, 4, , No Blacksmith Contracts of that size detected. Check server for user details?
 			IfMsgBox, Yes
-		{
-			GetUserDetails()
-		}
+			{
+				GetUserDetails()
+			}
 	}
 	InputBox, count, Blacksmithing, % "How many Blacksmith Contracts?`n(Max: " currentcontracts ")", , 200, 180, , , , , %currentcontracts%
 	if ErrorLevel
 		return
 	if (count > currentcontracts) {
 		MsgBox, 4, , Insufficient blacksmith contracts detected for use.`nContinue anyway?
-			IfMsgBox No
-		return
+		IfMsgBox, No
+		{
+			return
+		}
 	}
 	heroid := "error"
 	InputBox, heroid, Blacksmithing, % "Use contracts on which Champ? (Enter ID)", , 200, 180, , , , , %LastBSChamp%
@@ -1511,8 +1516,10 @@ UseBlacksmith(buffid) {
 			return
 	}
 	MsgBox, 4, , % "Use " count " contracts on " ChampFromID(heroid) "?"
-	IfMsgBox No
-	return
+	IfMsgBox, No
+	{
+		return
+	}
 	LastBSChamp := heroid
 	bscontractparams := "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&buff_id=" buffid "&hero_id=" heroid "&num_uses="
 	tempsavesetting := 0
@@ -1599,8 +1606,10 @@ LoadAdventure() {
 	GetUserDetails()
 	while !(CurrentAdventure == "-1") {
 		MsgBox, 5, , Please end your current adventure first.
-		IfMsgBox Cancel
-		return
+		IfMsgBox, Cancel
+		{
+			return
+		}
 	}
 	advtoload := lastadv		;fmagdi - defaults to last ended adventure id, or to variable default in globals
 	patrontoload := 0
@@ -1782,11 +1791,9 @@ FirstRun() {
 	{
 		GetIdFromWRL()
 		LogFile("User ID: " UserID " & Hash: " UserHash " detected in WRL")
-	}
-	else
-	{
+	} else {
 		MsgBox, 4, , Choose install directory manually?
-		IfMsgBox Yes
+		IfMsgBox, Yes
 		{
 			FileSelectFile, WRLFile, 1, webRequestLog.txt, Select webRequestLog file, webRequestLog.txt
 			if ErrorLevel
@@ -1794,8 +1801,7 @@ FirstRun() {
 			GetIdFromWRL()
 			GameInstallDir := SubStr(WRLFile, 1, -67)
 			GameClient := GameInstallDir "IdleDragons.exe"
-		}	
-		else {
+		} else {
 			InputBox, UserID, user_id, Please enter your "user_id" value., , 250, 125
 			if ErrorLevel
 				return
@@ -1839,15 +1845,15 @@ GetIDFromWRL() {
 	FileRead, oData, %WRLFile%
 	if ErrorLevel {
 		MsgBox, 4, , Could not find webRequestLog.txt file.`nChoose install directory manually?
-		IfMsgBox Yes
+		IfMsgBox, Yes
 		{
 			FileSelectFile, WRLFile, 1, webRequestLog.txt, Select webRequestLog file, webRequestLog.txt
 			if ErrorLevel
 				return
 			FileRead, oData, %WRLFile%
-		}
-		else
+		} else {
 			return
+		}
 	}
 	FoundPos := InStr(oData, "getuserdetails&language_id=1&user_id=")
 	oData2 := SubStr(oData, (FoundPos + 37))
@@ -2569,11 +2575,11 @@ Get_Journal:
 		if (InstanceID = 0) {
 			MsgBox, 4, , No Instance ID detected. Check server for user details?
 				IfMsgBox, Yes
-			{
-				GetUserDetails()
-			}
-			else
-				return
+				{
+					GetUserDetails()
+				} else {
+					return
+				}
 		}
 		journalparams := "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&page="
 		InputBox, pagecount, Journal, % "How many pages of Journal to retreive?`n`n(This will overwrite any previous download.)", , 350, 180
