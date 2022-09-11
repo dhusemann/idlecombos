@@ -281,6 +281,9 @@ if FileExist(TrayIcon) {
 
 oMyGUI := new MyGui()
 
+;end startup
+return
+
 ;BEGIN: GUI Defs
 class MyGui {
 	Width := "550"
@@ -561,8 +564,7 @@ class MyGui {
 			UserHash := CurrentSettings.hash
 			InstanceID := CurrentSettings.instance_id
 			SB_SetText("✅ User ID & Hash Ready")
-		}
-		else {
+		} else {
 			SB_SetText("❌ User ID & Hash not found!")
 		}
 
@@ -575,6 +577,8 @@ class MyGui {
 		AlwaysSaveCodes := CurrentSettings.alwayssavecodes
 		NoSaveSetting := CurrentSettings.nosavesetting
 		LogEnabled := CurrentSettings.logenabled
+		
+		this.Update()
 
 		LogFile("IdleCombos v" VersionNumber " started.")
 		LogFile("Settings File: '" SettingsFile "' - Loaded")
@@ -585,6 +589,7 @@ class MyGui {
 		if (LaunchGameonStart == "1") {
 			LaunchGame()
 		}
+
 		this.Update()
 		SendMessage, 0x115, 7, 0, Edit1, A
 	}
@@ -796,8 +801,7 @@ Open_Silver:
 		if (Not WinExist("ahk_exe IdleDragons.exe")) {
 			Open_Chests(1)
 			return
-		}
-		else {
+		} else {
 			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests"
 			return 
 			;MsgBox, 4, , % "Note: It's recommended to close the game client before opening chests.`nWould you like to continue anyway?"
@@ -818,8 +822,7 @@ Open_Gold:
 		if (Not WinExist("ahk_exe IdleDragons.exe")) {
 			Open_Chests(2)
 			return
-		}
-		else {
+		} else {
 			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests"
 			return
 			;MsgBox, 4, , % "Note: It's recommended to close the game client before opening chests.`nWould you like to continue anyway?`n`n(Feats earned using this app do not count towards the related achievement.)"
@@ -863,8 +866,7 @@ Open_Codes:
 		return
 	}
 
-	Paste()
-	{
+	Paste() {
 		getChestCodes()
 		loop, parse, foundCodeString, `n, `r
 			CodeTotal := a_index
@@ -876,21 +878,18 @@ Open_Codes:
 		return
 	}
 
-	Delete()
-	{
+	Delete() {
 		GuiControl, , CodestoEnter,
 		GuiControl, , CodesOutputStatus, ❗ Codes: 0/0 - Waiting... (1 code per line)
 		return
 	}
 
-	Open_Web_Codes_Page()
-	{
+	Open_Web_Codes_Page() {
 		Run, %WebToolCodes%
 		return
 	}
 
-	Get_Codes_Autoload()
-	{
+	Get_Codes_Autoload() {
 		Open_Web_Codes_Page()
 		winwait, ALL active IDLE Champions combination🔒 codes
 		sleep, 1000
@@ -904,15 +903,13 @@ Open_Codes:
 		return
 	}
 
-	Get_Codes_Autoload_Run()
-	{
+	Get_Codes_Autoload_Run() {
 		Get_Codes_Autoload()
 		Redeem_Codes()
 		return
 	}
 
-	Redeem_Codes()
-	{
+	Redeem_Codes() {
 		LogFile("Redeem Code Started")
 		Gui, CodeWindow:Submit, NoHide
 		Gui, CodeWindow:Add, Text, x+45, Codes Remaining:
@@ -1100,32 +1097,27 @@ Close_Codes:
 		return
 	}
 
-Open_Web_Game_Viewer()
-	{
+Open_Web_Game_Viewer() {
 		Run, %WebToolGameViewer%
 		return
 	}
 
-Open_Web_Data_Viewer()
-	{
+Open_Web_Data_Viewer() {
 		Run, %WebToolDataViewer%
 		return
 	}
 
-Open_Web_Utilities()
-	{
+Open_Web_Utilities() {
 		Run, %WebToolUtilities%
 		return
 	}
 
-Open_Web_Utilities_Formation()
-	{
+Open_Web_Utilities_Formation() {
 		Run, %WebToolUtilitiesFormation%
 		return
 	}
 
-Open_Web_Utilities_Modron()
-	{
+Open_Web_Utilities_Modron() {
 		Run, %WebToolUtilitiesModron%
 		return
 	}
@@ -1571,7 +1563,6 @@ UseBlacksmith(buffid) {
 global lastadv := 0			;fmagdi - to be used to save ended adventureid for use as default for next load 
 
 LoadAdventure() {
-
 	GetUserDetails()
 	while !(CurrentAdventure == "-1") {
 		MsgBox, 5, , Please end your current adventure first.
@@ -1607,7 +1598,6 @@ LoadAdventure() {
 
 EndAdventure() {
 	GetUserDetails()				;fmagdi - updates info before ending an adventure to be sure you are ending the correct one
-
 	while (CurrentAdventure == "-1") {
 		MsgBox, No current adventure active.
 		return
@@ -1846,7 +1836,7 @@ GetIDFromWRL() {
 
 GetUserDetails() {
 	Gui, MyWindow:Default
-	SB_SetText("⌛ Loading... Please wait...")
+	SB_SetText("⌛ Loading Data... Please wait...")
 	getuserparams := DummyData "&include_free_play_objectives=true&instance_key=1&user_id=" UserID "&hash=" UserHash
 	rawdetails := ServerCall("getuserdetails", getuserparams)
 	FileDelete, %UserDetailsFile%
@@ -1866,9 +1856,10 @@ GetUserDetails() {
 	ParseLootData()
 	CheckAchievements()
 	CheckBlessings()
-	oMyGUI.Update()
-	SB_SetText("✅ Loaded and Ready 😎")
 	CheckPatronProgress()
+	SB_SetText("✅ Loaded and Ready 😎")
+	LogFile("User Details - Loaded")
+	oMyGUI.Update()
 	return
 }
 
@@ -2246,7 +2237,6 @@ ParseChampData() {
 			TotalChamps += 1
 		}
 	}
-	;
 	ChampDetails := ""
 	if (UserDetails.details.stats.black_viper_total_gems) {
 		ViperGemsValue := UserDetails.details.stats.black_viper_total_gems
@@ -2264,7 +2254,6 @@ ParseChampData() {
 		TorogarStacks := SubStr( "          " Format("{:.2f}",TorogarStacksValue / (1000 ** Floor(log(TorogarStacksValue)/3))) MagList[Floor(log(TorogarStacksValue)/3)], -9)
 		ChampDetails := ChampDetails "Torogar Zealot Stacks: " TorogarStacks "`n`n"
 	}
-
 	if (UserDetails.details.stats.zorbu_lifelong_hits_humanoid || UserDetails.details.stats.zorbu_lifelong_hits_beast || UserDetails.details.stats.zorbu_lifelong_hits_undead || UserDetails.details.stats.zorbu_lifelong_hits_drow) {
 		ZorbuHitsHumanoidValue := UserDetails.details.stats.zorbu_lifelong_hits_humanoid
 		ZorbuHitsHumanoid := SubStr( "          " Format("{:.2f}",ZorbuHitsHumanoidValue / (1000 ** Floor(log(ZorbuHitsHumanoidValue)/3))) MagList[Floor(log(ZorbuHitsHumanoidValue)/3)], -9)
@@ -2276,7 +2265,6 @@ ParseChampData() {
 		ZorbuHitsDrow := SubStr( "          " Format("{:.2f}",ZorbuHitsDrowValue / (1000 ** Floor(log(ZorbuHitsDrowValue)/3))) MagList[Floor(log(ZorbuHitsDrowValue)/3)], -9)
 		ChampDetails := ChampDetails "Zorbu Kills:`n - Humanoid: " ZorbuHitsHumanoid "`n - Beast:       " ZorbuHitsBeast "`n - Undead:    " ZorbuHitsUndead "`n - Drow:         " ZorbuHitsDrow "`n`n"
 	}
-
 	if (UserDetails.details.stats.dhani_monsters_painted) {
 		DhaniPaintValue := UserDetails.details.stats.dhani_monsters_painted
 		DhaniPaint := SubStr( "          " Format("{:.2f}",DhaniPaintValue / (1000 ** Floor(log(DhaniPaintValue)/3))) MagList[Floor(log(DhaniPaintValue)/3)], -9)
@@ -2797,8 +2785,7 @@ SimulateBriv(i) {
 	Return message
 }
 
-KlehoImage()
-{
+KlehoImage() {
 	campaignid := 0
 	currenttimegate := ""
 	kleholink := "https://idle.kleho.ru/assets/fb/"
@@ -2852,8 +2839,7 @@ KlehoImage()
 	return
 }
 
-IncompleteVariants()
-{
+IncompleteVariants() {
 	if !FileExist("advdefs.json") {
 		MsgBox % "Downloading adventure defines"
 		AdventureList()
@@ -2875,8 +2861,7 @@ IncompleteVariants()
 	return
 }
 
-IncompleteBase()
-{
+IncompleteBase() {
 	FileRead, AdventureFile, advdefs.json
 	AdventureNames := JSON.parse(AdventureFile)
 
@@ -2929,8 +2914,7 @@ IncompleteBase()
 	return
 }
 
-IncompletePatron(patronid)
-{
+IncompletePatron(patronid) {
 	FileRead, AdventureFile, advdefs.json
 	AdventureNames := JSON.parse(AdventureFile)
 
