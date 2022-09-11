@@ -335,7 +335,7 @@ class MyGui {
 		Menu, AdvSubmenu, Add, End Background3 Adv, EndBG3Adventure
 		Menu, AdvSubmenu, Add, &Kleho Image, KlehoImage
 		Menu, AdvSubmenu, Add, &Incomplete Variants, IncompleteVariants
-		Menu, AdvSubmenu, Add, Adventure List, AdventureList
+		Menu, AdvSubmenu, Add, Update Adventure List, AdventureList
 		Menu, ToolsSubmenu, Add, &Adventure Manager, :AdvSubmenu
 
 		Menu, ToolsSubmenu, Add, &Briv Stack Calculator, Briv_Calc
