@@ -105,8 +105,8 @@ global VersionNumber := "3.25"
 global CurrentDictionary := "2.20"
 
 ;Local File globals
-;global OutputLogFile := "idlecombolog.txt"
 global OutputLogFile := ""
+global LogFileName := "idlecombolog.txt"
 global SettingsFile := "idlecombosettings.json"
 global UserDetailsFile := "userdetails.json"
 global ChestOpenLogFile := "chestopenlog.json"
@@ -114,6 +114,8 @@ global BlacksmithLogFile := "blacksmithlog.json"
 global RedeemCodeLogFile := "redeemcodelog.json"
 global JournalFile := "journal.json"
 global CurrentSettings := []
+global IconFilename := "IdleDragons.exe"
+global IconFile := ""
 global GameInstallDir := ""
 global GamePlatform := ""
 global GameClient := ""
@@ -132,6 +134,7 @@ global WRLFilePath := "IdleDragons_Data\StreamingAssets\downloaded_files\webRequ
 if ( setGameInstallEpic() == false ) {
 	setGameInstallSteam()
 }
+global IconFile := GameInstallDir IconFilename
 
 global DictionaryFile := "https://raw.githubusercontent.com/djravine/idlecombos/master/idledict.ahk"
 global LocalDictionary := "idledict.ahk"
@@ -149,8 +152,9 @@ global AlwaysSaveChests := 0
 global AlwaysSaveContracts := 0
 global AlwaysSaveCodes := 0
 global NoSaveSetting := 0
-global SettingsCheckValue := 13 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"servername":"ps7","firstrun":0,"user_id":0,"user_id_epic":0,"user_id_steam":0,"hash":0,"instance_id":0,"getdetailsonstart":0,"launchgameonstart":0,"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1, "NoSaveSetting":0})
+global LogEnabled := 0
+global SettingsCheckValue := 14 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"servername":"ps7","firstrun":0,"user_id":0,"user_id_epic":0,"user_id_steam":0,"hash":0,"instance_id":0,"getdetailsonstart":0,"launchgameonstart":0,"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1, "nosavesetting":0, "logenabled":0})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -180,7 +184,7 @@ global Background3Adventure := ""
 global Background3Area := ""
 global Background3Patron := ""
 global Background3Champions := ""
-global AchievementInfo := "This page intentionally left blank.`n`n`n`n`n`n`n"
+global AchievementInfo := "Welcome to IdleCombos!`n`nPlease setup you game client`nor update your user details.`n`n`n`n`n`n`n"
 global BlessingInfo := "`n`n`n`n`n`n"
 global ChampDetails := ""
 global TotalChamps := 0
@@ -260,108 +264,32 @@ global WebToolUtilitiesFormation := WebToolUtilities "/formation"
 
 ;GUI globals
 global oMyGUI := ""
-global OutputText := "Test"
+global OutputText := ""
 global OutputStatus := "Welcome to IdleCombos v" VersionNumber
 global CurrentTime := ""
 global CrashProtectStatus := "Crash Protect`nDisabled"
 global CrashCount := 0
-global LastUpdated := "No data loaded."
-global TrayIcon := systemroot "\system32\imageres.dll"
+global LastUpdated := "No data loaded"
+global TrayIcon := IconFile
 global LastBSChamp := ""
 global foundCodeString := ""
 
-;BEGIN:	default run commands
+;IdleChampions Icon
 if FileExist(TrayIcon) {
-	if (SubStr(A_OSVersion, 1, 2) == 10) {
-		Menu, Tray, Icon, %TrayIcon%, 300
-	}
-	else if (A_OSVersion == "WIN_8") {
-		Menu, Tray, Icon, %TrayIcon%, 284
-	}
-	else if (A_OSVersion == "WIN_7") {
-		Menu, Tray, Icon, %TrayIcon%, 78
-	}
-	else if (A_OSVersion == "WIN_VISTA") {
-		Menu, Tray, Icon, %TrayIcon%, 77
-	} ; WIN_8.1, WIN_2003, WIN_XP, WIN_2000, WIN_NT4, WIN_95, WIN_98, WIN_ME
+	Menu, Tray, Icon, %TrayIcon%
 }
-UpdateLogTime()
-FileAppend, (%CurrentTime%) IdleCombos v%VersionNumber% started.`n, %OutputLogFile%
-FileRead, OutputText, %OutputLogFile%
-if (!oMyGUI) {
-	oMyGUI := new MyGui()
-}
-;First run checks and setup
-if !FileExist(SettingsFile) {
-	FileAppend, %NewSettings%, %SettingsFile%
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) Settings file "idlecombosettings.json" created.`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
-}
-FileRead, rawsettings, %SettingsFile%
-CurrentSettings := JSON.parse(rawsettings)
-; MsgBox, % CurrentSettings.Count()
-; MsgBox, % CurrentSettings.user_id
-if !(CurrentSettings.Count() == SettingsCheckValue) {
-	FileDelete, %SettingsFile%
-	FileAppend, %NewSettings%, %SettingsFile%
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) Settings file "idlecombosettings.json" created.`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	FileRead, rawsettings, %SettingsFile%
-	CurrentSettings := JSON.parse(rawsettings)
-	oMyGUI.Update()
-	MsgBox, Your settings file has been deleted due to an update to IdleCombos. Please verify that your settings are set as preferred.
-}
-if FileExist(A_ScriptDir "\webRequestLog.txt") {
-	MsgBox, 4, , % "WRL File detected. Use file?"
-	IfMsgBox, Yes
-	{
-		WRLFile := A_ScriptDir "\webRequestLog.txt"
-		FirstRun()
-	}
-}
-if !(CurrentSettings.firstrun) {
-	FirstRun()
-}
-if (CurrentSettings.user_id && CurrentSettings.hash) {
-	UserID := CurrentSettings.user_id
-	UserIDEpic := CurrentSettings.user_id_epic
-	UserIDSteam := CurrentSettings.user_id_steam
-	UserHash := CurrentSettings.hash
-	InstanceID := CurrentSettings.instance_id
-	SB_SetText("User ID & Hash ready.")
-}
-else {
-	SB_SetText("User ID & Hash not found!")
-}
-;Loading current settings
-ServerName := CurrentSettings.servername
-GetDetailsonStart := CurrentSettings.getdetailsonstart
-LaunchGameonStart := CurrentSettings.launchgameonstart
-AlwaysSaveChests := CurrentSettings.alwayssavechests
-AlwaysSaveContracts := CurrentSettings.alwayssavecontracts
-AlwaysSaveCodes := CurrentSettings.alwayssavecodes
-NoSaveSetting := CurrentSettings.NoSaveSetting
-if (GetDetailsonStart == "1") {
-	GetUserDetails()
-}
-if (LaunchGameonStart == "1") {
-	LaunchGame()
-}
-oMyGUI.Update()
-SendMessage, 0x115, 7, 0, Edit1, A
+
+oMyGUI := new MyGui()
+
+;end startup
 return
-;END:	default run commands
 
 ;BEGIN: GUI Defs
 class MyGui {
 	Width := "550"
 	Height := "275" ;"250"
 
-	__New()
-	{
+	__New() {
 		Gui, MyWindow:New
 		Gui, MyWindow:+Resize -MaximizeBox +MinSize
 
@@ -407,7 +335,7 @@ class MyGui {
 		Menu, AdvSubmenu, Add, End Background3 Adv, EndBG3Adventure
 		Menu, AdvSubmenu, Add, &Kleho Image, KlehoImage
 		Menu, AdvSubmenu, Add, &Incomplete Variants, IncompleteVariants
-		Menu, AdvSubmenu, Add, Adventure List, AdventureList
+		Menu, AdvSubmenu, Add, Update Adventure List, AdventureList
 		Menu, ToolsSubmenu, Add, &Adventure Manager, :AdvSubmenu
 
 		Menu, ToolsSubmenu, Add, &Briv Stack Calculator, Briv_Calc
@@ -584,8 +512,9 @@ class MyGui {
 		Gui, MyWindow:Add, Text, vChampDetails x15 y33 w300 h180, % ChampDetails
 
 		Gui, Tab, Settings
-		Gui, MyWindow:Add, Text,, Server Name:
-		Gui, MyWindow:Add, Edit, vServerName w50
+		Gui, MyWindow:Add, Text, x15 y+10+p w95, Server Name:
+		Gui, MyWindow:Add, Edit, vServerName x85 y33 w50
+		Gui, MyWindow:Add, Checkbox, vLogEnabled x15 y+5+p, Logging Enabled?
 		Gui, MyWindow:Add, CheckBox, vGetDetailsonStart, Get User Details on start?
 		Gui, MyWindow:Add, CheckBox, vLaunchGameonStart, Launch game client on start?
 		Gui, MyWindow:Add, CheckBox, vAlwaysSaveChests, Always save Chest Open Results to file?
@@ -595,8 +524,74 @@ class MyGui {
 		Gui, MyWindow:Add, Button, gSave_Settings, Save Settings
 
 		Gui, Tab, Log
-		Gui, MyWindow:Add, Edit, r12 vOutputText ReadOnly w360, %OutputText%
+		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w375, %OutputText%
+
 		this.Show()
+		
+		;First run checks and setup
+		if !FileExist(SettingsFile) {
+			FileAppend, %NewSettings%, %SettingsFile%
+			LogFile("Settings File: '" SettingsFile "' - Created")
+			this.Update()
+		}
+		FileRead, rawsettings, %SettingsFile%
+		CurrentSettings := JSON.parse(rawsettings)
+		if !(CurrentSettings.Count() == SettingsCheckValue) {
+			FileDelete, %SettingsFile%
+			FileAppend, %NewSettings%, %SettingsFile%
+			LogFile("Settings File: '" SettingsFile "' - Created")
+			FileRead, rawsettings, %SettingsFile%
+			CurrentSettings := JSON.parse(rawsettings)
+			this.Update()
+			MsgBox, Your settings file has been deleted due to an update to IdleCombos. Please verify that your settings are set as preferred.
+		}
+
+		if FileExist(A_ScriptDir "\webRequestLog.txt") {
+			MsgBox, 4, , % "WRL File detected. Use file?"
+			IfMsgBox, Yes
+			{
+				WRLFile := A_ScriptDir "\webRequestLog.txt"
+				FirstRun()
+			}
+		}
+		if !(CurrentSettings.firstrun) {
+			FirstRun()
+		}
+		if (CurrentSettings.user_id && CurrentSettings.hash) {
+			UserID := CurrentSettings.user_id
+			UserIDEpic := CurrentSettings.user_id_epic
+			UserIDSteam := CurrentSettings.user_id_steam
+			UserHash := CurrentSettings.hash
+			InstanceID := CurrentSettings.instance_id
+			SB_SetText("✅ User ID & Hash Ready")
+		} else {
+			SB_SetText("❌ User ID & Hash not found!")
+		}
+
+		;Loading current settings
+		ServerName := CurrentSettings.servername
+		GetDetailsonStart := CurrentSettings.getdetailsonstart
+		LaunchGameonStart := CurrentSettings.launchgameonstart
+		AlwaysSaveChests := CurrentSettings.alwayssavechests
+		AlwaysSaveContracts := CurrentSettings.alwayssavecontracts
+		AlwaysSaveCodes := CurrentSettings.alwayssavecodes
+		NoSaveSetting := CurrentSettings.nosavesetting
+		LogEnabled := CurrentSettings.logenabled
+		
+		this.Update()
+
+		LogFile("IdleCombos v" VersionNumber " started.")
+		LogFile("Settings File: '" SettingsFile "' - Loaded")
+
+		if (GetDetailsonStart == "1") {
+			GetUserDetails()
+		}
+		if (LaunchGameonStart == "1") {
+			LaunchGame()
+		}
+
+		this.Update()
+		SendMessage, 0x115, 7, 0, Edit1, A
 	}
 
 	Show() {
@@ -642,7 +637,6 @@ class MyGui {
 		GuiControl, MyWindow:, Background3Area, % Background3Area, w250 h210
 		GuiControl, MyWindow:, Background3Patron, % Background3Patron, w250 h210
 		GuiControl, MyWindow:, Background3Champions, % Background3Champions, w250 h210
-
 		GuiControl, MyWindow:, FGCore, % FGCore, w250 h210
 		GuiControl, MyWindow:, BGCore, % BGCore, w250 h210
 		GuiControl, MyWindow:, BG2Core, % BG2Core, w250 h210
@@ -701,6 +695,7 @@ class MyGui {
 		GuiControl, MyWindow:, AlwaysSaveContracts, % AlwaysSaveContracts, w250 h210
 		GuiControl, MyWindow:, AlwaysSaveCodes, % AlwaysSaveCodes, w250 h210
 		GuiControl, MyWindow:, NoSaveSetting, % NoSaveSetting, w250 h210
+		GuiControl, MyWindow:, LogEnabled, % LogEnabled, w250 h210
 		;this.Show() - removed
 	}
 }
@@ -733,14 +728,14 @@ Crash_Toggle:
 			case "Crash Protect`nDisabled": {
 				CrashProtectStatus := "Crash Protect`nEnabled"
 				oMyGUI.Update()
-				SB_SetText("Crash Protect has been enabled!")
+				SB_SetText("✅ Crash Protect has been enabled!")
 				CrashProtect()
 			}
 			case "Crash Protect`nEnabled": {
 				CrashProtectStatus := "Crash Protect`nDisabled"
 				CrashCount := 0
 				oMyGUI.Update()
-				SB_SetText("Crash Protect has been disabled.")
+				SB_SetText("✅ Crash Protect has been disabled")
 			}
 		}
 		return
@@ -755,11 +750,9 @@ CrashProtect() {
 			Sleep 2500
 			Run, %GameClient%
 			++CrashCount
-			SB_SetText("Crash Protect has restarted your client.")
-			UpdateLogTime()
-			FileAppend, (%CurrentTime%) Restarts since enabling Crash Protect: %CrashCount%`n, %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
+			SB_SetText("✅ Crash Protect has restarted your client")
 			oMyGUI.Update()
+			LogFile("Restarts since enabling Crash Protect: " CrashCount)
 			Sleep 10000
 		}
 	}
@@ -776,10 +769,12 @@ Save_Settings:
 		CurrentSettings.alwayssavecontracts := AlwaysSaveContracts
 		CurrentSettings.alwayssavecodes := AlwaysSaveCodes
 		CurrentSettings.nosavesetting := NoSaveSetting
+		CurrentSettings.logenabled := LogEnabled
 		newsettings := JSON.stringify(CurrentSettings)
 		FileDelete, %SettingsFile%
 		FileAppend, %newsettings%, %SettingsFile%
-		SB_SetText("Settings have been saved.")
+		LogFile("Settings have been saved")
+		SB_SetText("✅ Settings have been saved")
 		return
 	}
 
@@ -806,9 +801,8 @@ Open_Silver:
 		if (Not WinExist("ahk_exe IdleDragons.exe")) {
 			Open_Chests(1)
 			return
-		}
-		else {
-			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests."
+		} else {
+			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests"
 			return 
 			;MsgBox, 4, , % "Note: It's recommended to close the game client before opening chests.`nWould you like to continue anyway?"
 			;IfMsgBox, Yes
@@ -828,9 +822,8 @@ Open_Gold:
 		if (Not WinExist("ahk_exe IdleDragons.exe")) {
 			Open_Chests(2)
 			return
-		}
-		else {
-			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests."
+		} else {
+			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests"
 			return
 			;MsgBox, 4, , % "Note: It's recommended to close the game client before opening chests.`nWould you like to continue anyway?`n`n(Feats earned using this app do not count towards the related achievement.)"
 			;IfMsgBox, Yes
@@ -862,42 +855,41 @@ Open_Codes:
 		Gui, CodeWindow:New
 		Gui, Menu, MyMenuBar
 		Gui, CodeWindow:+ToolWindow -Resize -MaximizeBox +MinSize
-		Gui, CodeWindow:Show, w230 h240, Codes
+		Gui, CodeWindow:Show, w230 h240, 📜 Codes
 		Gui, CodeWindow:Add, Edit, r12 vCodestoEnter w190 x20 y20, IDLE-CHAM-PION-SNOW
 		Gui, CodeWindow:Add, Button, gRedeem_Codes, Submit
 		Gui, CodeWindow:Add, Button, x+35 gPaste, Paste
 		Gui, CodeWindow:Add, Button, x+35 gClose_Codes, Close
 
 		; STATUS BAR
-		Gui, Add, StatusBar, vCodesOutputStatus, Codes: 0/1 - Waiting... (1 code per line)
+		Gui, Add, StatusBar, vCodesOutputStatus, ❗ Codes: 0/1 - Waiting... (1 code per line)
 		return
 	}
 
-	Paste()
-	{
+	Paste() {
 		getChestCodes()
 		loop, parse, foundCodeString, `n, `r
 			CodeTotal := a_index
 		GuiControl, , CodestoEnter, %foundCodeString%
-		GuiControl, , CodesOutputStatus, Codes: 0/%CodeTotal% - Waiting... (1 code per line)
+		if ( CodeTotal == "") {
+			CodeTotal := "0"
+		}
+		GuiControl, , CodesOutputStatus, ❗ Codes: 0/%CodeTotal% - Waiting... (1 code per line)
 		return
 	}
 
-	Delete()
-	{
+	Delete() {
 		GuiControl, , CodestoEnter,
-		GuiControl, , CodesOutputStatus, Codes: 0/0 - Waiting... (1 code per line)
+		GuiControl, , CodesOutputStatus, ❗ Codes: 0/0 - Waiting... (1 code per line)
 		return
 	}
 
-	Open_Web_Codes_Page()
-	{
+	Open_Web_Codes_Page() {
 		Run, %WebToolCodes%
 		return
 	}
 
-	Get_Codes_Autoload()
-	{
+	Get_Codes_Autoload() {
 		Open_Web_Codes_Page()
 		winwait, ALL active IDLE Champions combination🔒 codes
 		sleep, 1000
@@ -911,22 +903,21 @@ Open_Codes:
 		return
 	}
 
-	Get_Codes_Autoload_Run()
-	{
+	Get_Codes_Autoload_Run() {
 		Get_Codes_Autoload()
 		Redeem_Codes()
 		return
 	}
 
-	Redeem_Codes()
-	{
+	Redeem_Codes() {
+		LogFile("Redeem Code Started")
 		Gui, CodeWindow:Submit, NoHide
 		Gui, CodeWindow:Add, Text, x+45, Codes Remaining:
 		CodeList := StrSplit(CodestoEnter, "`n")
 		CodeCount := CodeList.Length()
 		CodeNum := 1
 		CodeTotal := CodeCount
-		CodesPending := "Codes: " CodeNum "/" CodeTotal " - Starting..."
+		CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Starting..."
 		GuiControl, , CodesOutputStatus, % CodesPending
 		usedcodes := ""
 		someonescodes := ""
@@ -941,8 +932,7 @@ Open_Codes:
 		codetgps := 0
 		codepolish := 0
 		tempsavesetting := 0
-		for k, v in CodeList
-		{
+		for k, v in CodeList {
 			v := StrReplace(v, "`r")
 			v := StrReplace(v, "`n")
 			v := Trim(v)
@@ -950,7 +940,7 @@ Open_Codes:
 			sCode := RegExReplace(CurrentCode, "&", Replacement := "%26")
 			sCode := RegExReplace(sCode, "#", Replacement := "%23")
 			if !UserID {
-				MsgBox % "Need User ID & Hash."
+				MsgBox % "Need User ID & Hash"
 				FirstRun()
 			}
 			codeparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&code=" sCode
@@ -972,66 +962,54 @@ Open_Codes:
 					coderesults := JSON.parse(rawresults)
 					rawloot := JSON.stringify(coderesults.loot_details)
 					codeloot := JSON.parse(rawloot)
-				}
-				else {
+				} else {
 					return
 				}
 			}
 			if (coderesults.failure_reason == "You have already redeemed this combination.") {
 				usedcodes := usedcodes sCode "`n"
-			}
-			else if (coderesults.failure_reason == "Someone has already redeemed this combination.") {
+			} else if (coderesults.failure_reason == "Someone has already redeemed this combination.") {
 				someonescodes := someonescodes sCode "`n"
-			}
-			else if (coderesults.failure_reason == "This offer has expired") {
+			} else if (coderesults.failure_reason == "This offer has expired") {
 				expiredcodes := expiredcodes sCode "`n"
-			}
-			else if (coderesults.failure_reason == "You can not yet redeem this combination.") {
+			} else if (coderesults.failure_reason == "You can not yet redeem this combination.") {
 				earlycodes := earlycodes sCode "`n"
-			}
-			else if (coderesults.failure_reason == "This is not a valid combination.") {
+			} else if (coderesults.failure_reason == "This is not a valid combination.") {
 				invalidcodes := invalidcodes sCode "`n"
-			}
-			else for kk, vv in codeloot
-			{
-				if (vv.chest_type_id == "2") {
-					codegolds += vv.count
-				}
-				else if (vv.chest_type_id == "37") {
-					codesupplys += vv.count
-				}
-				else if (vv.chest_type_id == "1") {
-					codesilvers += vv.count
-				}
-				else if (vv.chest_type_id) {
-					otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
-				}
-				else if (vv.add_time_gate_key_piece) {
-					codetgps += vv.count
-				}
-				else if (vv.add_inventory_buff_id) {
-					switch vv.add_inventory_buff_id
-					{
-						case 4: codeepics := codeepics "STR (" vv.count "), "
-						case 8: codeepics := codeepics "GF (" vv.count "), "
-						case 16: codeepics := codeepics "HP (" vv.count "), "
-						case 20: codeepics := codeepics "Bounty (" vv.count "), "
-						case 34: codeepics := codeepics "BS (" vv.count "), "
-						case 35: codeepics := codeepics "Spec (" vv.count "), "
-						case 40: codeepics := codeepics "FB (" vv.count "), "
-						case 77: codeepics := codeepics "Spd (" vv.count "), "
-						case 36: codepolish += vv.count
-						default: codeepics := codeepics vv.add_inventory_buff_id " (" vv.count "), "
+			} else {
+				for kk, vv in codeloot {
+					if (vv.chest_type_id == "2") {
+						codegolds += vv.count
+					} else if (vv.chest_type_id == "37") {
+						codesupplys += vv.count
+					} else if (vv.chest_type_id == "1") {
+						codesilvers += vv.count
+					} else if (vv.chest_type_id) {
+						otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
+					} else if (vv.add_time_gate_key_piece) {
+						codetgps += vv.count
+					} else if (vv.add_inventory_buff_id) {
+						switch vv.add_inventory_buff_id {
+							case 4: codeepics := codeepics "STR (" vv.count "), "
+							case 8: codeepics := codeepics "GF (" vv.count "), "
+							case 16: codeepics := codeepics "HP (" vv.count "), "
+							case 20: codeepics := codeepics "Bounty (" vv.count "), "
+							case 34: codeepics := codeepics "BS (" vv.count "), "
+							case 35: codeepics := codeepics "Spec (" vv.count "), "
+							case 40: codeepics := codeepics "FB (" vv.count "), "
+							case 77: codeepics := codeepics "Spd (" vv.count "), "
+							case 36: codepolish += vv.count
+							default: codeepics := codeepics vv.add_inventory_buff_id " (" vv.count "), "
+						}
 					}
 				}
-			}
+			} 
 			CodeCount := % (CodeCount-1)
 			CodeNum := % (CodeTotal-CodeCount)
 			if (CurrentSettings.alwayssavecodes || tempsavesetting) {
 				FileAppend, %sCode%`n, %RedeemCodeLogFile%
 				FileAppend, %rawresults%`n, %RedeemCodeLogFile%
-			}
-			else if !(CurrentSettings.nosavesetting) {
+			} else if !(CurrentSettings.nosavesetting) {
 				MsgBox, 4, , "Save to File?"
 				IfMsgBox, Yes
 				{
@@ -1041,10 +1019,10 @@ Open_Codes:
 				}
 			}
 			sleep, 1000
-			CodesPending := "Codes: " CodeNum "/" CodeTotal " - Submitting..."
+			CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Submitting..."
 			GuiControl, , CodesOutputStatus, % CodesPending
 		}
-		CodesPending := "Codes: " CodeNum "/" CodeTotal " - Loading Results..."
+		CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Loading Results..."
 		codemessage := ""
 		if (codegolds > 0) {
 			codemessage := codemessage "Gold Chests:`n" codegolds "`n"
@@ -1085,16 +1063,17 @@ Open_Codes:
 			codemessage := codemessage "You Already Used:`n" usedcodes "`n"
 		}
 		if (codemessage == "") {
-			codemessage := "Unknown or No Results."
+			codemessage := "Unknown or No Results"
 		}
 		GuiControl, , CodesOutputStatus, % CodesPending, w350 h210
 		GetUserDetails()
 		oMyGUI.Update()
 		Gui, CodeWindow: Default
-		CodesPending := "Codes: " CodeTotal "/" CodeTotal " - Completed!"
+		CodesPending := "✅ Codes: " CodeTotal "/" CodeTotal " - Completed! 😎"
 		GuiControl, , CodesOutputStatus, % CodesPending
 		; MsgBox, , Results, % codemessage
 		ScrollBox(codemessage, "p b1 h200 w250", "Redeem Codes Results")
+		LogFile("Redeem Code Finished")
 		return
 	}
 
@@ -1118,32 +1097,27 @@ Close_Codes:
 		return
 	}
 
-Open_Web_Game_Viewer()
-	{
+Open_Web_Game_Viewer() {
 		Run, %WebToolGameViewer%
 		return
 	}
 
-Open_Web_Data_Viewer()
-	{
+Open_Web_Data_Viewer() {
 		Run, %WebToolDataViewer%
 		return
 	}
 
-Open_Web_Utilities()
-	{
+Open_Web_Utilities() {
 		Run, %WebToolUtilities%
 		return
 	}
 
-Open_Web_Utilities_Formation()
-	{
+Open_Web_Utilities_Formation() {
 		Run, %WebToolUtilitiesFormation%
 		return
 	}
 
-Open_Web_Utilities_Modron()
-	{
+Open_Web_Utilities_Modron() {
 		Run, %WebToolUtilitiesModron%
 		return
 	}
@@ -1156,7 +1130,6 @@ Clear_Log:
 			FileDelete, %OutputLogFile%
 			OutputText := ""
 			oMyGUI.Update()
-			return
 		}
 		return
 	}
@@ -1165,50 +1138,43 @@ Buy_Extra_Chests(chestid,extracount) {
 	chestparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&chest_type_id=" chestid "&count="
 	gemsspent := 0
 	while (extracount > 0) {
-		SB_SetText("Chests remaining to purchase: " extracount)
+		SB_SetText("⌛ Chests remaining to purchase: " extracount)
 		if (extracount < 101) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams extracount)
 			extracount -= extracount
-		}
-		else {
+		} else {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams "100")
 			extracount -= 100
 		}
 		chestresults := JSON.parse(rawresults)
 		if (chestresults.success == "0") {
 			MsgBox % "Error: " rawresults
-			UpdateLogTime()
-			FileAppend, (%CurrentTime%) Gems spent: %gemsspent%`n, %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
-			oMyGUI.Update()
+			LogFile("Gems spent: " gemsspent)
 			GetUserDetails()
-			SB_SetText("Chests remaining: " count " (Error: " chestresults.failure_reason ")")
+			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
 		}
 		gemsspent += chestresults.currency_spent
 		Sleep 1000
 	}
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) Gems spent: %gemsspent%`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	SB_SetText("Chest purchase completed.")
+	LogFile("Gems spent: " gemsspent)
+	SB_SetText("✅ Chest purchase completed")
 	return gemsspent
 }
 
 Buy_Chests(chestid) {
 	if !UserID {
-		MsgBox % "Need User ID & Hash."
+		MsgBox % "Need User ID & Hash"
 		FirstRun()
 	}
 	if !CurrentGems {
 		MsgBox, 4, , No gems detected. Check server for user details?
-			IfMsgBox, Yes
+		IfMsgBox, Yes
 		{
 			GetUserDetails()
 		}
 	}
-	switch chestid
-	{
+	switch chestid {
 		case 1: {
 			maxbuy := Floor(CurrentGems/50)
 			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 200, 180
@@ -1216,8 +1182,10 @@ Buy_Chests(chestid) {
 				return
 			if (count > maxbuy) {
 				MsgBox, 4, , Insufficient gems detected for purchase.`nContinue anyway?
-					IfMsgBox No
-				return
+				IfMsgBox, No
+				{
+					return
+				}
 			}
 		}
 		case 2: {
@@ -1230,13 +1198,15 @@ Buy_Chests(chestid) {
 				rawresults := ServerCall("alphachests", chestparams)
 				MsgBox % rawresults
 				GetUserDetails()
-				SB_SetText("Ai yi yi, Zordon!")
+				SB_SetText("✨ Ai yi yi, Zordon!")
 				return
 			}
 			if (count > maxbuy) {
 				MsgBox, 4, , Insufficient gems detected for purchase.`nContinue anyway?
-					IfMsgBox No
-				return
+				IfMsgBox, No
+				{
+					return
+				}
 			}
 		}
 		default: {
@@ -1247,52 +1217,44 @@ Buy_Chests(chestid) {
 	chestparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&chest_type_id=" chestid "&count="
 	gemsspent := 0
 	while (count > 0) {
-		SB_SetText("Chests remaining to purchase: " count)
+		SB_SetText("⌛ Chests remaining to purchase: " count)
 		if (count < 101) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams count)
 			count -= count
-		}
-		else {
+		} else {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams "100")
 			count -= 100
 		}
 		chestresults := JSON.parse(rawresults)
 		if (chestresults.success == "0") {
 			MsgBox % "Error: " rawresults
-			UpdateLogTime()
-			FileAppend, (%CurrentTime%) Gems spent: %gemsspent%`n, %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
-			oMyGUI.Update()
+			LogFile("Gems spent: " gemsspent)
 			GetUserDetails()
-			SB_SetText("Chests remaining: " count " (Error: " chestresults.failure_reason ")")
+			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
 		}
 		gemsspent += chestresults.currency_spent
 		Sleep 1000
 	}
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) Gems spent: %gemsspent%`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
+	LogFile("Gems spent: " gemsspent)
 	GetUserDetails()
-	SB_SetText("Chest purchase completed.")
+	SB_SetText("✅ Chest purchase completed.")
 	return
 }
 
 Open_Chests(chestid) {
 	if !UserID {
-		MsgBox % "Need User ID & Hash."
+		MsgBox % "Need User ID & Hash"
 		FirstRun()
 	}
 	if (!CurrentGolds && !CurrentSilvers && !CurrentGems) {
 		MsgBox, 4, , No chests or gems detected. Check server for user details?
-			IfMsgBox, Yes
+		IfMsgBox, Yes
 		{
 			GetUserDetails()
 		}
 	}
-	switch chestid
-	{
+	switch chestid {
 		case 1: {
 			InputBox, count, Opening Chests, % "How many Silver Chests?`n(Owned: " CurrentSilvers ")`n(Max: " (CurrentSilvers + Floor(CurrentGems/50)) ")", , 200, 180
 			if ErrorLevel
@@ -1301,8 +1263,9 @@ Open_Chests(chestid) {
 				MsgBox, 4, , % "Spend " ((count - CurrentSilvers)*50) " gems to purchase " (count - CurrentSilvers) " chests before opening?"
 				extracount := (count - CurrentSilvers)
 				IfMsgBox, Yes
-				extraspent := Buy_Extra_Chests(1,extracount)
-				else {
+				{
+					extraspent := Buy_Extra_Chests(1,extracount)
+				} else {
 					return
 				}
 			}
@@ -1315,8 +1278,9 @@ Open_Chests(chestid) {
 				MsgBox, 4, , % "Spend " ((count - CurrentGolds)*500) " gems to purchase " (count - CurrentGolds) " chests before opening?"
 				extracount := (count - CurrentGolds)
 				IfMsgBox, Yes
-				extraspent := Buy_Extra_Chests(2,extracount)
-				else {
+				{
+					extraspent := Buy_Extra_Chests(2,extracount)
+				} else {
 					return
 				}
 			}
@@ -1335,21 +1299,19 @@ Open_Chests(chestid) {
 	chestresults_cumulative := {}
 
 	while (count > 0) {
-		SB_SetText("Chests remaining to open: " count)
+		SB_SetText("⌛ Chests remaining to open: " count)
 		if (count < 100) {
 			rawresults := ServerCall("opengenericchest", chestparams count)
 			Sleep, 500
 			count -= count
-		}
-		else {
+		} else {
 			rawresults := ServerCall("opengenericchest", chestparams 99)
 			Sleep, 500
 			count -= 99
 		}
 		if (CurrentSettings.alwayssavechests || tempsavesetting) {
 			FileAppend, %rawresults%`n, %ChestOpenLogFile%
-		}
-		else {
+		} else {
 			if !CurrentSettings.nosavesetting {
 				InputBox, dummyvar, Chest Results, Save to File?, , 250, 150, , , , , % rawresults
 				dummyvar := ""
@@ -1361,8 +1323,7 @@ Open_Chests(chestid) {
 		}
 		chestresults := JSON.parse(rawresults)
 		if ((chestresults.success == "0") || (chestresults.loot_details == "0")) {
-			switch chestid
-			{
+			switch chestid {
 				case "1": {
 					chestsopened := (CurrentSilvers - chestresults.chests_remaining)
 					if (extraspent) {
@@ -1379,12 +1340,9 @@ Open_Chests(chestid) {
 				}
 			}
 			MsgBox % "Error: " rawresults
-			UpdateLogTime()
-			FileAppend, % "(" CurrentTime ") Chests Opened: " Floor(chestsopened) "`n", %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
-			oMyGUI.Update()
+			LogFile("Chests Opened: " Floor(chestsopened))
 			GetUserDetails()
-			SB_SetText("Chests remaining: " count " (Error)")
+			SB_SetText("⌛ Chests remaining: " count " (Error)")
 			return
 		}
 		for k, v in chestresults.loot_details {
@@ -1393,56 +1351,48 @@ Open_Chests(chestid) {
 				newfeats := newfeats lastfeat
 			}
 			if (v.gilded) {
-				if ( !IsObject( chestresults_cumulative[ v.hero_id ] ) )
-				{
+				if ( !IsObject( chestresults_cumulative[ v.hero_id ] ) ) {
 					chestresults_cumulative[ v.hero_id ] := {}
 					chestresults_cumulative[ v.hero_id ][ v.slot_id ] := {}
 					chestresults_cumulative[ v.hero_id ][ v.slot_id ][ gilded_count ] := 1
 					if (v.disenchant_amount == 125)
 						chestresults_cumulative[ v.hero_id ][ v.slot_id ][ disenchant_amount ] := v.disenchant_amount
-				}
-				else if ( !IsObject( chestresults_cumulative[ v.hero_id ][ v.slot_id ] ) )
-				{
+				} else if ( !IsObject( chestresults_cumulative[ v.hero_id ][ v.slot_id ] ) ) {
 					chestresults_cumulative[ v.hero_id ][ v.slot_id ] := {}
 					chestresults_cumulative[ v.hero_id ][ v.slot_id ][ gilded_count ] := 1
 					if (v.disenchant_amount == 125)
 						chestresults_cumulative[ v.hero_id ][ v.slot_id ][ disenchant_amount ] := v.disenchant_amount
-				}
-				Else
-				{
+				} else {
 					chestresults_cumulative[ v.hero_id ][ v.slot_id ][ gilded_count ] += 1
 					if (v.disenchant_amount == 125)
 						chestresults_cumulative[ v.hero_id ][ v.slot_id ][ disenchant_amount ] += v.disenchant_amount
 				}
-
 			}
 		}
 	}
 
-	for k, v in chestresults_cumulative
-	{
-		for k2, v2 in v
-		{
-			if ( v2.gilded_count <= 1 )
+	for k, v in chestresults_cumulative {
+		for k2, v2 in v {
+			if ( v2.gilded_count <= 1 ) {
 				lastshiny := ( ChampFromID( k ) " (Slot " k2 ")" )
-			else
+			} else {
 				lastshiny := ( ChampFromID( k ) " (Slot " k2 " x " v2.gilded_count ")" )
-			if ( v2.disenchant_amount )
+			}
+			if ( v2.disenchant_amount ) {
 				lastshiny .= " +" v2.disenchant_amount
+			}
 			newshinies .= lastshiny "`n"
 		}
 	}
 	tempsavesetting := 0
-	switch chestid
-	{
+	switch chestid {
 		case "1": {
 			chestsopened := (CurrentSilvers - chestresults.chests_remaining)
 			if (extraspent) {
 				chestsopened += (extraspent/50)
 			}
 			MsgBox % "New Shinies:`n" newshinies
-			UpdateLogTime()
-			FileAppend, % "(" CurrentTime ") Silver Chests Opened: " Floor(chestsopened) "`n", %OutputLogFile%
+			LogFile("Silver Chests Opened: " Floor(chestsopened))
 		}
 		case "2": {
 			chestsopened := (CurrentGolds - chestresults.chests_remaining)
@@ -1450,14 +1400,11 @@ Open_Chests(chestid) {
 				chestsopened += (extraspent/500)
 			}
 			MsgBox % "New Feats:`n" newfeats "`nNew Shinies:`n" newshinies
-			UpdateLogTime()
-			FileAppend, % "(" CurrentTime ") Gold Chests Opened: " Floor(chestsopened) "`n", %OutputLogFile%
+			LogFile("Gold Chests Opened: " Floor(chestsopened))
 		}
 	}
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
 	GetUserDetails()
-	SB_SetText("Chest opening completed.")
+	SB_SetText("✅ Chest opening completed")
 	return
 }
 
@@ -1493,11 +1440,10 @@ Hg_Blacksmith:
 
 UseBlacksmith(buffid) {
 	if !UserID {
-		MsgBox % "Need User ID & Hash."
+		MsgBox % "Need User ID & Hash"
 		FirstRun()
 	}
-	switch buffid
-	{
+	switch buffid {
 		case 31: currentcontracts := CurrentTinyBS
 		case 32: currentcontracts := CurrentSmBS
 		case 33: currentcontracts := CurrentMdBS
@@ -1507,35 +1453,39 @@ UseBlacksmith(buffid) {
 	if !(currentcontracts) {
 		MsgBox, 4, , No Blacksmith Contracts of that size detected. Check server for user details?
 			IfMsgBox, Yes
-		{
-			GetUserDetails()
-		}
+			{
+				GetUserDetails()
+			}
 	}
 	InputBox, count, Blacksmithing, % "How many Blacksmith Contracts?`n(Max: " currentcontracts ")", , 200, 180, , , , , %currentcontracts%
 	if ErrorLevel
 		return
 	if (count > currentcontracts) {
 		MsgBox, 4, , Insufficient blacksmith contracts detected for use.`nContinue anyway?
-			IfMsgBox No
-		return
+		IfMsgBox, No
+		{
+			return
+		}
 	}
 	heroid := "error"
 	InputBox, heroid, Blacksmithing, % "Use contracts on which Champ? (Enter ID)", , 200, 180, , , , , %LastBSChamp%
 	if ErrorLevel
 		return
 	while !(heroid is number) {
-		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number.", , 200, 180, , , , , %LastBSChamp%
+		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number", , 200, 180, , , , , %LastBSChamp%
 		if ErrorLevel
 			return
 	}
 	while !((heroid > 0) && (heroid < 107)) {
-		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number.", , 200, 180, , , , , %LastBSChamp%
+		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number", , 200, 180, , , , , %LastBSChamp%
 		if ErrorLevel
 			return
 	}
 	MsgBox, 4, , % "Use " count " contracts on " ChampFromID(heroid) "?"
-	IfMsgBox No
-	return
+	IfMsgBox, No
+	{
+		return
+	}
 	LastBSChamp := heroid
 	bscontractparams := "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&buff_id=" buffid "&hero_id=" heroid "&num_uses="
 	tempsavesetting := 0
@@ -1546,19 +1496,17 @@ UseBlacksmith(buffid) {
 	slot5lvs := 0
 	slot6lvs := 0
 	while (count > 0) {
-		SB_SetText("Contracts remaining to use: " count)
+		SB_SetText("⌛ Contracts remaining to use: " count)
 		if (count < 50) {
 			rawresults := ServerCall("useserverbuff", bscontractparams count)
 			count -= count
-		}
-		else {
+		} else {
 			rawresults := ServerCall("useserverbuff", bscontractparams "50")
 			count -= 50
 		}
 		if (CurrentSettings.alwayssavecontracts || tempsavesetting) {
 			FileAppend, %rawresults%`n, %BlacksmithLogFile%
-		}
-		else {
+		} else {
 			if !CurrentSettings.nosavesetting {
 				InputBox, dummyvar, Contracts Results, Save to File?, , 250, 150, , , , , % rawresults
 				dummyvar := ""
@@ -1572,28 +1520,22 @@ UseBlacksmith(buffid) {
 		if ((blacksmithresults.success == "0") || (blacksmithresults.okay == "0")) {
 			MsgBox % ChampFromID(heroid) " levels gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
 			MsgBox % "Error: " rawresults
-			switch buffid
-			{
+			switch buffid {
 				case 31: contractsused := (CurrentTinyBS - blacksmithresults.buffs_remaining)
 				case 32: contractsused := (CurrentSmBS - blacksmithresults.buffs_remaining)
 				case 33: contractsused := (CurrentMdBS - blacksmithresults.buffs_remaining)
 				case 34: contractsused := (CurrentLgBS - blacksmithresults.buffs_remaining)
 				case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 			}
-			UpdateLogTime()
-			FileAppend, % "(" CurrentTime ") Contracts Used: " Floor(contractsused) "`n", %OutputLogFile%
-			FileRead, OutputText, %OutputLogFile%
-			oMyGUI.Update()
+			LogFile("Contracts Used: " Floor(contractsused))
 			GetUserDetails()
-			SB_SetText("Contracts remaining: " count " (Error)")
+			SB_SetText("⌛ Contracts remaining: " count " (Error)")
 			return
 		}
 		rawactions := JSON.stringify(blacksmithresults.actions)
 		blacksmithactions := JSON.parse(rawactions)
-		for k, v in blacksmithactions
-		{
-			switch v.slot_id
-			{
+		for k, v in blacksmithactions {
+			switch v.slot_id {
 				case 1: slot1lvs += v.amount
 				case 2: slot2lvs += v.amount
 				case 3: slot3lvs += v.amount
@@ -1612,24 +1554,22 @@ UseBlacksmith(buffid) {
 		case 34: contractsused := (CurrentLgBS - blacksmithresults.buffs_remaining)
 		case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 	}
-	UpdateLogTime()
-	FileAppend, % "(" CurrentTime ") Contracts used on " ChampFromID(heroid) ": " Floor(contractsused) "`n", %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
+	LogFile("Contracts used on " ChampFromID(heroid) ": " Floor(contractsused))
 	GetUserDetails()
-	SB_SetText("Blacksmith use completed.")
+	SB_SetText("✅ Blacksmith use completed")
 	return
 }
 
 global lastadv := 0			;fmagdi - to be used to save ended adventureid for use as default for next load 
 
 LoadAdventure() {
-
 	GetUserDetails()
 	while !(CurrentAdventure == "-1") {
 		MsgBox, 5, , Please end your current adventure first.
-		IfMsgBox Cancel
-		return
+		IfMsgBox, Cancel
+		{
+			return
+		}
 	}
 	advtoload := lastadv		;fmagdi - defaults to last ended adventure id, or to variable default in globals
 	patrontoload := 0
@@ -1652,13 +1592,12 @@ LoadAdventure() {
 	advparams := DummyData "&patron_tier=0&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" ActiveInstance "&adventure_id=" advtoload "&patron_id=" patrontoload
 	sResult := ServerCall("setcurrentobjective", advparams)
 	GetUserDetails()
-	SB_SetText("Selected adventure has been loaded.")
+	SB_SetText("✅ Selected adventure has been loaded")
 	return
 }
 
 EndAdventure() {
 	GetUserDetails()				;fmagdi - updates info before ending an adventure to be sure you are ending the correct one
-
 	while (CurrentAdventure == "-1") {
 		MsgBox, No current adventure active.
 		return
@@ -1674,15 +1613,14 @@ EndAdventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" ActiveInstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("Current adventure has been ended.")
+	SB_SetText("✅ Current adventure has been ended")
 	return
 }
 
 EndBGAdventure() {
 	if (ActiveInstance == "1") {
 		bginstance := 2
-	}
-	else {
+	} else {
 		bginstance := 1
 	}
 	while (BackgroundAdventure == "-1" or BackgroundAdventure == "") {
@@ -1697,15 +1635,14 @@ EndBGAdventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" bginstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("Background adventure has been ended.")
+	SB_SetText("✅ Background adventure has been ended")
 	return
 }
 
 EndBG2Adventure() {
 	if (ActiveInstance == "3" or ActiveInstance == "4") {
 		bginstance := 2
-	}
-	else {
+	} else {
 		bginstance := 3
 	}
 	while (Background2Adventure == "-1" or Background2Adventure == "") {
@@ -1720,15 +1657,14 @@ EndBG2Adventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" bginstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("Background2 adventure has been ended.")
+	SB_SetText("✅ Background2 adventure has been ended")
 	return
 }
 
 EndBG3Adventure() {
 	if (ActiveInstance == "4") {
 		bginstance := 3
-	}
-	else {
+	} else {
 		bginstance := 4
 	}
 	while (Background3Adventure == "-1" or Background3Adventure == "") {
@@ -1743,18 +1679,16 @@ EndBG3Adventure() {
 	advparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" bginstance
 	sResult := ServerCall("softreset", advparams)
 	GetUserDetails()
-	SB_SetText("Background3 adventure has been ended.")
+	SB_SetText("✅ Background3 adventure has been ended")
 	return
 }
 ;	fmagdi -stop
 
-detectGameInstallSteam()
-{
+detectGameInstallSteam() {
 	setGameInstallSteam(true)
 }
 
-setGameInstallSteam( manual = false)
-{
+setGameInstallSteam( manual = false) {
 	; Detect Steam install
 	if FileExist(GameInstallDirSteam) {
 		GameInstallDir := GameInstallDirSteam
@@ -1773,13 +1707,11 @@ setGameInstallSteam( manual = false)
 	return false
 }
 
-detectGameInstallEpic()
-{
+detectGameInstallEpic() {
 	setGameInstallEpic(true)
 }
 
-setGameInstallEpic( manual = false)
-{
+setGameInstallEpic( manual = false) {
 	; Detect Epic Games install
 	if FileExist(GameClientEpic) {
 		FileRead, EpicJSONString, %GameClientEpic%
@@ -1791,7 +1723,7 @@ setGameInstallEpic( manual = false)
 				GameClient := GameClientEpicLauncher
 				WRLFile := GameInstallDir WRLFilePath
 				GamePlatform := "Epic Game Store"
-				if manual{
+				if manual {
 					msgbox Epic Games install found
 					FirstRun()
 					GetUserDetails()
@@ -1810,13 +1742,10 @@ FirstRun() {
 	IfMsgBox, Yes
 	{
 		GetIdFromWRL()
-		UpdateLogTime()
-		FileAppend, (%CurrentTime%) User ID: %UserID% & Hash: %UserHash% detected in WRL.`n, %OutputLogFile%
-	}
-	else
-	{
+		LogFile("User ID: " UserID " & Hash: " UserHash " detected in WRL")
+	} else {
 		MsgBox, 4, , Choose install directory manually?
-		IfMsgBox Yes
+		IfMsgBox, Yes
 		{
 			FileSelectFile, WRLFile, 1, webRequestLog.txt, Select webRequestLog file, webRequestLog.txt
 			if ErrorLevel
@@ -1824,20 +1753,16 @@ FirstRun() {
 			GetIdFromWRL()
 			GameInstallDir := SubStr(WRLFile, 1, -67)
 			GameClient := GameInstallDir "IdleDragons.exe"
-		}	
-		else {
+		} else {
 			InputBox, UserID, user_id, Please enter your "user_id" value., , 250, 125
 			if ErrorLevel
 				return
 			InputBox, UserHash, hash, Please enter your "hash" value., , 250, 125
 			if ErrorLevel
 				return
-			UpdateLogTime()
-			FileAppend, (%CurrentTime%) User ID: %UserID% & Hash: %UserHash% manually entered.`n, %OutputLogFile%
+			LogFile("User ID: " UserID " & Hash: " UserHash " manually entered")
 		}
 	}
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
 	CurrentSettings.user_id := UserID
 	CurrentSettings.user_id_epic := UserIDEpic
 	CurrentSettings.user_id_steam := UserIDSteam
@@ -1846,30 +1771,41 @@ FirstRun() {
 	newsettings := JSON.stringify(CurrentSettings)
 	FileDelete, %SettingsFile%
 	FileAppend, %newsettings%, %SettingsFile%
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) IdleCombos setup completed.`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
-	SB_SetText("User ID & Hash ready.")
+	LogFile("IdleCombos Setup Completed")
+	SB_SetText("✅ User ID & Hash Ready")
 }
 
 UpdateLogTime() {
 	FormatTime, CurrentTime, , yyyy-MM-dd HH:mm:ss
 }
 
+LogFile(LogMessage) {
+	if (LogEnabled) {
+		OutputLogFile := LogFileName
+		if (LogMessage) {
+			UpdateLogTime()
+			FileAppend, [%CurrentTime%] %LogMessage% `n, %OutputLogFile%
+			FileRead, OutputText, %OutputLogFile%
+			oMyGUI.Update()
+		}
+	} else {
+		OutputLogFile := ""
+	}
+}
+
 GetIDFromWRL() {
 	FileRead, oData, %WRLFile%
 	if ErrorLevel {
 		MsgBox, 4, , Could not find webRequestLog.txt file.`nChoose install directory manually?
-		IfMsgBox Yes
+		IfMsgBox, Yes
 		{
 			FileSelectFile, WRLFile, 1, webRequestLog.txt, Select webRequestLog file, webRequestLog.txt
 			if ErrorLevel
 				return
 			FileRead, oData, %WRLFile%
-		}
-		else
+		} else {
 			return
+		}
 	}
 	FoundPos := InStr(oData, "getuserdetails&language_id=1&user_id=")
 	oData2 := SubStr(oData, (FoundPos + 37))
@@ -1900,7 +1836,7 @@ GetIDFromWRL() {
 
 GetUserDetails() {
 	Gui, MyWindow:Default
-	SB_SetText("Please wait a moment...")
+	SB_SetText("⌛ Loading Data... Please wait...")
 	getuserparams := DummyData "&include_free_play_objectives=true&instance_key=1&user_id=" UserID "&hash=" UserHash
 	rawdetails := ServerCall("getuserdetails", getuserparams)
 	FileDelete, %UserDetailsFile%
@@ -1920,9 +1856,10 @@ GetUserDetails() {
 	ParseLootData()
 	CheckAchievements()
 	CheckBlessings()
-	oMyGUI.Update()
-	SB_SetText("User details available.")
 	CheckPatronProgress()
+	SB_SetText("✅ Loaded and Ready 😎")
+	LogFile("User Details - Loaded")
+	oMyGUI.Update()
 	return
 }
 
@@ -1936,10 +1873,11 @@ ParseAdventureData() {
 		InstanceList[v.game_instance_id].current_area := v.current_area
 		InstanceList[v.game_instance_id].Patron := PatronFromID(v.current_patron_id)
 		InstanceList[v.game_instance_id].ChampionsCount := 0
-		for l, w in v.formation
+		for l, w in v.formation {
 			if (w > 0) {
 				InstanceList[v.game_instance_id].ChampionsCount += 1
 			}
+		}
 	}
 	for k, v in UserDetails.details.modron_saves {
 		InstanceList[v.instance_id].core := "Core: " Corelist[v.core_id]
@@ -1970,8 +1908,7 @@ ParseAdventureData() {
 			FGCore := v.core
 			CurrentChampions := v.ChampionsCount
 			ChampionsActiveCount += v.ChampionsCount
-		}
-		else if (bginstance == 0){
+		} else if (bginstance == 0){
 			BackgroundAdventure := v.current_adventure_id
 			BackgroundArea := v.current_area
 			BackgroundPatron := v.Patron
@@ -1979,8 +1916,7 @@ ParseAdventureData() {
 			BackgroundChampions := v.ChampionsCount
 			ChampionsActiveCount += v.ChampionsCount
 			bginstance += 1
-		}
-		else if (bginstance == 1){
+		} else if (bginstance == 1){
 			Background2Adventure := v.current_adventure_id
 			Background2Area := v.current_area
 			Background2Patron := v.Patron
@@ -1988,8 +1924,7 @@ ParseAdventureData() {
 			Background2Champions := v.ChampionsCount
 			ChampionsActiveCount += v.ChampionsCount
 			bginstance += 1
-		}
-		else if (bginstance == 2){
+		} else if (bginstance == 2){
 			Background3Adventure := v.current_adventure_id
 			Background3Area := v.current_area
 			Background3Patron := v.Patron
@@ -2027,8 +1962,7 @@ ParseTimestamps() {
 	if (UserDetails.details.stats.time_gate_key_next_time < UserDetails.current_time) {
 		Gui, Font, cGreen
 		GuiControl, Font, NextTGPDrop
-	}
-	else {
+	} else {
 		Gui, Font, cBlack
 		GuiControl, Font, NextTGPDrop
 	}
@@ -2042,18 +1976,18 @@ ParseInventoryData() {
 	CurrentSilvers := UserDetails.details.chests.1
 	CurrentTGPs := UserDetails.details.stats.time_gate_key_pieces
 	AvailableTGs := "= " Floor(CurrentTGPs/6) " Time Gates"
-	for k, v in UserDetails.details.buffs
-		switch v.buff_id
-	{
-		case 17: CurrentTinyBounties := v.inventory_amount
-		case 18: CurrentSmBounties := v.inventory_amount
-		case 19: CurrentMdBounties := v.inventory_amount
-		case 20: CurrentLgBounties := v.inventory_amount
-		case 31: CurrentTinyBS := v.inventory_amount
-		case 32: CurrentSmBS := v.inventory_amount
-		case 33: CurrentMdBS := v.inventory_amount
-		case 34: CurrentLgBS := v.inventory_amount
-		case 1797: CurrentHgBS := v.inventory_amount
+	for k, v in UserDetails.details.buffs {
+		switch v.buff_id {
+			case 17: CurrentTinyBounties := v.inventory_amount
+			case 18: CurrentSmBounties := v.inventory_amount
+			case 19: CurrentMdBounties := v.inventory_amount
+			case 20: CurrentLgBounties := v.inventory_amount
+			case 31: CurrentTinyBS := v.inventory_amount
+			case 32: CurrentSmBS := v.inventory_amount
+			case 33: CurrentMdBS := v.inventory_amount
+			case 34: CurrentLgBS := v.inventory_amount
+			case 1797: CurrentHgBS := v.inventory_amount
+		}
 	}
 	if (CurrentTinyBounties = "") {
 		CurrentTinyBounties := 0
@@ -2089,8 +2023,7 @@ ParseInventoryData() {
 		AvailableTokens := "= " tokencount " Tokens`t(" Round(tokencount/2500, 2) " FPs)"
 		CurrentTokens := "+ " tokentotal " Current`t(" Round(tokentotal/2500, 2) " FPs)"
 		AvailableFPs := "(Total: " (tokentotal+tokencount) " = " Round((tokentotal + tokencount)/2500, 2) " Free Plays)"
-	}
-	else {
+	} else {
 		AvailableTokens := "= " tokencount " Tokens"
 		CurrentTokens := "(" Round(tokencount/2500, 2) " Free Plays)"
 	}
@@ -2133,8 +2066,8 @@ ParsePatronData() {
 							case "weekly_challenge_porgress": MirtChallenges := vv.count
 						}
 					}
-					MirtRequires := "Mirt Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
-					MirtCosts := "Mirt Coins:  "  Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
+					MirtRequires := "Mirt Influence: " SubStr( "          " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)], -9)
+					MirtCosts := "Mirt Coins: " SubStr( "          " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)], -9)
 				}
 			}
 			case 2: {
@@ -2167,8 +2100,8 @@ ParsePatronData() {
 							case "weekly_challenge_porgress": VajraChallenges := vv.count
 						}
 					}
-					VajraRequires := "Vajra Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
-					VajraCosts := "Vajra Coins:  "  Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
+					VajraRequires := "Vajra Influence: " SubStr( "          " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)], -9)
+					VajraCosts := "Vajra Coins: " SubStr( "          " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)], -9)
 				}
 			}
 			case 3: {
@@ -2207,8 +2140,8 @@ ParsePatronData() {
 							case "weekly_challenge_porgress": StrahdChallenges := vv.count
 						}
 					}
-					StrahdRequires := "Strahd Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
-					StrahdCosts := "Strahd Coins:  "  Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
+					StrahdRequires := "Strahd Influence: " SubStr( "          " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)], -9)
+					StrahdCosts := "Strahd Coins: " SubStr( "          " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)], -9)
 				}
 			}
 			case 4: {
@@ -2241,8 +2174,8 @@ ParsePatronData() {
 							case "weekly_challenge_porgress": ZarielChallenges := vv.count
 						}
 					}
-					ZarielRequires := "Zariel Influence:  " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)]
-					ZarielCosts := "Zariel Coins:  " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)]
+					ZarielRequires := "Zariel Influence: " SubStr( "          " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)], -9)
+					ZarielCosts := "Zariel Coins: " SubStr( "          " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)], -9)
 				}
 			}
 		}
@@ -2289,41 +2222,53 @@ ParseLootData() {
 	}
 	BrivSlot4 += brivenchant*0.4
 	BrivSlot4 *= 1+(brivgild*0.5)
-	for k, v in UserDetails.details.modron_saves
-	if (v.instance_id == ActiveInstance) {
-		BrivZone := v.area_goal
+	for k, v in UserDetails.details.modron_saves {
+		if (v.instance_id == ActiveInstance) {
+			BrivZone := v.area_goal
+		}
 	}
 }
 
 ParseChampData() {
 	TotalChamps := 0
-	for k, v in UserDetails.details.heroes
-	if (v.owned == 1) {
-		TotalChamps += 1
+	MagList := ["K","M","B","t"]
+	for k, v in UserDetails.details.heroes {
+		if (v.owned == 1) {
+			TotalChamps += 1
+		}
 	}
-	;
 	ChampDetails := ""
 	if (UserDetails.details.stats.black_viper_total_gems) {
-		ChampDetails := ChampDetails "Black Viper Red Gems: " UserDetails.details.stats.black_viper_total_gems "`n`n"
+		ViperGemsValue := UserDetails.details.stats.black_viper_total_gems
+		ViperGems := SubStr( "          " Format("{:.2f}",ViperGemsValue / (1000 ** Floor(log(ViperGemsValue)/3))) MagList[Floor(log(ViperGemsValue)/3)], -9)
+		ChampDetails := ChampDetails "Black Viper Red Gems: " ViperGems "`n`n"
 	}
 	if (UserDetails.details.stats.total_paid_up_front_gold) {
-		morgaengold := SubStr(UserDetails.details.stats.total_paid_up_front_gold, 1, 4)
-		epos := InStr(UserDetails.details.stats.total_paid_up_front_gold, "E")
-		morgaengold := morgaengold SubStr(UserDetails.details.stats.total_paid_up_front_gold, epos)
-		ChampDetails := ChampDetails "M" Chr(244) "rg" Chr(230) "n Gold Collected: " morgaengold "`n`n"
+		MorgaenGold := SubStr(UserDetails.details.stats.total_paid_up_front_gold, 1, 4)
+		ePos := InStr(UserDetails.details.stats.total_paid_up_front_gold, "E")
+		MorgaenGold := morgaengold SubStr(UserDetails.details.stats.total_paid_up_front_gold, epos)
+		ChampDetails := ChampDetails "M" Chr(244) "rg" Chr(230) "n Gold Collected:   " MorgaenGold "`n`n"
 	}
 	if (UserDetails.details.stats.torogar_lifetime_zealot_stacks) {
-		torostacks := UserDetails.details.stats.torogar_lifetime_zealot_stacks
-		ChampDetails := ChampDetails "Torogar Zealot Stacks: " torostacks "`n`n"
+		TorogarStacksValue := UserDetails.details.stats.torogar_lifetime_zealot_stacks
+		TorogarStacks := SubStr( "          " Format("{:.2f}",TorogarStacksValue / (1000 ** Floor(log(TorogarStacksValue)/3))) MagList[Floor(log(TorogarStacksValue)/3)], -9)
+		ChampDetails := ChampDetails "Torogar Zealot Stacks: " TorogarStacks "`n`n"
 	}
-
-	if (UserDetails.details.stats.zorbu_lifelong_hits_beast || UserDetails.details.stats.zorbu_lifelong_hits_undead || UserDetails.details.stats.zorbu_lifelong_hits_drow) {
-		ChampDetails := ChampDetails "Zorbu Kills:`n(Humanoid)`t" UserDetails.details.stats.zorbu_lifelong_hits_humanoid "`n(Beast)`t`t" UserDetails.details.stats.zorbu_lifelong_hits_beast "`n(Undead)`t" UserDetails.details.stats.zorbu_lifelong_hits_undead "`n(Drow)`t`t" UserDetails.details.stats.zorbu_lifelong_hits_drow "`n`n"
+	if (UserDetails.details.stats.zorbu_lifelong_hits_humanoid || UserDetails.details.stats.zorbu_lifelong_hits_beast || UserDetails.details.stats.zorbu_lifelong_hits_undead || UserDetails.details.stats.zorbu_lifelong_hits_drow) {
+		ZorbuHitsHumanoidValue := UserDetails.details.stats.zorbu_lifelong_hits_humanoid
+		ZorbuHitsHumanoid := SubStr( "          " Format("{:.2f}",ZorbuHitsHumanoidValue / (1000 ** Floor(log(ZorbuHitsHumanoidValue)/3))) MagList[Floor(log(ZorbuHitsHumanoidValue)/3)], -9)
+		ZorbuHitsBeastValue := UserDetails.details.stats.zorbu_lifelong_hits_beast
+		ZorbuHitsBeast := SubStr( "          " Format("{:.2f}",ZorbuHitsBeastValue / (1000 ** Floor(log(ZorbuHitsBeastValue)/3))) MagList[Floor(log(ZorbuHitsBeastValue)/3)], -9)
+		ZorbuHitsUndeadValue := UserDetails.details.stats.zorbu_lifelong_hits_undead
+		ZorbuHitsUndead := SubStr( "          " Format("{:.2f}",ZorbuHitsUndeadValue / (1000 ** Floor(log(ZorbuHitsUndeadValue)/3))) MagList[Floor(log(ZorbuHitsUndeadValue)/3)], -9)
+		ZorbuHitsDrowValue := UserDetails.details.stats.zorbu_lifelong_hits_drow
+		ZorbuHitsDrow := SubStr( "          " Format("{:.2f}",ZorbuHitsDrowValue / (1000 ** Floor(log(ZorbuHitsDrowValue)/3))) MagList[Floor(log(ZorbuHitsDrowValue)/3)], -9)
+		ChampDetails := ChampDetails "Zorbu Kills:`n - Humanoid: " ZorbuHitsHumanoid "`n - Beast:       " ZorbuHitsBeast "`n - Undead:    " ZorbuHitsUndead "`n - Drow:         " ZorbuHitsDrow "`n`n"
 	}
-
 	if (UserDetails.details.stats.dhani_monsters_painted) {
-		dhanipaint := UserDetails.details.stats.dhani_monsters_painted
-		ChampDetails := ChampDetails "D'hani Paints: " dhanipaint "`n`n"
+		DhaniPaintValue := UserDetails.details.stats.dhani_monsters_painted
+		DhaniPaint := SubStr( "          " Format("{:.2f}",DhaniPaintValue / (1000 ** Floor(log(DhaniPaintValue)/3))) MagList[Floor(log(DhaniPaintValue)/3)], -9)
+		ChampDetails := ChampDetails "D'hani Paints: " DhaniPaint "`n`n"
 	}
 
 }	
@@ -2333,24 +2278,21 @@ CheckPatronProgress() {
 		if (MirtFPCurrency = "5000") {
 			Gui, Font, cGreen
 			GuiControl, Font, MirtFPCurrency
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, MirtFPCurrency
 		}
 		if (MirtChallenges = "10") {
 			Gui, Font, cGreen
 			GuiControl, Font, MirtChallenges
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, MirtChallenges
 		}
 		if (MirtCompleted = MirtVariantTotal) {
 			Gui, Font, cGreen
 			GuiControl, Font, MirtVariants
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, MirtVariants
 		}
@@ -2359,24 +2301,21 @@ CheckPatronProgress() {
 		if (VajraFPCurrency = "5000") {
 			Gui, Font, cGreen
 			GuiControl, Font, VajraFPCurrency
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, VajraFPCurrency
 		}
 		if (VajraChallenges = "10") {
 			Gui, Font, cGreen
 			GuiControl, Font, VajraChallenges
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, VajraChallenges
 		}
 		if (VajraCompleted = VajraVariantTotal) {
 			Gui, Font, cGreen
 			GuiControl, Font, VajraVariants
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, VajraVariants
 		}
@@ -2385,24 +2324,21 @@ CheckPatronProgress() {
 		if (StrahdChallenges = "10") {
 			Gui, Font, cGreen
 			GuiControl, Font, StrahdChallenges
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, StrahdChallenges
 		}
 		if (StrahdFPCurrency = "5000") {
 			Gui, Font, cGreen
 			GuiControl, Font, StrahdFPCurrency
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, StrahdFPCurrency
 		}
 		if (StrahdCompleted = StrahdVariantTotal) {
 			Gui, Font, cGreen
 			GuiControl, Font, StrahdVariants
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, StrahdVariants
 		}
@@ -2411,24 +2347,21 @@ CheckPatronProgress() {
 		if (ZarielChallenges = "10") {
 			Gui, Font, cGreen
 			GuiControl, Font, ZarielChallenges
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, ZarielChallenges
 		}
 		if (ZarielFPCurrency = "5000") {
 			Gui, Font, cGreen
 			GuiControl, Font, ZarielFPCurrency
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, ZarielFPCurrency
 		}
 		if (ZarielCompleted = ZarielVariantTotal) {
 			Gui, Font, cGreen
 			GuiControl, Font, ZarielVariants
-		}
-		else {
+		} else {
 			Gui, Font, cRed
 			GuiControl, Font, ZarielVariants
 		}
@@ -2549,23 +2482,20 @@ ServerCall(callname, parameters) {
 		data := WR.ResponseText
 		WR.Close()
 	}
-	UpdateLogTime()
-	FileAppend, (%CurrentTime%) Server request: "%callname%"`n, %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
+	LogFile("API Call: " callname)
 	return data
 }
 
 LaunchGame() {
 	if (Not WinExist("ahk_exe IdleDragons.exe")) {
 		Run, %GameClient%
-		SB_SetText("Game client starting...")
+		SB_SetText("⌛ Game client starting...")
 		WinWait, "ahk_exe IdleDragons.exe"
-		SB_SetText("Game client has started!")
-	}
-	else {
+		LogFile("Game Client Launched")
+		SB_SetText("✅ Game client has started!")
+	} else {
 		if !FirstRun {
-			SB_SetText("Game client is already running!")
+			SB_SetText("✅ Game client is already running!")
 		}
 	}
 	return
@@ -2574,17 +2504,17 @@ LaunchGame() {
 Get_Journal:
 	{
 		if !UserID {
-			MsgBox % "Need User ID & Hash."
+			MsgBox % "Need User ID & Hash"
 			FirstRun()
 		}
 		if (InstanceID = 0) {
 			MsgBox, 4, , No Instance ID detected. Check server for user details?
 				IfMsgBox, Yes
-			{
-				GetUserDetails()
-			}
-			else
-				return
+				{
+					GetUserDetails()
+				} else {
+					return
+				}
 		}
 		journalparams := "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&page="
 		InputBox, pagecount, Journal, % "How many pages of Journal to retreive?`n`n(This will overwrite any previous download.)", , 350, 180
@@ -2593,17 +2523,14 @@ Get_Journal:
 		pagenum := 1
 		FileDelete, %JournalFile%
 		while !(pagenum > pagecount) {
-			SB_SetText("Journal pages remaining to download: " ((pagecount - pagenum) + 1))
+			SB_SetText("⌛ Journal pages remaining to download: " ((pagecount - pagenum) + 1))
 			rawresults := ServerCall("getPlayHistory", journalparams pagenum)
 			FileAppend, %rawresults%`n, %JournalFile%
 			pagenum += 1
 			sleep 1000
 		}
-		UpdateLogTime()
-		FileAppend, % "(" CurrentTime ") Journal pages downloaded: " (pagenum - 1) "`n", %OutputLogFile%
-		FileRead, OutputText, %OutputLogFile%
-		oMyGUI.Update()
-		SB_SetText("Journal download completed.")
+		LogFile("Journal pages downloaded: " (pagenum - 1))
+		SB_SetText("✅ Journal download completed")
 		return
 	}
 
@@ -2611,8 +2538,7 @@ Open_Ticket:
 	{
 		if (GamePlatform = "Steam"){
 			Run, % "https://help.idlechampions.com/?page=help&steam_user_id=" UserIDSteam "&steam_hash=" GameHashSteam "&user_id=" UserID
-		}
-		else if (GamePlatform = "Epic Game Store") {
+		} else if (GamePlatform = "Epic Game Store") {
 			Run, % "https://help.idlechampions.com/?page=help&network=epicgames&epic_games_user_id=" UserIDEpic "&epic_games_hash=" GameHashEpic "&language_id=1&user_id=" UserIDEpic
 		}
 		return
@@ -2630,9 +2556,8 @@ Discord_Clicked:
 			UrlDownloadToFile, %DictionaryFile%, %LocalDictionary%
 			Reload
 			return
-		}
-		else {
-			MsgBox % "Dictionary file up to date."
+		} else {
+			MsgBox % "Dictionary file up to date"
 		}
 		return
 	}
@@ -2662,15 +2587,15 @@ List_ChampIDs:
 		while (id < 121) {
 			champname := ChampFromID(id)
 			StringLen, champnamelen, champname
-			while (champnamelen < 16)
-			{
+			while (champnamelen < 16) {
 				champname := champname " "
 				champnamelen += 1
 			}
-			if (!mod(id, 4))
+			if (!mod(id, 4)) {
 				champidlist := champidlist id ": " champname "`n"
-			else
+			} else {
 				champidlist := champidlist id ": " champname "`t"
+			}
 			id += 1
 		}
 		;MsgBox, , Champ ID List, % champidlist
@@ -2735,8 +2660,7 @@ SetUIScale() {
 	for k, v in CurrentICSettings {
 		if (k == "UIScale") {
 			newicsettings := newicsettings """" k """:" newuiscale ","
-		}
-		else {
+		} else {
 			newicsettings := newicsettings """" k """:" v ","
 		}
 	}
@@ -2745,11 +2669,8 @@ SetUIScale() {
 	MsgBox % newicsettings
 	FileDelete, %ICSettingsFile%
 	FileAppend, %newicsettings%, %ICSettingsFile%
-	UpdateLogTime()
-	FileAppend, % "(" CurrentTime ") UI Scale changed to " newuiscale "`n", %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
-	SB_SetText("UI Scale changed to " newuiscale)
+	LogFile("UI Scale changed to " newuiscale)
+	SB_SetText("✅ UI Scale changed to " newuiscale)
 }
 
 SetFramerate() {
@@ -2768,8 +2689,7 @@ SetFramerate() {
 	for k, v in CurrentICSettings {
 		if (k == "TargetFramerate") {
 			newicsettings := newicsettings """" k """:" newframerate ","
-		}
-		else {
+		} else {
 			newicsettings := newicsettings """" k """:" v ","
 		}
 	}
@@ -2778,11 +2698,8 @@ SetFramerate() {
 	MsgBox % newicsettings
 	FileDelete, %ICSettingsFile%
 	FileAppend, %newicsettings%, %ICSettingsFile%
-	UpdateLogTime()
-	FileAppend, % "(" CurrentTime ") Framerate changed to " newframerate "`n", %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
-	SB_SetText("Framerate changed to " newframerate)
+	LogFile("Framerate changed to " newframerate)
+	SB_SetText("✅ Framerate changed to " newframerate)
 }
 
 SetParticles() {
@@ -2801,8 +2718,7 @@ SetParticles() {
 	for k, v in CurrentICSettings {
 		if (k == "PercentOfParticlesSpawned") {
 			newicsettings := newicsettings """" k """:" newparticles ","
-		}
-		else {
+		} else {
 			newicsettings := newicsettings """" k """:" v ","
 		}
 	}
@@ -2811,15 +2727,12 @@ SetParticles() {
 	MsgBox % newicsettings
 	FileDelete, %ICSettingsFile%
 	FileAppend, %newicsettings%, %ICSettingsFile%
-	UpdateLogTime()
-	FileAppend, % "(" CurrentTime ") Paticles changed to " newparticles "`n", %OutputLogFile%
-	FileRead, OutputText, %OutputLogFile%
-	oMyGUI.Update()
-	SB_SetText("Particles changed to " newparticles)
+	LogFile("Paticles changed to " newparticles)
+	SB_SetText("✅ Particles changed to " newparticles)
 }
 
 SimulateBriv(i) {
-	SB_SetText("Calculating...")
+	SB_SetText("⌛ Calculating...")
 	;Original version by Gladio Stricto - pastebin.com/Rd8wWSVC
 	;Copied from updated version - github.com/Deatho0ne
 	chance := ((BrivSlot4 / 100) + 1) * 0.25
@@ -2855,10 +2768,11 @@ SimulateBriv(i) {
 		totalSkips += skips
 	}
 	;chance := Round(chance, 2)
-	if skipLevels < 3
+	if (skipLevels < 3) {
 		trueChance := Round(trueChance * 100, 2)
-	else
+	} else {
 		trueChance := Round(chance * 100, 2)
+	}
 	avgSkips := Round(totalSkips / i, 2)
 	avgSkipped := Round(avgSkips * skipLevels, 2)
 	avgZones := Round(totalLevels / i, 2)
@@ -2867,12 +2781,11 @@ SimulateBriv(i) {
 	multiplier := 0.1346894362, additve := 41.86396406
 	roughTime := Round(((multiplier * avgStacks) + additve), 2)
 	message = With Briv skip %skipLevels% until zone %BrivZone%`n(%trueChance%`% chance to skip %skipLevels% zones)`n`n%i% simulations produced an average:`n%avgSkips% skips (%avgSkipped% zones skipped)`n%avgZones% end zone`n%avgSkipRate%`% true skip rate`n%avgStacks% required stacks with`n%roughTime% time in secs to build said stacks very rough guess
-	SB_SetText("Calculation has completed.")
+	SB_SetText("✅ Calculation has completed")
 	Return message
 }
 
-KlehoImage()
-{
+KlehoImage() {
 	campaignid := 0
 	currenttimegate := ""
 	kleholink := "https://idle.kleho.ru/assets/fb/"
@@ -2886,8 +2799,7 @@ KlehoImage()
 			}
 		}
 		campaignid := KlehoFromID(currenttimegate)
-	}
-	else if !((campaignid < 3) or (campaignid == 15) or (campaignid > 21)) {
+	} else if !((campaignid < 3) or (campaignid == 15) or (campaignid > 21)) {
 		for k, v in UserDetails.details.game_instances {
 			if (v.game_instance_id == ActiveInstance) {
 				campaignid := campaignid "a" JSON.stringify(v.defines.adventure_defines[1].requirements[1].adventure_id)
@@ -2900,8 +2812,7 @@ KlehoImage()
 			for kk, vv in v.formation {
 				if (vv > 0) {
 					kleholink := kleholink vv "_"
-				}
-				else {
+				} else {
 					kleholink := kleholink "_"
 				}
 			}
@@ -2928,10 +2839,9 @@ KlehoImage()
 	return
 }
 
-IncompleteVariants()
-{
+IncompleteVariants() {
 	if !FileExist("advdefs.json") {
-		MsgBox % "Downloading adventure defines."
+		MsgBox % "Downloading adventure defines"
 		AdventureList()
 	}
 	idtocheck := 0
@@ -2945,15 +2855,13 @@ IncompleteVariants()
 	}
 	if (idtocheck == 0) {
 		IncompleteBase()
-	}
-	else {
+	} else {
 		IncompletePatron(idtocheck)
 	}
 	return
 }
 
-IncompleteBase()
-{
+IncompleteBase() {
 	FileRead, AdventureFile, advdefs.json
 	AdventureNames := JSON.parse(AdventureFile)
 
@@ -3006,8 +2914,7 @@ IncompleteBase()
 	return
 }
 
-IncompletePatron(patronid)
-{
+IncompletePatron(patronid) {
 	FileRead, AdventureFile, advdefs.json
 	AdventureNames := JSON.parse(AdventureFile)
 
@@ -3088,7 +2995,7 @@ AdventureList() {
 	testvar := testvar "}"
 	FileDelete, advdefs.json
 	FileAppend, %testvar%, advdefs.json
-	MsgBox % "advdefs.json saved to file."
+	MsgBox % "advdefs.json saved to file"
 	return
 }
 
@@ -3140,13 +3047,11 @@ GearReport() {
 				currentcount := 0
 				currentchamplevel := (v.enchant + 1)
 				currentcount += 1
-			}
-			else {
+			} else {
 				currentchamplevel += (v.enchant + 1)
 				currentcount += 1
 			}
-		}
-		else if ((lastchamp = 13) or (lastchamp = 18) or (lastchamp = 30) or (lastchamp = 67) or (lastchamp = 68) or (lastchamp = 86) or (lastchamp = 87) or (lastchamp = 88) or (lastchamp = 106)){
+		} else if ((lastchamp = 13) or (lastchamp = 18) or (lastchamp = 30) or (lastchamp = 67) or (lastchamp = 68) or (lastchamp = 86) or (lastchamp = 87) or (lastchamp = 88) or (lastchamp = 106)){
 			totalcorelevels += (v.enchant + 1)
 			totalcoreitems += 1
 			if (lastshiny) {
@@ -3165,13 +3070,11 @@ GearReport() {
 				currentcount := 0
 				currentchamplevel := (v.enchant + 1)
 				currentcount += 1
-			}
-			else {
+			} else {
 				currentchamplevel += (v.enchant + 1)
 				currentcount += 1
 			}
-		}
-		else {
+		} else {
 			totaleventlevels += (v.enchant + 1)
 			totaleventitems += 1
 			if (lastshiny) {
@@ -3190,8 +3093,7 @@ GearReport() {
 				currentcount := 0
 				currentchamplevel := (v.enchant + 1)
 				currentcount += 1
-			}
-			else {
+			} else {
 				currentchamplevel += (v.enchant + 1)
 				currentcount += 1
 			}
@@ -3256,8 +3158,7 @@ ShowPityTimers() {
 	while (chestsforepic < 11) {
 		if (chestsforepic == 1) {
 			pitylist := pitylist "Epic in Next Chest for:`n "
-		}
-		else {
+		} else {
 			pitylist := pitylist "Epic in next " chestsforepic " Chests for:`n "
 		}
 		currentchamp := 14
@@ -3284,8 +3185,7 @@ ShowPityTimers() {
 		}
 		if !(currentcount) {
 			pitylist := pitylist "(None)`n"
-		}
-		else {
+		} else {
 			StringTrimRight, pitylist, pitylist, 2
 			pitylist := pitylist "`n"
 		}
