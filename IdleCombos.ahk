@@ -3157,11 +3157,20 @@ PatronFeats() {
 
 ShowPityTimers() {
 	pitylist := ""
-	pityjson := JSON.stringify(UserDetails.details.stats)
-	pityjson := StrReplace(pityjson, """forced_tutorial_done"":""0"",""", """forced_win"":{""")
-	pityjson := StrReplace(pityjson, "forced_win_counter_", "")
-	pityjson := StrReplace(pityjson, ",""free_plays_completed""", "},""free_plays_completed""")
-	pityjson := JSON.parse(pityjson)
+	pityjsonoutput := "{"
+	jsoncount := 0
+	for k, v in (UserDetails.details.stats) {
+		if (InStr(k,"forced_win_counter_")) {
+			if (jsoncount > 0) {
+				pityjsonoutput := pityjsonoutput ","
+			}
+			jsoncount += 1
+			pityjsonoutput := pityjsonoutput """" k """:""" v """"
+		}
+	}
+	pityjsonoutput := pityjsonoutput "}"
+	pityjson := JSON.parse( pityjsonoutput )
+	pityjsonoutput := "" ; Free Memory
 	newestchamp := JSON.stringify(UserDetails.details.heroes[UserDetails.details.heroes.MaxIndex()].hero_id)
 	newestchamp := StrReplace(newestchamp, """")
 	chestsforepic := 1
@@ -3176,8 +3185,8 @@ ShowPityTimers() {
 		currentchest := 0
 		currentpity := ""
 		while (currentchamp < newestchamp) {
-			currentchest := ChestIDFromChampID(currentchamp)
-			for k, v in (pityjson.forced_win) {
+			currentchest := "forced_win_counter_" ChestIDFromChampID(currentchamp)
+			for k, v in (pityjson) {
 				if (k = currentchest) {
 					currentpity := v
 				}
