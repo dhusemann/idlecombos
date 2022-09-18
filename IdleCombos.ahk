@@ -115,7 +115,7 @@
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
 global VersionNumber := "3.26"
-global CurrentDictionary := "2.20"
+global CurrentDictionary := "2.21"
 
 ;Local File globals
 global OutputLogFile := ""
