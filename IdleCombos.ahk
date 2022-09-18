@@ -5,6 +5,9 @@
 
 ; CHANGELOG
 
+;3.27
+;fix pity timers due to change in json structure
+
 ;3.26
 ;overhaul logging system
 ;major manual syntax cleanup
