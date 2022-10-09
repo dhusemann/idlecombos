@@ -5,6 +5,10 @@
 
 ; CHANGELOG
 
+;3.28
+;add egbert to dictionary
+;add kent to dictionary
+
 ;3.27
 ;fix pity timers due to change in json structure
 
@@ -114,8 +118,8 @@
 
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
-global VersionNumber := "3.26"
-global CurrentDictionary := "2.20"
+global VersionNumber := "3.28"
+global CurrentDictionary := "2.22"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -1489,7 +1493,12 @@ UseBlacksmith(buffid) {
 		if ErrorLevel
 			return
 	}
-	while !((heroid > 0) && (heroid < 107)) {
+	while !((heroid > 0) && (heroid < 115)) {
+		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number", , 200, 180, , , , , %LastBSChamp%
+		if ErrorLevel
+			return
+	}
+	while ((heroid > 106) && (heroid < 113)) {
 		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number", , 200, 180, , , , , %LastBSChamp%
 		if ErrorLevel
 			return
