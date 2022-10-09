@@ -3,7 +3,7 @@
 #include JSON.ahk
 #include idledict.ahk
 
-; CHANGELOG
+;CHANGELOG
 
 ;3.28
 ;add egbert to dictionary
