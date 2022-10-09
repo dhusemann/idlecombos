@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.21"
+global DictionaryVersion := "2.22"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -163,28 +163,32 @@ ChampFromID(id) {
 			case "100": namefromid := "Nordom"
 		}
 	}
-	else if (id < 107) {
+	else if (id < 111) {
 		switch id {
 			case "101": namefromid := "Merilwen"
 			case "102": namefromid := "Nahara"
 			case "103": namefromid := "Valentine"
 			case "104": namefromid := "Voronika"
-			case "105": namefromid := "UNKNOWN (" id ")"
+			case "105": namefromid := "Dob"
 			case "106": namefromid := "Blooshi"
-			;case "107": namefromid := "UNKNOWN (" id ")"
-			;case "108": namefromid := "UNKNOWN (" id ")"
-			;case "109": namefromid := "UNKNOWN (" id ")"
-			;case "110": namefromid := "UNKNOWN (" id ")"
-			;case "111": namefromid := "UNKNOWN (" id ")"
-			;case "112": namefromid := "UNKNOWN (" id ")"
-			;case "113": namefromid := "UNKNOWN (" id ")"
-			;case "114": namefromid := "UNKNOWN (" id ")"
-			;case "115": namefromid := "UNKNOWN (" id ")"
-			;case "116": namefromid := "UNKNOWN (" id ")"
-			;case "117": namefromid := "UNKNOWN (" id ")"
-			;case "118": namefromid := "UNKNOWN (" id ")"
-			;case "119": namefromid := "UNKNOWN (" id ")"
-			;case "120": namefromid := "UNKNOWN (" id ")"
+			case "107": namefromid := "UNKNOWN (" id ")"
+			case "108": namefromid := "UNKNOWN (" id ")"
+			case "109": namefromid := "UNKNOWN (" id ")"
+			case "110": namefromid := "UNKNOWN (" id ")"
+		}
+	}
+	else if (id < 121) {
+		switch id {
+			case "111": namefromid := "UNKNOWN (" id ")"
+			case "112": namefromid := "UNKNOWN (" id ")"
+			case "113": namefromid := "Egbert"
+			case "114": namefromid := "Kent"
+			case "115": namefromid := "UNKNOWN (" id ")"
+			case "116": namefromid := "UNKNOWN (" id ")"
+			case "117": namefromid := "UNKNOWN (" id ")"
+			case "118": namefromid := "UNKNOWN (" id ")"
+			case "119": namefromid := "UNKNOWN (" id ")"
+			case "120": namefromid := "UNKNOWN (" id ")"
 		}
 	}
 	else {

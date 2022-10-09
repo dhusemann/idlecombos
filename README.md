@@ -1,5 +1,5 @@
 # idlecombos
-v3.27 is the current supported Version.</br>
+v3.28 is the current supported Version.</br>
 </br>
 
 **IMPORTANT** - When opening chests with the idlecombos app:</br>
