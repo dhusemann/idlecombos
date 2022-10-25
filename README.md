@@ -1,8 +1,7 @@
 # idlecombos
-v3.28 is the current supported Version.</br>
-</br>
-
-**IMPORTANT** - When opening chests with the idlecombos app:</br>
+Because of Health No longer able to maintain. 
+3.00 is supported Version. </br>
+IMPORTANT - When opening chests with the idlecombos app:</br>
 The game client can save an outdated inventory, overwriting some consumables.</br>
 It's recommended to exit the game first to avoid losing items.</br>
 </br>
