@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.22"
+global DictionaryVersion := "2.23"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -142,7 +142,7 @@ ChampFromID(id) {
 	else if (id < 101) {
 		switch id {
 			case "81": namefromid := "Selise"
-			case "82": namefromid := "Sgt Knox"
+			case "82": namefromid := "Sgt. Knox"
 			case "83": namefromid := "Ellywick"
 			case "84": namefromid := "Prudence"
 			case "85": namefromid := "Corazon"
@@ -183,7 +183,7 @@ ChampFromID(id) {
 			case "112": namefromid := "UNKNOWN (" id ")"
 			case "113": namefromid := "Egbert"
 			case "114": namefromid := "Kent"
-			case "115": namefromid := "UNKNOWN (" id ")"
+			case "115": namefromid := "Virgil"
 			case "116": namefromid := "UNKNOWN (" id ")"
 			case "117": namefromid := "UNKNOWN (" id ")"
 			case "118": namefromid := "UNKNOWN (" id ")"
@@ -929,7 +929,7 @@ ChestFromID(id) {
 			case "400": namefromid := "Gold Shadow-Eberron Chest"
 		}
 	}
-	else if (id < 412) {
+	else if (id < 421) {
 		switch id {
 			case "401": namefromid := "Gold Rescue Chest"
 			case "402": namefromid := "Gold New Moon Chest"
@@ -942,15 +942,135 @@ ChestFromID(id) {
 			case "409": namefromid := "Gold Clockwork Chest"
 			case "410": namefromid := "Gold Marching Chest"
 			case "411": namefromid := "Gold Toolbox Chest"
-			;case "412": namefromid := "Gold Elven Chest"
-			;case "413": namefromid := "Gold Gold Piece Chest"
-			;case "414": namefromid := "Gold Pouch Chest"
-			;case "415": namefromid := "Gold Tarrasque Chest"
-			;case "416": namefromid := "UNKNOWN (" id ")"
-			;case "417": namefromid := "UNKNOWN (" id ")"
-			;case "418": namefromid := "UNKNOWN (" id ")"
-			;case "419": namefromid := "UNKNOWN (" id ")"
-			;case "420": namefromid := "UNKNOWN (" id ")"
+			case "412": namefromid := "Gold Distinguished Chest"
+			case "413": namefromid := "Gold Sharp Chest"
+			case "414": namefromid := "Gold Serpent Chest"
+			case "415": namefromid := "Gold Lighthouse Chest"
+			case "416": namefromid := "Gold Revelry Chest"
+			case "417": namefromid := "Gold Trophy Chest"
+			case "418": namefromid := "Gold Heirloom Chest"
+			case "419": namefromid := "Gold Aerois Chest"
+			case "420": namefromid := "Gold Lyre Chest"
+		}
+	}
+	else if (id < 441) {
+		switch id {
+			case "421": namefromid := "Gold Footprint Chest"
+			case "422": namefromid := "Gold Guiding Star Chest"
+			case "423": namefromid := "Gold Starlit Chest"
+			case "424": namefromid := "Gold Spelljammer Chest"
+			case "425": namefromid := "Gold Orderly Chest"
+			case "426": namefromid := "Gold Swag Chest"
+			case "427": namefromid := "Silver Egbert Chest"
+			case "428": namefromid := "Gold Egbert Chest"
+			case "429": namefromid := "Silver Kent Chest"
+			case "430": namefromid := "Gold Kent Chest"
+			case "431": namefromid := "Silver Virgil Chest"
+			case "432": namefromid := "Gold Virgil Chest"
+			case "433": namefromid := "Silver Warduke Chest"
+			case "434": namefromid := "Gold Warduke Chest"
+			case "435": namefromid := "Silver Imoen Chest"
+			case "436": namefromid := "Gold Imoen Chest"
+			case "437": namefromid := "Silver E6Y6 Chest"
+			;case "438": namefromid := "UNKNOWN (" id ")"
+			case "439": namefromid := "Silver E7Y6 Chest"
+			;case "440": namefromid := "UNKNOWN (" id ")"
+		}
+	}
+	else if (id < 461) {
+		switch id {
+			case "441": namefromid := "Silver E8Y6 Chest"
+			;case "442": namefromid := "UNKNOWN (" id ")"
+			case "443": namefromid := "Silver E9Y6 Chest"
+			;case "444": namefromid := "UNKNOWN (" id ")"
+			case "445": namefromid := "Silver E10Y6 Chest"
+			;case "446": namefromid := "UNKNOWN (" id ")"
+			case "447": namefromid := "Silver E11Y6 Chest"
+			;case "448": namefromid := "UNKNOWN (" id ")"
+			case "449": namefromid := "Silver E12Y6 Chest"
+			;case "450": namefromid := "UNKNOWN (" id ")"
+			case "451": namefromid := "Silver E13Y6 Chest"
+			;case "452": namefromid := "UNKNOWN (" id ")"
+			case "453": namefromid := "Silver E14Y6 Chest"
+			;case "454": namefromid := "UNKNOWN (" id ")"
+			case "455": namefromid := "Silver E15Y6 Chest"
+			;case "456": namefromid := "UNKNOWN (" id ")"
+			case "457": namefromid := "Silver E16Y6 Chest"
+			;case "458": namefromid := "UNKNOWN (" id ")"
+			case "459": namefromid := "Silver E17Y6 Chest"
+			;case "460": namefromid := "UNKNOWN (" id ")"
+		}
+	}
+	else if (id < 481) {
+		switch id {
+			case "461": namefromid := "Gold Bruenor Chest"
+			case "462": namefromid := "Gold Celeste Chest"
+			case "463": namefromid := "Gold Nayeli Chest"
+			case "464": namefromid := "Gold Jarlaxle Chest"
+			case "465": namefromid := "Gold Calliope Chest"
+			case "466": namefromid := "Gold Asharra Chest"
+			case "467": namefromid := "Gold Minsc Chest"
+			case "468": namefromid := "Gold Delina Chest"
+			case "469": namefromid := "Gold Makos Chest"
+			case "470": namefromid := "Gold Tyril Chest"
+			case "471": namefromid := "Gold Jamilah Chest"
+			case "472": namefromid := "Gold Arkhan Chest"
+			case "473": namefromid := "Gold Hitch Chest"
+			case "474": namefromid := "Gold Drizzt Chest"
+			case "475": namefromid := "Gold Azaka Chest"
+			case "476": namefromid := "Gold Dragonbait Chest"
+			case "477": namefromid := "Gold Ulkoria Chest"
+			case "478": namefromid := "Gold Reya Chest"
+			case "479": namefromid := "Gold NERDS Chest"
+			case "480": namefromid := "Gold Xerophon Chest"
+		}
+	}
+	else if (id < 501) {
+		switch id {
+			case "481": namefromid := "Gold Blooshi Chest"
+			case "482": namefromid := "Gold Koshmarr Chest"
+			case "483": namefromid := "Gold Corrupted Chest"
+			case "484": namefromid := "Gold Shar Chest"
+			case "485": namefromid := "Gold Prismed Chest"
+			;case "486": namefromid := "UNKNOWN (" id ")"
+			;case "487": namefromid := "UNKNOWN (" id ")"
+			case "488": namefromid := "Gold Compass Chest"
+			case "489": namefromid := "Gold Eyeball Chest"
+			case "490": namefromid := "Gold Dungeon Chest"
+			case "491": namefromid := "Gold Galaxy Chest"
+			case "492": namefromid := "Gold Tentacled Chest"
+			case "493": namefromid := "Gold Glamerweave Chest"
+			case "494": namefromid := "Gold Graz'zt's Trinket Chest"
+			case "495": namefromid := "Gold Woven Chest"
+			case "496": namefromid := "Gold Eldritch Lich Chest"
+			case "497": namefromid := "Gold Bracers of Defense Chest"
+			case "498": namefromid := "Gold Harmony Chest"
+			case "499": namefromid := "Gold S2 Chest (NYI)"
+			case "500": namefromid := "Gold Accessory Chest"
+		}
+	}
+	else if (id < 505) {
+		switch id {
+			case "501": namefromid := "Gold All Star Chest"
+			case "502": namefromid := "Gold Sidekick Chest"
+			case "503": namefromid := "Gold Balanced Chest"
+			case "504": namefromid := "Gold Lockpick Chest"
+			;case "505": namefromid := "UNKNOWN (" id ")"
+			;case "506": namefromid := "UNKNOWN (" id ")"
+			;case "507": namefromid := "UNKNOWN (" id ")"
+			;case "508": namefromid := "UNKNOWN (" id ")"
+			;case "509": namefromid := "UNKNOWN (" id ")"
+			;case "510": namefromid := "UNKNOWN (" id ")"
+			;case "511": namefromid := "UNKNOWN (" id ")"
+			;case "512": namefromid := "UNKNOWN (" id ")"
+			;case "513": namefromid := "UNKNOWN (" id ")"
+			;case "514": namefromid := "UNKNOWN (" id ")"
+			;case "515": namefromid := "UNKNOWN (" id ")"
+			;case "516": namefromid := "UNKNOWN (" id ")"
+			;case "517": namefromid := "UNKNOWN (" id ")"
+			;case "518": namefromid := "UNKNOWN (" id ")"
+			;case "519": namefromid := "UNKNOWN (" id ")"
+			;case "520": namefromid := "UNKNOWN (" id ")"
 		}
 	}
 	else {
@@ -1057,6 +1177,19 @@ KlehoFromID(id) {
 ChestIDFromChampID(id) {
 	if (id < 21) {
 		switch id {
+			case "1": chestfromchamp := "461"
+			case "2": chestfromchamp := "462"
+			case "3": chestfromchamp := "463"
+			case "4": chestfromchamp := "464"
+			case "5": chestfromchamp := "465"
+			case "6": chestfromchamp := "466"
+			case "7": chestfromchamp := "467"
+			case "8": chestfromchamp := "468"
+			case "9": chestfromchamp := "469"
+			case "10": chestfromchamp := "470"
+			case "11": chestfromchamp := "471"
+			case "12": chestfromchamp := "472"
+			case "13": chestfromchamp := "473"
 			case "14": chestfromchamp := "4"
 			case "15": chestfromchamp := "6"
 			case "16": chestfromchamp := "8"
@@ -1134,13 +1267,52 @@ ChestIDFromChampID(id) {
 			case "80": chestfromchamp := "267"
 		}
 	}
-	else if (id < 86) {
+	else if (id < 101) {
 		switch id {
 			case "81": chestfromchamp := "269"
 			case "82": chestfromchamp := "271"
-			case "93": chestfromchamp := "273"
+			case "83": chestfromchamp := "273"
 			case "84": chestfromchamp := "275"
 			case "85": chestfromchamp := "277"
+			case "86": chestfromchamp := "478"
+			case "87": chestfromchamp := "479"
+			case "88": chestfromchamp := "480"
+			case "89": chestfromchamp := "335"
+			case "90": chestfromchamp := "337"
+			case "91": chestfromchamp := "339"
+			case "92": chestfromchamp := "341"
+			case "93": chestfromchamp := "343"
+			case "94": chestfromchamp := "345"
+			case "95": chestfromchamp := "347"
+			case "96": chestfromchamp := "349"
+			case "97": chestfromchamp := "351"
+			case "98": chestfromchamp := "353"
+			case "99": chestfromchamp := "355"
+			case "100": chestfromchamp := "357"
+		}
+	}
+	else if (id < 116) {
+		switch id {
+			case "101": chestfromchamp := "359"
+			case "102": chestfromchamp := "361"
+			case "103": chestfromchamp := "363"
+			case "104": chestfromchamp := "365"
+			case "105": chestfromchamp := "367"
+			case "106": chestfromchamp := "481"
+			;case "107": chestfromchamp := "UNKNOWN (" id ")"
+			;case "108": chestfromchamp := "UNKNOWN (" id ")"
+			;case "109": chestfromchamp := "UNKNOWN (" id ")"
+			;case "110": chestfromchamp := "UNKNOWN (" id ")"
+			;case "111": chestfromchamp := "UNKNOWN (" id ")"
+			;case "112": chestfromchamp := "UNKNOWN (" id ")"
+			case "113": chestfromchamp := "428"
+			case "114": chestfromchamp := "430"
+			case "115": chestfromchamp := "432"
+			;case "116": chestfromchamp := "UNKNOWN (" id ")"
+			;case "117": chestfromchamp := "UNKNOWN (" id ")"
+			;case "118": chestfromchamp := "UNKNOWN (" id ")"
+			;case "119": chestfromchamp := "UNKNOWN (" id ")"
+			;case "120": chestfromchamp := "UNKNOWN (" id ")"
 		}
 	}
 	else {

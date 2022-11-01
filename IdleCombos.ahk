@@ -119,7 +119,7 @@
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
 global VersionNumber := "3.28"
-global CurrentDictionary := "2.22"
+global CurrentDictionary := "2.23"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -3190,7 +3190,7 @@ ShowPityTimers() {
 		if (chestsforepic == 1) {
 			pitylist := pitylist "Epic in Next Chest for:`n "
 		} else {
-			pitylist := pitylist "Epic in next " chestsforepic " Chests for:`n "
+			pitylist := pitylist "`nEpic in next " chestsforepic " Chests for:`n "
 		}
 		currentchamp := 14
 		currentcount := 0
@@ -3204,7 +3204,11 @@ ShowPityTimers() {
 				}
 			}
 			if (currentpity = chestsforepic) {
-				pitylist := pitylist ChampFromID(currentchamp) ", "
+				tempchamp := ChampFromID(currentchamp)
+				if not InStr(tempchamp, "UNKNOWN") {
+					pitylist := pitylist tempchamp ", "
+				}
+				tempchamp := ""
 				currentcount += 1
 			}
 			switch currentchamp {
