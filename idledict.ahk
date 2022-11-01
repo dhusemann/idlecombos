@@ -1177,6 +1177,19 @@ KlehoFromID(id) {
 ChestIDFromChampID(id) {
 	if (id < 21) {
 		switch id {
+			case "1": chestfromchamp := "461"
+			case "2": chestfromchamp := "462"
+			case "3": chestfromchamp := "463"
+			case "4": chestfromchamp := "464"
+			case "5": chestfromchamp := "465"
+			case "6": chestfromchamp := "466"
+			case "7": chestfromchamp := "467"
+			case "8": chestfromchamp := "468"
+			case "9": chestfromchamp := "469"
+			case "10": chestfromchamp := "470"
+			case "11": chestfromchamp := "471"
+			case "12": chestfromchamp := "472"
+			case "13": chestfromchamp := "473"
 			case "14": chestfromchamp := "4"
 			case "15": chestfromchamp := "6"
 			case "16": chestfromchamp := "8"
