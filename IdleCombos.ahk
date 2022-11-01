@@ -5,6 +5,12 @@
 
 ;CHANGELOG
 
+;3.29
+;add virgil to dictionary
+;add missing chests to dictionary
+;add missing champ ids to chest ids to dictionary
+;hide unknown characters from pity timers
+
 ;3.28
 ;add egbert to dictionary
 ;add kent to dictionary
@@ -118,7 +124,7 @@
 
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
-global VersionNumber := "3.28"
+global VersionNumber := "3.29"
 global CurrentDictionary := "2.23"
 
 ;Local File globals
