@@ -1254,13 +1254,52 @@ ChestIDFromChampID(id) {
 			case "80": chestfromchamp := "267"
 		}
 	}
-	else if (id < 86) {
+	else if (id < 101) {
 		switch id {
 			case "81": chestfromchamp := "269"
 			case "82": chestfromchamp := "271"
-			case "93": chestfromchamp := "273"
+			case "83": chestfromchamp := "273"
 			case "84": chestfromchamp := "275"
 			case "85": chestfromchamp := "277"
+			case "86": chestfromchamp := "478"
+			case "87": chestfromchamp := "479"
+			case "88": chestfromchamp := "480"
+			case "89": chestfromchamp := "335"
+			case "90": chestfromchamp := "337"
+			case "91": chestfromchamp := "339"
+			case "92": chestfromchamp := "341"
+			case "93": chestfromchamp := "343"
+			case "94": chestfromchamp := "345"
+			case "95": chestfromchamp := "347"
+			case "96": chestfromchamp := "349"
+			case "97": chestfromchamp := "351"
+			case "98": chestfromchamp := "353"
+			case "99": chestfromchamp := "355"
+			case "100": chestfromchamp := "357"
+		}
+	}
+	else if (id < 116) {
+		switch id {
+			case "101": chestfromchamp := "359"
+			case "102": chestfromchamp := "361"
+			case "103": chestfromchamp := "363"
+			case "104": chestfromchamp := "365"
+			case "105": chestfromchamp := "367"
+			case "106": chestfromchamp := "481"
+			;case "107": chestfromchamp := "UNKNOWN (" id ")"
+			;case "108": chestfromchamp := "UNKNOWN (" id ")"
+			;case "109": chestfromchamp := "UNKNOWN (" id ")"
+			;case "110": chestfromchamp := "UNKNOWN (" id ")"
+			;case "111": chestfromchamp := "UNKNOWN (" id ")"
+			;case "112": chestfromchamp := "UNKNOWN (" id ")"
+			case "113": chestfromchamp := "428"
+			case "114": chestfromchamp := "430"
+			case "115": chestfromchamp := "432"
+			;case "116": chestfromchamp := "UNKNOWN (" id ")"
+			;case "117": chestfromchamp := "UNKNOWN (" id ")"
+			;case "118": chestfromchamp := "UNKNOWN (" id ")"
+			;case "119": chestfromchamp := "UNKNOWN (" id ")"
+			;case "120": chestfromchamp := "UNKNOWN (" id ")"
 		}
 	}
 	else {
