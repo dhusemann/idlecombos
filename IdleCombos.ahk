@@ -143,8 +143,11 @@ global GameInstallDir := ""
 global GamePlatform := ""
 global GameClient := ""
 global GameClientExe := "IdleDragons.exe"
+global GameClientExeStandaloneLauncher := "IdleDragonsLauncher.exe"
 global GameInstallDirSteam := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
 global GameInstallDirEpic := ""
+global GameInstallDirStandaloneLauncher := "C:\Program Files (x86)\Idle Champions\"
+global GameInstallDirStandalone := "C:\Program Files (x86)\Idle Champions\IdleChampions\"
 global GameClientEpic := "C:\ProgramData\Epic\UnrealEngineLauncher\LauncherInstalled.dat"
 global GameIDEpic := "40cb42e38c0b4a14a1bb133eb3291572"
 global GameHashEpic := "57f205884f6c64417c7aa5e84ad9fc8d"
@@ -155,9 +158,10 @@ global WRLFilePath := "IdleDragons_Data\StreamingAssets\downloaded_files\webRequ
 
 ;detect and set game installation paths
 if ( setGameInstallEpic() == false ) {
-	setGameInstallSteam()
+	if ( setGameInstallSteam() == false ) {
+		setGameInstallStandalone()
+	}
 }
-global IconFile := GameInstallDir IconFilename
 
 global DictionaryFile := "https://raw.githubusercontent.com/djravine/idlecombos/master/idledict.ahk"
 global LocalDictionary := "idledict.ahk"
@@ -211,6 +215,7 @@ global AchievementInfo := "Welcome to IdleCombos!`n`nPlease setup you game clien
 global BlessingInfo := "`n`n`n`n`n`n"
 global ChampDetails := ""
 global TotalChamps := 0
+
 ;Inventory globals
 global CurrentGems := ""
 global AvailableChests := ""
@@ -234,6 +239,7 @@ global CurrentMdBS := ""
 global CurrentLgBS := ""
 global CurrentHgBS := ""
 global AvailableBSLvs := ""
+
 ;Loot globals
 global ChampionsUnlockedCount := 0
 global ChampionsActiveCount := 0
@@ -242,11 +248,13 @@ global CostumesUnlockedCount := 0
 global EpicGearCount := 0
 global BrivSlot4 := 0
 global BrivZone := 0
+
 ;Modron globals
 global FGCore := "`n`n"
 global BGCore := "`n`n"
 global BG2Core := "`n`n"
 global BG3Core := "`n`n"
+
 ;Patron globals
 global MirtVariants := ""
 global MirtCompleted := ""
@@ -276,8 +284,8 @@ global ZarielFPCurrency := ""
 global ZarielChallenges := ""
 global ZarielRequires := ""
 global ZarielCosts := ""
-;Web Tools globals
 
+;Web Tools globals
 global WebToolCodes := "https://incendar.com/idlechampions_codes.php#123"
 global WebToolGameViewer := "http://idlechampions.soulreaver.usermd.net"
 global WebToolDataViewer := "https://idle.kleho.ru"
@@ -296,6 +304,7 @@ global LastUpdated := "No data loaded"
 global TrayIcon := IconFile
 global LastBSChamp := ""
 global foundCodeString := ""
+
 
 ;IdleChampions Icon
 if FileExist(TrayIcon) {
@@ -327,6 +336,8 @@ class MyGui {
 		Menu, FileSubmenu, Add
 		Menu, FileSubmenu, Add, Detect Game - Epic Games, detectGameInstallEpic
 		Menu, FileSubmenu, Add, Detect Game - Steam, detectGameInstallSteam
+		Menu, FileSubmenu, Add, Detect Game - Standalone, detectGameInstallStandalone
+		; Menu, FileSubmenu, Add, Detect Game - Standalone Launcher, detectGameInstallStandaloneLauncher
 		Menu, FileSubmenu, Add
 		Menu, FileSubmenu, Add, &Reload IdleCombos, Reload_Clicked
 		Menu, FileSubmenu, Add, E&xit IdleCombos, Exit_Clicked
@@ -643,6 +654,7 @@ class MyGui {
 		GuiControl, MyWindow:, AchievementInfo, % AchievementInfo, w250 h210
 		GuiControl, MyWindow:, BlessingInfo, % BlessingInfo, w250 h210
 		GuiControl, MyWindow:, LastUpdated, % LastUpdated, w250 h210
+
 		;adventures
 		GuiControl, MyWindow:, CurrentAdventure, % CurrentAdventure, w250 h210
 		GuiControl, MyWindow:, CurrentArea, % CurrentArea, w250 h210
@@ -664,6 +676,7 @@ class MyGui {
 		GuiControl, MyWindow:, BGCore, % BGCore, w250 h210
 		GuiControl, MyWindow:, BG2Core, % BG2Core, w250 h210
 		GuiControl, MyWindow:, BG3Core, % BG3Core, w250 h210
+
 		;inventory
 		GuiControl, MyWindow:, CurrentGems, % CurrentGems, w250 h210
 		GuiControl, MyWindow:, SpentGems, % SpentGems, w250 h210
@@ -687,6 +700,7 @@ class MyGui {
 		GuiControl, MyWindow:, CurrentLgBS, % CurrentLgBS, w250 h210
 		GuiControl, MyWindow:, CurrentHgBS, % CurrentHgBS, w250 h210
 		GuiControl, MyWindow:, AvailableBSLvs, % AvailableBSLvs, w250 h210
+
 		;patrons
 		GuiControl, MyWindow:, MirtVariants, % MirtVariants, w250 h210
 		GuiControl, MyWindow:, MirtChallenges, % MirtChallenges, w250 h210
@@ -708,8 +722,10 @@ class MyGui {
 		GuiControl, MyWindow:, ZarielFPCurrency, % ZarielFPCurrency, w250 h210
 		GuiControl, MyWindow:, ZarielRequires, % ZarielRequires, w250 h210
 		GuiControl, MyWindow:, ZarielCosts, % ZarielCosts, w250 h210
+
 		;champions
 		GuiControl, MyWindow:, ChampDetails, % ChampDetails, w250 h210
+
 		;settings
 		GuiControl, MyWindow:, ServerName, % ServerName, w50 h210
 		GuiControl, MyWindow:, GetDetailsonStart, % GetDetailsonStart, w250 h210
@@ -1722,6 +1738,11 @@ setGameInstallSteam( manual = false) {
 		GameInstallDir := GameInstallDirSteam
 		GameClient := GameInstallDir GameClientExe
 		WRLFile := GameInstallDir WRLFilePath
+		IconFile := GameInstallDir IconFilename
+		;IdleChampions Icon
+		if FileExist(IconFile) {
+			Menu, Tray, Icon, %IconFile%
+		}
 		GamePlatform := "Steam"
 		if manual {
 			msgbox Steam install found
@@ -1750,6 +1771,11 @@ setGameInstallEpic( manual = false) {
 				GameInstallDir := GameInstallDirEpic
 				GameClient := GameClientEpicLauncher
 				WRLFile := GameInstallDir WRLFilePath
+				IconFile := GameInstallDir IconFilename
+				;IdleChampions Icon
+				if FileExist(IconFile) {
+					Menu, Tray, Icon, %IconFile%
+				}
 				GamePlatform := "Epic Game Store"
 				if manual {
 					msgbox Epic Games install found
@@ -1765,11 +1791,70 @@ setGameInstallEpic( manual = false) {
 	return false
 }
 
+detectGameInstallStandalone() {
+	setGameInstallStandalone(true)
+}
+
+setGameInstallStandalone( manual = false) {
+	; Detect Standalone install
+	if FileExist(GameInstallDirStandalone) {
+		GameInstallDir := GameInstallDirStandaloneLauncher
+		GameClient := GameInstallDirStandaloneLauncher GameClientExeStandaloneLauncher
+		WRLFile := GameInstallDirStandalone WRLFilePath
+		IconFilename := GameClientExeStandaloneLauncher
+		IconFile := GameInstallDir IconFilename
+		;IdleChampions Icon
+		if FileExist(IconFile) {
+			Menu, Tray, Icon, %IconFile%
+		}
+		GamePlatform := "Standalone"
+		if manual {
+			msgbox Standalone install found
+			FirstRun()
+			GetUserDetails()
+		}
+		return true
+	}
+	if manual
+		msgbox Standalone install NOT found
+	return setGameInstallStandaloneLauncher(manual)
+}
+
+detectGameInstallStandaloneLauncher() {
+	setGameInstallStandaloneLauncher(true)
+}
+
+setGameInstallStandaloneLauncher( manual = false) {
+	; Detect Standalone Launcher install
+	if FileExist(GameInstallDirStandaloneLauncher) {
+		GameInstallDir := GameInstallDirStandaloneLauncher
+		GameClient := GameInstallDirStandaloneLauncher GameClientExeStandaloneLauncher
+		WRLFile := ""
+		IconFilename := GameClientExeStandaloneLauncher
+		IconFile := GameInstallDir IconFilename
+		;IdleChampions Icon
+		if FileExist(IconFile) {
+			Menu, Tray, Icon, %IconFile%
+		}
+		GamePlatform := "Standalone Launcher"
+		if manual {
+			msgbox Standalone Launcher install found`nYou must login to the launcher and install the game first`nAfter the game is installed, launch the game`nThen rerun game detection to grab the User ID and Hash
+		}
+		return true
+	}
+	if manual
+		msgbox Standalone Launcher install NOT found
+	return false
+}
+
+
+
 FirstRun() {
 	MsgBox, 4, , Get User ID and Hash from webrequestlog.txt?
 	IfMsgBox, Yes
 	{
 		GetIdFromWRL()
+		LogFile("Platform: " GamePlatform)
 		LogFile("User ID: " UserID " & Hash: " UserHash " detected in WRL")
 	} else {
 		MsgBox, 4, , Choose install directory manually?
@@ -2515,16 +2600,26 @@ ServerCall(callname, parameters) {
 }
 
 LaunchGame() {
-	if (Not WinExist("ahk_exe IdleDragons.exe")) {
-		Run, %GameClient%
-		SB_SetText("⌛ Game client starting...")
-		WinWait, "ahk_exe IdleDragons.exe"
-		LogFile("Game Client Launched")
-		SB_SetText("✅ Game client has started!")
-	} else {
-		if !FirstRun {
-			SB_SetText("✅ Game client is already running!")
+	if( GamePlatform == "Standalone Launcher") {
+		if (Not WinExist("ahk_exe IdleDragonsLauncher.exe")) {
+			Run, %GameClient%, %GameInstallDir%
+			SB_SetText("⌛ Game Launcher starting...")
+			WinWait, Idle Champions
+			LogFile("Game Launcher Launched")
+			SB_SetText("✅ Game Launcher has started!")
+		} else {
+			SB_SetText("✅ Game Launcher is already running!")
 		}
+		return
+	}
+	if (Not WinExist("ahk_exe IdleDragons.exe")) {
+		Run, %GameClient%, %GameInstallDir%
+		SB_SetText("⌛ Game Client starting...")
+		WinWait, Idle Champions
+		LogFile("Game Client Launched")
+		SB_SetText("✅ Game Client has started!")
+	} else {
+		SB_SetText("✅ Game Client is already running!")
 	}
 	return
 }
