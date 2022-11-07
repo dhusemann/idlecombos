@@ -5,6 +5,9 @@
 
 ;CHANGELOG
 
+;3.30
+;support for standalone game and launcher
+
 ;3.29
 ;add virgil to dictionary
 ;add missing chests to dictionary
@@ -124,7 +127,7 @@
 
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
-global VersionNumber := "3.29"
+global VersionNumber := "3.30"
 global CurrentDictionary := "2.23"
 
 ;Local File globals
