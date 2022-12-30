@@ -6,12 +6,12 @@
 ;CHANGELOG
 
 ;3.31
-;support for standalone game and launcher
-
-;3.30
 ;add warduke to dictionary
 ;add imoen to dictionary
 ;add missing chests to dictionary
+
+;3.30
+;support for standalone game and launcher
 
 ;3.29
 ;add virgil to dictionary
