@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.23"
+global DictionaryVersion := "2.24"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -184,8 +184,8 @@ ChampFromID(id) {
 			case "113": namefromid := "Egbert"
 			case "114": namefromid := "Kent"
 			case "115": namefromid := "Virgil"
-			case "116": namefromid := "UNKNOWN (" id ")"
-			case "117": namefromid := "UNKNOWN (" id ")"
+			case "116": namefromid := "Warduke"
+			case "117": namefromid := "Imoen"
 			case "118": namefromid := "UNKNOWN (" id ")"
 			case "119": namefromid := "UNKNOWN (" id ")"
 			case "120": namefromid := "UNKNOWN (" id ")"
@@ -1049,17 +1049,17 @@ ChestFromID(id) {
 			case "500": namefromid := "Gold Accessory Chest"
 		}
 	}
-	else if (id < 505) {
+	else if (id < 510) {
 		switch id {
 			case "501": namefromid := "Gold All Star Chest"
 			case "502": namefromid := "Gold Sidekick Chest"
 			case "503": namefromid := "Gold Balanced Chest"
 			case "504": namefromid := "Gold Lockpick Chest"
-			;case "505": namefromid := "UNKNOWN (" id ")"
-			;case "506": namefromid := "UNKNOWN (" id ")"
-			;case "507": namefromid := "UNKNOWN (" id ")"
-			;case "508": namefromid := "UNKNOWN (" id ")"
-			;case "509": namefromid := "UNKNOWN (" id ")"
+			case "505": namefromid := "Gold Dread Helm Chest"
+			case "506": namefromid := "Gold Iridescent Chest"
+			case "507": namefromid := "Gold Dhampiric Chest"
+			case "508": namefromid := "Gold Wedding Chest"
+			case "509": namefromid := "Gold Sword of Koshmarr Chest"
 			;case "510": namefromid := "UNKNOWN (" id ")"
 			;case "511": namefromid := "UNKNOWN (" id ")"
 			;case "512": namefromid := "UNKNOWN (" id ")"
@@ -1291,7 +1291,7 @@ ChestIDFromChampID(id) {
 			case "100": chestfromchamp := "357"
 		}
 	}
-	else if (id < 116) {
+	else if (id < 118) {
 		switch id {
 			case "101": chestfromchamp := "359"
 			case "102": chestfromchamp := "361"
@@ -1308,8 +1308,8 @@ ChestIDFromChampID(id) {
 			case "113": chestfromchamp := "428"
 			case "114": chestfromchamp := "430"
 			case "115": chestfromchamp := "432"
-			;case "116": chestfromchamp := "UNKNOWN (" id ")"
-			;case "117": chestfromchamp := "UNKNOWN (" id ")"
+			case "116": chestfromchamp := "434"
+			case "117": chestfromchamp := "436"
 			;case "118": chestfromchamp := "UNKNOWN (" id ")"
 			;case "119": chestfromchamp := "UNKNOWN (" id ")"
 			;case "120": chestfromchamp := "UNKNOWN (" id ")"

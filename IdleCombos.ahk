@@ -5,8 +5,13 @@
 
 ;CHANGELOG
 
-;3.30
+;3.31
 ;support for standalone game and launcher
+
+;3.30
+;add warduke to dictionary
+;add imoen to dictionary
+;add missing chests to dictionary
 
 ;3.29
 ;add virgil to dictionary
@@ -127,8 +132,8 @@
 
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
-global VersionNumber := "3.30"
-global CurrentDictionary := "2.23"
+global VersionNumber := "3.31"
+global CurrentDictionary := "2.24"
 
 ;Local File globals
 global OutputLogFile := ""
