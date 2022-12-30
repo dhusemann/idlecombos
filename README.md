@@ -1,19 +1,18 @@
 # idlecombos
-v3.29 is the current supported Version.</br>
-</br>
 
-**IMPORTANT** - When opening chests with the idlecombos app:</br>
-The game client can save an outdated inventory, overwriting some consumables.</br>
-It's recommended to exit the game first to avoid losing items.</br>
-</br>
+Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).</br>
 
-**IMPORTANT** - Epic Launcher will not open Idlechampions if Idlecombos is open first.</br>
-</br>
-
-### Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).</br>
-</br>
+**v3.30** is the current supported Version.</br>
 
 <img src="https://i.imgur.com/LoeTt9r.png"></br>
+
+## **IMPORTANT NOTES**
+- When opening chests with the idlecombos app:
+  - The game client can save an outdated inventory, overwriting some consumables.
+  - It's recommended to exit the game first to avoid losing items.
+ - Steam Launcher will not open Idlechampions if Steam is not open and logged in.
+</br>
+</br>
 
 ### Features:</br>
 - Simple account statistics display</br>
@@ -22,14 +21,14 @@ It's recommended to exit the game first to avoid losing items.</br>
 - Enter multiple combinations at once</br>
   <img src=https://i.imgur.com/vwqDR4U.png>
 - Briv Stack Calculator [github.com/Deatho0ne]</br>
-- Manual starting/stopping adventures</br>
-  - (Sometimes can fix stuck accounts)</br>
+- Manual starting/stopping adventures (Sometimes can fix stuck accounts)</br>
 - Can reload game client on crash (Steam only)</br>
 </br>
 
 ### Requirements:</br>
-- Steam install or
-- Epic Games install or
+- Steam install _or_
+- Epic Games install _or_
+- Standalone install _or_
 - Able to enter your `user_id` & `hash` if on another platform.</br>
 </br>
 
