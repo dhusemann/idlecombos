@@ -6,6 +6,8 @@
 ;CHANGELOG
 
 ;3.32
+;update buy/open chests menu hotkeys
+;update blacksmith contracts menu hotkeys
 ;increase the font size of the "List Champ IDs"
 ;increase the font size of the "List User Details"
 
@@ -355,20 +357,20 @@ class MyGui {
 		Menu, FileSubmenu, Add, E&xit IdleCombos, Exit_Clicked
 		Menu, IdleMenu, Add, &File, :FileSubmenu
 
-		Menu, ChestsSubmenu, Add, Buy Gold, Buy_Gold
-		Menu, ChestsSubmenu, Add, Buy Silver, Buy_Silver
-		Menu, ChestsSubmenu, Add, Open Gold, Open_Gold
-		Menu, ChestsSubmenu, Add, Open Silver, Open_Silver
-		Menu, ChestsSubmenu, Add, Pity Timers, ShowPityTimers
+		Menu, ChestsSubmenu, Add, Buy &Gold, Buy_Gold
+		Menu, ChestsSubmenu, Add, Buy &Silver, Buy_Silver
+		Menu, ChestsSubmenu, Add, Open G&old, Open_Gold
+		Menu, ChestsSubmenu, Add, Open S&ilver, Open_Silver
+		Menu, ChestsSubmenu, Add, &Pity Timers, ShowPityTimers
 		Menu, ToolsSubmenu, Add, &Chests, :ChestsSubmenu
 
-		Menu, BlacksmithSubmenu, Add, Use Tiny Contracts, Tiny_Blacksmith
-		Menu, BlacksmithSubmenu, Add, Use Small Contracts, Sm_Blacksmith
-		Menu, BlacksmithSubmenu, Add, Use Medium Contracts, Med_Blacksmith
-		Menu, BlacksmithSubmenu, Add, Use Large Contracts, Lg_Blacksmith
-		Menu, BlacksmithSubmenu, Add, Use Huge Contracts, Hg_Blacksmith
-		Menu, BlacksmithSubmenu, Add, Item Level Report, GearReport
-		Menu, BlacksmithSubmenu, Add, Active Patron Feats, PatronFeats
+		Menu, BlacksmithSubmenu, Add, Use &Tiny Contracts, Tiny_Blacksmith
+		Menu, BlacksmithSubmenu, Add, Use &Small Contracts, Sm_Blacksmith
+		Menu, BlacksmithSubmenu, Add, Use &Medium Contracts, Med_Blacksmith
+		Menu, BlacksmithSubmenu, Add, Use &Large Contracts, Lg_Blacksmith
+		Menu, BlacksmithSubmenu, Add, Use &Huge Contracts, Hg_Blacksmith
+		Menu, BlacksmithSubmenu, Add, &Item Level Report, GearReport
+		Menu, BlacksmithSubmenu, Add, &Active Patron Feats, PatronFeats
 		Menu, ToolsSubmenu, Add, &Blacksmith, :BlacksmithSubmenu
 
 		Menu, ToolsSubmenu, Add, &Redeem Codes, Open_Codes
@@ -384,13 +386,13 @@ class MyGui {
 		Menu, AdvSubmenu, Add, Update Adventure List, AdventureList
 		Menu, ToolsSubmenu, Add, &Adventure Manager, :AdvSubmenu
 
-		Menu, ToolsSubmenu, Add, &Briv Stack Calculator, Briv_Calc
+		Menu, ToolsSubmenu, Add, Briv &Stack Calculator, Briv_Calc
 
 		Menu, WebToolsSubmenu, Add, &Data Viewer - Kleho, Open_Web_Data_Viewer
 		Menu, WebToolsSubmenu, Add, &Game Viewer - SoulReaver, Open_Web_Game_Viewer
-		Menu, WebToolsSubmenu, Add, &Utilities - ByteGlow, Open_Web_Utilities
-		Menu, WebToolsSubmenu, Add, &Utilities - Modron Core Calc, Open_Web_Utilities_Modron
-		Menu, WebToolsSubmenu, Add, &Utilities - Formation Calc, Open_Web_Utilities_Formation
+		Menu, WebToolsSubmenu, Add, Utilities - &ByteGlow, Open_Web_Utilities
+		Menu, WebToolsSubmenu, Add, Utilities - &Modron Core Calc, Open_Web_Utilities_Modron
+		Menu, WebToolsSubmenu, Add, Utilities - &Formation Calc, Open_Web_Utilities_Formation
 		Menu, ToolsSubmenu, Add, &Web Tools, :WebToolsSubmenu
 
 		Menu, IdleMenu, Add, &Tools, :ToolsSubmenu
