@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.24"
+global DictionaryVersion := "2.25"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -791,6 +791,7 @@ ChestFromID(id) {
 			case "281": namefromid := "Gold Experimental Chest"
 			case "282": namefromid := "Electrum Chest"
 			case "284": namefromid := "Gold Ichor Covered Chest"
+			case "283": namefromid := "UNKNOWN (" id ")"
 			case "285": namefromid := "Gold Scrappy Chest"
 			case "286": namefromid := "Gold Giant's Bane Chest"
 			case "287": namefromid := "Gold Dragonscale Chest"
@@ -826,9 +827,9 @@ ChestFromID(id) {
 			case "313": namefromid := "Gold Tidal Chest"
 			case "314": namefromid := "Gold Netherese Chest"
 			case "315": namefromid := "Gold Smores Chest"
-			;case "316": namefromid := "UNKNOWN (" id ")"
-			;case "317": namefromid := "UNKNOWN (" id ")"
-			;case "318": namefromid := "UNKNOWN (" id ")"
+			case "316": namefromid := "UNKNOWN (" id ")"
+			case "317": namefromid := "UNKNOWN (" id ")"
+			case "318": namefromid := "UNKNOWN (" id ")"
 			case "319": namefromid := "Gold Illusion Chest"
 			case "320": namefromid := "Gold Coast Chest"
 		}
@@ -972,33 +973,33 @@ ChestFromID(id) {
 			case "435": namefromid := "Silver Imoen Chest"
 			case "436": namefromid := "Gold Imoen Chest"
 			case "437": namefromid := "Silver E6Y6 Chest"
-			;case "438": namefromid := "UNKNOWN (" id ")"
+			case "438": namefromid := "UNKNOWN (" id ")"
 			case "439": namefromid := "Silver E7Y6 Chest"
-			;case "440": namefromid := "UNKNOWN (" id ")"
+			case "440": namefromid := "UNKNOWN (" id ")"
 		}
 	}
 	else if (id < 461) {
 		switch id {
 			case "441": namefromid := "Silver E8Y6 Chest"
-			;case "442": namefromid := "UNKNOWN (" id ")"
+			case "442": namefromid := "UNKNOWN (" id ")"
 			case "443": namefromid := "Silver E9Y6 Chest"
-			;case "444": namefromid := "UNKNOWN (" id ")"
+			case "444": namefromid := "UNKNOWN (" id ")"
 			case "445": namefromid := "Silver E10Y6 Chest"
-			;case "446": namefromid := "UNKNOWN (" id ")"
+			case "446": namefromid := "UNKNOWN (" id ")"
 			case "447": namefromid := "Silver E11Y6 Chest"
-			;case "448": namefromid := "UNKNOWN (" id ")"
+			case "448": namefromid := "UNKNOWN (" id ")"
 			case "449": namefromid := "Silver E12Y6 Chest"
-			;case "450": namefromid := "UNKNOWN (" id ")"
+			case "450": namefromid := "UNKNOWN (" id ")"
 			case "451": namefromid := "Silver E13Y6 Chest"
-			;case "452": namefromid := "UNKNOWN (" id ")"
+			case "452": namefromid := "UNKNOWN (" id ")"
 			case "453": namefromid := "Silver E14Y6 Chest"
-			;case "454": namefromid := "UNKNOWN (" id ")"
+			case "454": namefromid := "UNKNOWN (" id ")"
 			case "455": namefromid := "Silver E15Y6 Chest"
-			;case "456": namefromid := "UNKNOWN (" id ")"
+			case "456": namefromid := "UNKNOWN (" id ")"
 			case "457": namefromid := "Silver E16Y6 Chest"
-			;case "458": namefromid := "UNKNOWN (" id ")"
+			case "458": namefromid := "UNKNOWN (" id ")"
 			case "459": namefromid := "Silver E17Y6 Chest"
-			;case "460": namefromid := "UNKNOWN (" id ")"
+			case "460": namefromid := "UNKNOWN (" id ")"
 		}
 	}
 	else if (id < 481) {
@@ -1032,8 +1033,8 @@ ChestFromID(id) {
 			case "483": namefromid := "Gold Corrupted Chest"
 			case "484": namefromid := "Gold Shar Chest"
 			case "485": namefromid := "Gold Prismed Chest"
-			;case "486": namefromid := "UNKNOWN (" id ")"
-			;case "487": namefromid := "UNKNOWN (" id ")"
+			case "486": namefromid := "UNKNOWN (" id ")"
+			case "487": namefromid := "UNKNOWN (" id ")"
 			case "488": namefromid := "Gold Compass Chest"
 			case "489": namefromid := "Gold Eyeball Chest"
 			case "490": namefromid := "Gold Dungeon Chest"

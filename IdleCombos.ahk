@@ -6,6 +6,9 @@
 ;CHANGELOG
 
 ;3.32
+;add buy chests event
+;add open chests event
+;add list chest ids
 ;store blacksmith contract last used count
 ;update buy/open chests menu hotkeys
 ;update blacksmith contracts menu hotkeys
@@ -140,7 +143,7 @@
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
 global VersionNumber := "3.31"
-global CurrentDictionary := "2.24"
+global CurrentDictionary := "2.25"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -362,10 +365,12 @@ class MyGui {
 		Menu, FileSubmenu, Add, E&xit IdleCombos, Exit_Clicked
 		Menu, IdleMenu, Add, &File, :FileSubmenu
 
-		Menu, ChestsSubmenu, Add, Buy &Gold, Buy_Gold
 		Menu, ChestsSubmenu, Add, Buy &Silver, Buy_Silver
-		Menu, ChestsSubmenu, Add, Open G&old, Open_Gold
+		Menu, ChestsSubmenu, Add, Buy &Gold, Buy_Gold
+		Menu, ChestsSubmenu, Add, Buy &Event, Buy_Event
 		Menu, ChestsSubmenu, Add, Open S&ilver, Open_Silver
+		Menu, ChestsSubmenu, Add, Open G&old, Open_Gold
+		Menu, ChestsSubmenu, Add, Open E&vent, Open_Event
 		Menu, ChestsSubmenu, Add, &Pity Timers, ShowPityTimers
 		Menu, ToolsSubmenu, Add, &Chests, :ChestsSubmenu
 
@@ -409,6 +414,7 @@ class MyGui {
 		Menu, HelpSubmenu, Add
 		Menu, HelpSubmenu, Add, List &User Details, List_UserDetails
 		Menu, HelpSubmenu, Add, List &Champ IDs, List_ChampIDs
+		Menu, HelpSubmenu, Add, List C&hest IDs, List_ChestIDs
 		Menu, HelpSubmenu, Add, &About IdleCombos, About_Clicked
 		Menu, HelpSubmenu, Add, &Update Dictionary, Update_Dictionary
 		Menu, HelpSubmenu, Add, &Discord Support Server, Discord_Clicked
@@ -854,15 +860,26 @@ Buy_Gold:
 		return
 	}
 
+Buy_Event:
+	{
+		InputBox, chestid, Opening Chests, % "Enter Chest ID?`n", , 200, 150
+		if ErrorLevel
+			return
+		if (chestid) {
+			Buy_Chests(chestid)
+		}
+		return
+	}
+
 Open_Silver:
 	{
 		if (Not WinExist("ahk_exe IdleDragons.exe")) {
 			Open_Chests(1)
 			return
 		} else {
-			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests"
+			MsgBox, 0, , % "NOTE: It's recommended to close the game client before opening chests"
 			return 
-			;MsgBox, 4, , % "Note: It's recommended to close the game client before opening chests.`nWould you like to continue anyway?"
+			;MsgBox, 4, , % "NOTE: It's recommended to close the game client before opening chests.`nWould you like to continue anyway?"
 			;IfMsgBox, Yes
 			;{
 			;Open_Chests(1)
@@ -881,9 +898,35 @@ Open_Gold:
 			Open_Chests(2)
 			return
 		} else {
-			MsgBox, 0, , % "Note: It's recommended to close the game client before opening chests"
+			MsgBox, 0, , % "NOTE: It's recommended to close the game client before opening chests"
 			return
-			;MsgBox, 4, , % "Note: It's recommended to close the game client before opening chests.`nWould you like to continue anyway?`n`n(Feats earned using this app do not count towards the related achievement.)"
+			;MsgBox, 4, , % "NOTE: It's recommended to close the game client before opening chests.`nWould you like to continue anyway?`n`n(Feats earned using this app do not count towards the related achievement.)"
+			;IfMsgBox, Yes
+			;{
+			;	;Open_Chests(2)
+			;	return
+			;}
+			;else IfMsgBox, No
+			;{
+			;	return
+			;}
+		}
+	}
+
+Open_Event:
+	{
+		if (Not WinExist("ahk_exe IdleDragons.exe")) {
+			InputBox, chestid, Opening Chests, % "Enter Chest ID?`n", , 200, 150
+			if ErrorLevel
+				return
+			if (chestid) {
+				Open_Chests(chestid)
+			}
+			return
+		} else {
+			MsgBox, 0, , % "NOTE: It's recommended to close the game client before opening chests"
+			return
+			;MsgBox, 4, , % "NOTE: It's recommended to close the game client before opening chests.`nWould you like to continue anyway?`n`n(Feats earned using this app do not count towards the related achievement.)"
 			;IfMsgBox, Yes
 			;{
 			;	;Open_Chests(2)
@@ -1131,7 +1174,7 @@ Open_Codes:
 		GuiControl, , CodesOutputStatus, % CodesPending
 		;MsgBox, , Results, % codemessage
 		ScrollBox(codemessage, "p b1 h200 w250", "Redeem Codes Results")
-		;ScrollBox(codemessage, "p b1 h200 w250 f{s10 Consolas}", "Redeem Codes Results")
+		;ScrollBox(codemessage, "p b1 h200 w250 f{s10, Consolas}", "Redeem Codes Results")
 		;CustomMsgBox("Redeem Codes Results",codemessage,"Consolas","s14")
 		LogFile("Redeem Code Finished")
 		return
@@ -1209,7 +1252,7 @@ Buy_Extra_Chests(chestid,extracount) {
 		chestresults := JSON.parse(rawresults)
 		if (chestresults.success == "0") {
 			MsgBox % "Error: " rawresults
-			LogFile("Gems spent: " gemsspent)
+			LogFile("Gems Spent: " gemsspent)
 			GetUserDetails()
 			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
@@ -1217,7 +1260,7 @@ Buy_Extra_Chests(chestid,extracount) {
 		gemsspent += chestresults.currency_spent
 		Sleep 1000
 	}
-	LogFile("Gems spent: " gemsspent)
+	LogFile("Gems Spent: " gemsspent)
 	SB_SetText("✅ Chest purchase completed")
 	return gemsspent
 }
@@ -1234,8 +1277,8 @@ Buy_Chests(chestid) {
 			GetUserDetails()
 		}
 	}
-	switch chestid {
-		case 1: {
+	switch {
+		case (chestid = 1): {
 			maxbuy := Floor(CurrentGems/50)
 			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 200, 180
 			if ErrorLevel
@@ -1248,9 +1291,30 @@ Buy_Chests(chestid) {
 				}
 			}
 		}
-		case 2: {
+		case (chestid = 2): {
 			maxbuy := Floor(CurrentGems/500)
 			InputBox, count, Buying Chests, % "How many Gold Chests?`n(Max: " maxbuy ")", , 200, 180
+			if ErrorLevel
+				return
+			if (count = "alpha5") {
+				chestparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID
+				rawresults := ServerCall("alphachests", chestparams)
+				MsgBox % rawresults
+				GetUserDetails()
+				SB_SetText("✨ Ai yi yi, Zordon!")
+				return
+			}
+			if (count > maxbuy) {
+				MsgBox, 4, , Insufficient gems detected for purchase.`nContinue anyway?
+				IfMsgBox, No
+				{
+					return
+				}
+			}
+		}
+		case (chestid > 3 and chestid < 510): {
+			maxbuy := Floor(CurrentGems/10000)
+			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(Max: " maxbuy ")", , 200, 180
 			if ErrorLevel
 				return
 			if (count = "alpha5") {
@@ -1314,8 +1378,8 @@ Open_Chests(chestid) {
 			GetUserDetails()
 		}
 	}
-	switch chestid {
-		case 1: {
+	switch {
+		case (chestid = 1): {
 			InputBox, count, Opening Chests, % "How many Silver Chests?`n(Owned: " CurrentSilvers ")`n(Max: " (CurrentSilvers + Floor(CurrentGems/50)) ")", , 200, 180
 			if ErrorLevel
 				return
@@ -1330,13 +1394,29 @@ Open_Chests(chestid) {
 				}
 			}
 		}
-		case 2: {
+		case (chestid = 2): {
 			InputBox, count, Opening Chests, % "How many Gold Chests?`n(Owned: " CurrentGolds ")`n(Max: " (CurrentGolds + Floor(CurrentGems/500)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
 			if ErrorLevel
 				return
 			if (count > CurrentGolds) {
 				MsgBox, 4, , % "Spend " ((count - CurrentGolds)*500) " gems to purchase " (count - CurrentGolds) " chests before opening?"
 				extracount := (count - CurrentGolds)
+				IfMsgBox, Yes
+				{
+					extraspent := Buy_Extra_Chests(2,extracount)
+				} else {
+					return
+				}
+			}
+		}
+		case (chestid > 3 and chestid < 510): {
+			CurrentChests := 0
+			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(CurrentGems/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
+			if ErrorLevel
+				return
+			if (count > CurrentChests) {
+				MsgBox, 4, , % "Spend " ((count - CurrentChests)*10000) " gems to purchase " (count - CurrentChests) " chests before opening?"
+				extracount := (count - CurrentChests)
 				IfMsgBox, Yes
 				{
 					extraspent := Buy_Extra_Chests(2,extracount)
@@ -2741,7 +2821,8 @@ List_UserDetails:
 			userdetailslist := userdetailslist "Steam User ID : " UserIDSteam "`n"
 		}
 		;MsgBox, , User Details, % userdetailslist
-		CustomMsgBox("User Details",userdetailslist,"Consolas","s14")
+		;CustomMsgBox("User Details",userdetailslist,"Consolas","s14")
+		ScrollBox(userdetailslist, "p b1 h100 w700 f{s14, Consolas}", "User Details")
 		return	
 	}
 
@@ -2754,11 +2835,11 @@ List_ChampIDs:
 		while (id < 121) {
 			champname := ChampFromID(id)
 			StringLen, champnamelen, champname
-			while (champnamelen < 16) {
+			while (champnamelen < 25) {
 				champname := champname " "
 				champnamelen += 1
 			}
-			if (!mod(id, 4)) {
+			if (!mod(id, 3)) {
 				champidlist := champidlist id ": " champname "`n"
 			} else {
 				champidlist := champidlist id ": " champname "`t"
@@ -2766,7 +2847,35 @@ List_ChampIDs:
 			id += 1
 		}
 		;MsgBox, , Champ ID List, % champidlist
-		CustomMsgBox("Champion IDs and Names",champidlist,"Consolas","s14")
+		;CustomMsgBox("Champion IDs and Names",champidlist,"Consolas","s14")
+		ScrollBox(champidlist, "p b1 h700 w1000 f{s14, Consolas}", "Champion IDs and Names")
+		return	
+	}
+
+
+List_ChestIDs:
+	{
+		chestnamelen := 0
+		chestname := ""
+		id := 1
+		chestidlist := ""
+		while (id < 510) {
+			chestname := ChestFromID(id)
+			StringLen, chestnamelen, chestname
+			while (chestnamelen < 40) {
+				chestname := chestname " "
+				chestnamelen += 1
+			}
+			if (!mod(id, 2)) {
+				chestidlist := chestidlist id ": " chestname "`n"
+			} else {
+				chestidlist := chestidlist id ": " chestname "`t"
+			}
+			id += 1
+		}
+		;MsgBox, , Chest ID List, % chestidlist
+		;CustomMsgBox("Chest IDs and Names",chestidlist,"Consolas","s14")
+		ScrollBox(chestidlist, "p b1 h700 w1000 f{s14, Consolas}", "Chest IDs and Names")
 		return	
 	}
 
