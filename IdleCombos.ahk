@@ -1313,8 +1313,8 @@ Buy_Chests(chestid) {
 			}
 		}
 		case (chestid > 3 and chestid < 510): {
-			CurrentCurrency := 0 ;Get current event currency, need to check during event
-			maxbuy := Floor(CurrentCurrency/10000)
+			CurrentTokens := UserDetails.details.event_details.user_data.event_tokens ;Get current event tokens, need to check during event
+			maxbuy := Floor(CurrentTokens/10000)
 			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(Max: " maxbuy ")", , 200, 180
 			if ErrorLevel
 				return
@@ -1327,7 +1327,7 @@ Buy_Chests(chestid) {
 				return
 			}
 			if (count > maxbuy) {
-				MsgBox, 4, , Insufficient Currency detected for purchase.`nContinue anyway?
+				MsgBox, 4, , Insufficient Event Tokens detected for purchase.`nContinue anyway?
 				IfMsgBox, No
 				{
 					return
@@ -1412,12 +1412,12 @@ Open_Chests(chestid) {
 		}
 		case (chestid > 3 and chestid < 510): {
 			CurrentChests := UserDetails.details.chests[%chestid%]
-			CurrentCurrency := 0 ;Get current event currency, need to check during event
-			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(CurrentCurrency/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
+			CurrentTokens := UserDetails.details.event_details.user_data.event_tokens ;Get current event currency, need to check during event
+			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(CurrentTokens/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
 			if ErrorLevel
 				return
 			if (count > CurrentChests) {
-				MsgBox, 4, , % "Spend " ((count - CurrentChests)*10000) " Currency to purchase " (count - CurrentChests) " chests before opening?"
+				MsgBox, 4, , % "Spend " ((count - CurrentChests)*10000) " event tokens to purchase " (count - CurrentChests) " chests before opening?"
 				extracount := (count - CurrentChests)
 				IfMsgBox, Yes
 				{
