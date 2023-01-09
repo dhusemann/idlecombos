@@ -6,6 +6,7 @@
 ;CHANGELOG
 
 ;3.32
+;store blacksmith contract last used count
 ;update buy/open chests menu hotkeys
 ;update blacksmith contracts menu hotkeys
 ;increase the font size of the "List Champ IDs"
@@ -317,8 +318,12 @@ global CrashCount := 0
 global LastUpdated := "No data loaded"
 global TrayIcon := IconFile
 global LastBSChamp := ""
-global foundCodeString := ""
-
+global LastBSTnCount := ""
+global LastBSSmCount := ""
+global LastBSMdCount := ""
+global LastBSLgCount := ""
+global LastBSHgCount := ""
+global foundCodeString := ""	
 
 ;IdleChampions Icon
 if FileExist(TrayIcon) {
@@ -1499,12 +1504,28 @@ UseBlacksmith(buffid) {
 		FirstRun()
 	}
 	switch buffid {
-		case 31: currentcontracts := CurrentTinyBS
-		case 32: currentcontracts := CurrentSmBS
-		case 33: currentcontracts := CurrentMdBS
-		case 34: currentcontracts := CurrentLgBS
-		case 1797: currentcontracts := CurrentHgBS
-	}	
+		case 31:
+			currentcontracts := CurrentTinyBS
+			lastcontracts := LastBSTnCount
+		case 32:
+			currentcontracts := CurrentSmBS
+			lastcontracts := LastBSSmCount
+		case 33:
+			currentcontracts := CurrentMdBS
+			lastcontracts := LastBSMdCount
+		case 34:
+			currentcontracts := CurrentLgBS
+			lastcontracts := LastBSLgCount
+		case 1797:
+			currentcontracts := CurrentHgBS
+			lastcontracts := LastBSHgCount
+	}
+	if !(lastcontracts) {
+		lastcontracts := currentcontracts
+	}
+	if (lastcontracts > currentcontracts) {
+		lastcontracts := currentcontracts
+	}
 	if !(currentcontracts) {
 		MsgBox, 4, , No Blacksmith Contracts of that size detected. Check server for user details?
 			IfMsgBox, Yes
@@ -1512,7 +1533,7 @@ UseBlacksmith(buffid) {
 				GetUserDetails()
 			}
 	}
-	InputBox, count, Blacksmithing, % "How many Blacksmith Contracts?`n(Max: " currentcontracts ")", , 200, 180, , , , , %currentcontracts%
+	InputBox, count, Blacksmithing, % "How many Blacksmith Contracts?`n(Max: " currentcontracts ")", , 200, 180, , , , , %lastcontracts%
 	if ErrorLevel
 		return
 	if (count > currentcontracts) {
@@ -1547,6 +1568,13 @@ UseBlacksmith(buffid) {
 		return
 	}
 	LastBSChamp := heroid
+	switch buffid {
+		case 31: LastBSTnCount := count
+		case 32: LastBSSmCount := count
+		case 33: LastBSMdCount := count
+		case 34: LastBSLgCount := count
+		case 1797: LastBSHgCount := count
+	}	
 	bscontractparams := "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&buff_id=" buffid "&hero_id=" heroid "&num_uses="
 	tempsavesetting := 0
 	slot1lvs := 0
