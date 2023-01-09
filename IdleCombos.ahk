@@ -5,6 +5,10 @@
 
 ;CHANGELOG
 
+;3.32
+;increase the font size of the "List Champ IDs"
+;increase the font size of the "List User Details"
+
 ;3.31
 ;add warduke to dictionary
 ;add imoen to dictionary
@@ -1118,8 +1122,10 @@ Open_Codes:
 		Gui, CodeWindow: Default
 		CodesPending := "✅ Codes: " CodeTotal "/" CodeTotal " - Completed! 😎"
 		GuiControl, , CodesOutputStatus, % CodesPending
-		; MsgBox, , Results, % codemessage
+		;MsgBox, , Results, % codemessage
 		ScrollBox(codemessage, "p b1 h200 w250", "Redeem Codes Results")
+		;ScrollBox(codemessage, "p b1 h200 w250 f{s10 Consolas}", "Redeem Codes Results")
+		;CustomMsgBox("Redeem Codes Results",codemessage,"Consolas","s14")
 		LogFile("Redeem Code Finished")
 		return
 	}
@@ -2705,7 +2711,7 @@ List_UserDetails:
 			userdetailslist := userdetailslist "Steam User ID : " UserIDSteam "`n"
 		}
 		;MsgBox, , User Details, % userdetailslist
-		CustomMsgBox("User Details",userdetailslist,"Fixedsys")
+		CustomMsgBox("User Details",userdetailslist,"Consolas","s14")
 		return	
 	}
 
@@ -2730,7 +2736,7 @@ List_ChampIDs:
 			id += 1
 		}
 		;MsgBox, , Champ ID List, % champidlist
-		CustomMsgBox("Champion IDs and Names",champidlist,"Fixedsys")
+		CustomMsgBox("Champion IDs and Names",champidlist,"Consolas","s14")
 		return	
 	}
 
