@@ -1270,7 +1270,7 @@ Buy_Chests(chestid) {
 		MsgBox % "Need User ID & Hash"
 		FirstRun()
 	}
-	if !CurrentGems {
+	if !CurrentGems && (chestid = 1 OR chestid = 2) {
 		MsgBox, 4, , No gems detected. Check server for user details?
 		IfMsgBox, Yes
 		{
@@ -1313,7 +1313,8 @@ Buy_Chests(chestid) {
 			}
 		}
 		case (chestid > 3 and chestid < 510): {
-			maxbuy := Floor(CurrentGems/10000)
+			CurrentCurrency := 0 ;Get current event currency, need to check during event
+			maxbuy := Floor(CurrentCurrency/10000)
 			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(Max: " maxbuy ")", , 200, 180
 			if ErrorLevel
 				return
@@ -1326,7 +1327,7 @@ Buy_Chests(chestid) {
 				return
 			}
 			if (count > maxbuy) {
-				MsgBox, 4, , Insufficient gems detected for purchase.`nContinue anyway?
+				MsgBox, 4, , Insufficient Currency detected for purchase.`nContinue anyway?
 				IfMsgBox, No
 				{
 					return
@@ -1371,7 +1372,7 @@ Open_Chests(chestid) {
 		MsgBox % "Need User ID & Hash"
 		FirstRun()
 	}
-	if (!CurrentGolds && !CurrentSilvers && !CurrentGems) {
+	if (!CurrentGolds && !CurrentSilvers && !CurrentGems && (chestid = 1 OR chestid = 2) ) {
 		MsgBox, 4, , No chests or gems detected. Check server for user details?
 		IfMsgBox, Yes
 		{
@@ -1410,16 +1411,17 @@ Open_Chests(chestid) {
 			}
 		}
 		case (chestid > 3 and chestid < 510): {
-			CurrentChests := 0
-			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(CurrentGems/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
+			CurrentChests := UserDetails.details.chests[%chestid%]
+			CurrentCurrency := 0 ;Get current event currency, need to check during event
+			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(CurrentCurrency/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
 			if ErrorLevel
 				return
 			if (count > CurrentChests) {
-				MsgBox, 4, , % "Spend " ((count - CurrentChests)*10000) " gems to purchase " (count - CurrentChests) " chests before opening?"
+				MsgBox, 4, , % "Spend " ((count - CurrentChests)*10000) " Currency to purchase " (count - CurrentChests) " chests before opening?"
 				extracount := (count - CurrentChests)
 				IfMsgBox, Yes
 				{
-					extraspent := Buy_Extra_Chests(2,extracount)
+					extraspent := Buy_Extra_Chests(chestid,extracount)
 				} else {
 					return
 				}
