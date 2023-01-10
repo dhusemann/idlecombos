@@ -143,6 +143,7 @@
 
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
+;Versions
 global VersionNumber := "3.31"
 global CurrentDictionary := "2.25"
 
@@ -176,7 +177,6 @@ global WRLFile := ""
 global WRLFilePath := "IdleDragons_Data\StreamingAssets\downloaded_files\webRequestLog.txt"
 global DictionaryFile := "https://raw.githubusercontent.com/djravine/idlecombos/master/idledict.ahk"
 global LocalDictionary := "idledict.ahk"
-
 global ICSettingsFile := A_AppData
 StringTrimRight, ICSettingsFile, ICSettingsFile, 7
 ICSettingsFile := ICSettingsFile "LocalLow\Codename Entertainment\Idle Champions\localSettings.json"
@@ -193,7 +193,7 @@ global NoSaveSetting := 0
 global LogEnabled := 0
 global LoadGameClient := 0 ;0 none; 1 epic, 2 steam, 3 standalone
 global SettingsCheckValue := 15 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"servername":"ps7","firstrun":0,"loadgameclient":0,"user_id":0,"user_id_epic":0,"user_id_steam":0,"hash":0,"instance_id":0,"getdetailsonstart":0,"launchgameonstart":0,"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1, "nosavesetting":0, "logenabled":0})
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"servername":"ps7","launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"user_id":0,"user_id_epic":0,"user_id_steam":0})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -329,10 +329,7 @@ if ( setGameInstallEpic() == false ) {
 	}
 }
 
-;IdleChampions Icon
-if FileExist(TrayIcon) {
-	Menu, Tray, Icon, %TrayIcon%
-}
+SetIcon()
 
 oMyGUI := new MyGui()
 
@@ -628,7 +625,7 @@ class MyGui {
 			SB_SetText("❌ User ID & Hash not found!")
 		}
 
-		;Loading current settings
+		;Load current settings
 		ServerName := CurrentSettings.servername
 		GetDetailsonStart := CurrentSettings.getdetailsonstart
 		LaunchGameonStart := CurrentSettings.launchgameonstart
@@ -638,6 +635,8 @@ class MyGui {
 		NoSaveSetting := CurrentSettings.nosavesetting
 		LogEnabled := CurrentSettings.logenabled
 		LoadGameClient := CurrentSettings.loadgameclient
+		
+		this.Update()
 
 		;detect and set game installation paths
 		switch (LoadGameClient) {
@@ -648,8 +647,6 @@ class MyGui {
 			case 3: ;standalone
 				setGameInstallStandalone()
 		}
-		
-		this.Update()
 
 		LogFile("IdleCombos v" VersionNumber " started.")
 		LogFile("Settings File: '" SettingsFile "' - Loaded")
@@ -692,7 +689,7 @@ class MyGui {
 		GuiControl, MyWindow:, BlessingInfo, % BlessingInfo, w250 h210
 		GuiControl, MyWindow:, LastUpdated, % LastUpdated, w250 h210
 
-		;adventures
+		;Adventures
 		GuiControl, MyWindow:, CurrentAdventure, % CurrentAdventure, w250 h210
 		GuiControl, MyWindow:, CurrentArea, % CurrentArea, w250 h210
 		GuiControl, MyWindow:, CurrentPatron, % CurrentPatron, w250 h210
@@ -714,7 +711,7 @@ class MyGui {
 		GuiControl, MyWindow:, BG2Core, % BG2Core, w250 h210
 		GuiControl, MyWindow:, BG3Core, % BG3Core, w250 h210
 
-		;inventory
+		;Inventory
 		GuiControl, MyWindow:, CurrentGems, % CurrentGems, w250 h210
 		GuiControl, MyWindow:, SpentGems, % SpentGems, w250 h210
 		GuiControl, MyWindow:, CurrentGolds, % CurrentGolds, w250 h210
@@ -738,7 +735,7 @@ class MyGui {
 		GuiControl, MyWindow:, CurrentHgBS, % CurrentHgBS, w250 h210
 		GuiControl, MyWindow:, AvailableBSLvs, % AvailableBSLvs, w250 h210
 
-		;patrons
+		;Patrons
 		GuiControl, MyWindow:, MirtVariants, % MirtVariants, w250 h210
 		GuiControl, MyWindow:, MirtChallenges, % MirtChallenges, w250 h210
 		GuiControl, MyWindow:, MirtFPCurrency, % MirtFPCurrency, w250 h210
@@ -760,10 +757,10 @@ class MyGui {
 		GuiControl, MyWindow:, ZarielRequires, % ZarielRequires, w250 h210
 		GuiControl, MyWindow:, ZarielCosts, % ZarielCosts, w250 h210
 
-		;champions
+		;Champions
 		GuiControl, MyWindow:, ChampDetails, % ChampDetails, w250 h210
 
-		;settings
+		;Settings
 		GuiControl, MyWindow:, ServerName, % ServerName, w50 h210
 		GuiControl, MyWindow:, GetDetailsonStart, % GetDetailsonStart, w250 h210
 		GuiControl, MyWindow:, LaunchGameonStart, % LaunchGameonStart, w250 h210
@@ -837,15 +834,16 @@ CrashProtect() {
 
 SaveSettings()
 	{
-		CurrentSettings.servername := ServerName
-		CurrentSettings.getdetailsonstart := GetDetailsonStart
-		CurrentSettings.launchgameonstart := LaunchGameonStart
 		CurrentSettings.alwayssavechests := AlwaysSaveChests
 		CurrentSettings.alwayssavecontracts := AlwaysSaveContracts
 		CurrentSettings.alwayssavecodes := AlwaysSaveCodes
-		CurrentSettings.nosavesetting := NoSaveSetting
-		CurrentSettings.logenabled := LogEnabled
+		CurrentSettings.getdetailsonstart := GetDetailsonStart
+		CurrentSettings.instance_id := InstanceID
+		CurrentSettings.launchgameonstart := LaunchGameonStart
 		CurrentSettings.loadgameclient := LoadGameClient
+		CurrentSettings.logenabled := LogEnabled
+		CurrentSettings.nosavesetting := NoSaveSetting
+		CurrentSettings.servername := ServerName
 		newsettings := JSON.stringify(CurrentSettings)
 		FileDelete, %SettingsFile%
 		FileAppend, %newsettings%, %SettingsFile%
@@ -1873,6 +1871,13 @@ EndBG3Adventure() {
 }
 ;	fmagdi -stop
 
+SetIcon() {
+	;IdleChampions Icon
+	if FileExist(IconFile) {
+		Menu, Tray, Icon, %IconFile%
+	}
+}
+
 detectGameInstallEpic() {
 	setGameInstallEpic(true)
 }
@@ -1889,13 +1894,9 @@ setGameInstallEpic( manual = false) {
 				GameClient := GameClientEpicLauncher
 				WRLFile := GameInstallDir WRLFilePath
 				IconFile := GameInstallDir IconFilename
-				;IdleChampions Icon
-				if FileExist(IconFile) {
-					Menu, Tray, Icon, %IconFile%
-				}
 				GamePlatform := "Epic Game Store"
 				LoadGameClient := 1
-				SaveSettings()
+				SetIcon()
 				if manual {
 					msgbox Epic Games install found
 					FirstRun()
@@ -1921,13 +1922,9 @@ setGameInstallSteam( manual = false) {
 		GameClient := GameInstallDir GameClientExe
 		WRLFile := GameInstallDir WRLFilePath
 		IconFile := GameInstallDir IconFilename
-		;IdleChampions Icon
-		if FileExist(IconFile) {
-			Menu, Tray, Icon, %IconFile%
-		}
 		GamePlatform := "Steam"
 		LoadGameClient := 2
-		SaveSettings()
+		SetIcon()
 		if manual {
 			msgbox Steam install found
 			FirstRun()
@@ -1952,13 +1949,9 @@ setGameInstallStandalone( manual = false) {
 		WRLFile := GameInstallDirStandalone WRLFilePath
 		IconFilename := GameClientExeStandaloneLauncher
 		IconFile := GameInstallDir IconFilename
-		;IdleChampions Icon
-		if FileExist(IconFile) {
-			Menu, Tray, Icon, %IconFile%
-		}
 		GamePlatform := "Standalone"
 		LoadGameClient := 3
-		SaveSettings()
+		SetIcon()
 		if manual {
 			msgbox Standalone install found
 			FirstRun()
@@ -1984,11 +1977,7 @@ setGameInstallStandaloneLauncher( manual = false) {
 		IconFilename := GameClientExeStandaloneLauncher
 		IconFile := GameInstallDir IconFilename
 		LoadGameClient := 3
-		oMyGUI.Save_Settings()
-		;IdleChampions Icon
-		if FileExist(IconFile) {
-			Menu, Tray, Icon, %IconFile%
-		}
+		SetIcon()
 		GamePlatform := "Standalone Launcher"
 		if manual {
 			msgbox Standalone Launcher install found`nYou must login to the launcher and install the game first`nAfter the game is installed, launch the game`nThen rerun game detection to grab the User ID and Hash
@@ -2108,6 +2097,7 @@ GetUserDetails() {
 	UserDetails := JSON.parse(rawdetails)
 	InstanceID := UserDetails.details.instance_id
 	CurrentSettings.instance_id := InstanceID
+	CurrentSettings.loadgameclient := LoadGameClient
 	ActiveInstance := UserDetails.details.active_game_instance_id
 	newsettings := JSON.stringify(CurrentSettings)
 	FileDelete, %SettingsFile%
