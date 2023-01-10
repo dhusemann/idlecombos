@@ -40,7 +40,7 @@ Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).
 </br>
 
 ### How To Run: <br/>
-- Install [AutoHotKey](https://www.autohotkey.com/)
+- Install [AutoHotKey](https://www.autohotkey.com/) (Supports v1.1 or v2.0)
 - Checkout this REPO or download a [release](https://github.com/djravine/idlecombos/releases)
 - Right click the file `IdleCombos.ahk` and open with AutoHotKey
   <img src=https://i.imgur.com/UFWxScW.png>
