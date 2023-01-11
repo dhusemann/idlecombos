@@ -2,7 +2,7 @@
 
 Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).</br>
 
-**v3.32** is the current supported Version.</br>
+**v3.33** is the current supported Version.</br>
 
 <img src="https://i.imgur.com/LoeTt9r.png"></br>
 

@@ -8,6 +8,7 @@
 
 ;3.33
 ;add style support
+;add styles: ayofe, lakrits, luminous, mac, paper
 
 ;3.32
 ;save last loaded game client
@@ -148,7 +149,7 @@
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
 ;Versions
-global VersionNumber := "3.32"
+global VersionNumber := "3.33"
 global CurrentDictionary := "2.25"
 
 ;Local File globals
