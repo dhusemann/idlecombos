@@ -1,9 +1,13 @@
-﻿#SingleInstance Force
+﻿#NoEnv
+#SingleInstance Force
 #include %A_ScriptDir%
 #include JSON.ahk
 #include idledict.ahk
 
 ;CHANGELOG
+
+;3.33
+;add style support
 
 ;3.32
 ;save last loaded game client
@@ -192,8 +196,9 @@ global AlwaysSaveCodes := 0
 global NoSaveSetting := 0
 global LogEnabled := 0
 global LoadGameClient := 0 ;0 none; 1 epic, 2 steam, 3 standalone
-global SettingsCheckValue := 15 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"servername":"ps7","launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"user_id":0,"user_id_epic":0,"user_id_steam":0})
+global StyleSelection := "Default"
+global SettingsCheckValue := 16 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps7","style":"Default","user_id":0,"user_id_epic":0,"user_id_steam":0})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -227,6 +232,7 @@ global AchievementInfo := "Welcome to IdleCombos!`n`nPlease setup your game clie
 global BlessingInfo := "`n`n`n`n`n`n"
 global ChampDetails := ""
 global TotalChamps := 0
+global About := "About IdleCombos v" VersionNumber " by QuickMythril`nUpdates by Eldoen, dhusemann, NeyahPeterson, deathoone, Fmagdi, djravine `n`nSpecial thanks to all the idle dragoneers who inspired and assisted me!"
 
 ;Inventory globals
 global CurrentGems := ""
@@ -322,6 +328,19 @@ global LastBSLgCount := ""
 global LastBSHgCount := ""
 global foundCodeString := ""
 
+;Style support
+global StyleDLLPath := A_ScriptDir "\USkin.dll" ;Location to the USkin.dll file
+global StylePath := A_ScriptDir "\styles\" ;Location where you saved the .msstyles files
+global CurrentStyle := "IdleCombos.msstyles"
+global StyleList := "Default||"
+Loop, % StylePath "*.msstyles" {
+	if (A_LoopFilename != "Default.msstyles") {
+		StyleList .= A_LoopFilename . "|"
+	}
+}
+StyleList := RegExReplace(StyleList, ".msstyles")
+RunWith(32) ;Force to start in 32 bit mode
+
 ;detect and set game installation paths
 if ( setGameInstallEpic() == false ) {
 	if ( setGameInstallSteam() == false ) {
@@ -333,6 +352,8 @@ SetIcon()
 
 oMyGUI := new MyGui()
 
+OnExit("ExitFunc")
+
 ;end startup
 return
 
@@ -342,6 +363,7 @@ class MyGui {
 	Height := "275" ;"250"
 
 	__New() {
+		Global
 		Gui, MyWindow:New
 		Gui, MyWindow:+Resize -MaximizeBox +MinSize
 
@@ -570,7 +592,9 @@ class MyGui {
 
 		Gui, Tab, Settings
 		Gui, MyWindow:Add, Text, x15 y+10+p w95, Server Name:
+		Gui, MyWindow:Add, Text, x170 y37 w95, Style:
 		Gui, MyWindow:Add, Edit, vServerName x85 y33 w50
+		Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vStyleChoice, % StyleList
 		Gui, MyWindow:Add, Checkbox, vLogEnabled x15 y+5+p, Logging Enabled?
 		Gui, MyWindow:Add, CheckBox, vGetDetailsonStart, Get User Details on start?
 		Gui, MyWindow:Add, CheckBox, vLaunchGameonStart, Launch game client on start?
@@ -582,8 +606,6 @@ class MyGui {
 
 		Gui, Tab, Log
 		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w375, %OutputText%
-
-		this.Show()
 		
 		;First run checks and setup
 		if !FileExist(SettingsFile) {
@@ -635,8 +657,12 @@ class MyGui {
 		NoSaveSetting := CurrentSettings.nosavesetting
 		LogEnabled := CurrentSettings.logenabled
 		LoadGameClient := CurrentSettings.loadgameclient
+		StyleSelection := CurrentSettings.style
+		SetStyle(StyleSelection)
 		
 		this.Update()
+		this.Show()
+
 
 		;detect and set game installation paths
 		switch (LoadGameClient) {
@@ -769,6 +795,10 @@ class MyGui {
 		GuiControl, MyWindow:, AlwaysSaveCodes, % AlwaysSaveCodes, w250 h210
 		GuiControl, MyWindow:, NoSaveSetting, % NoSaveSetting, w250 h210
 		GuiControl, MyWindow:, LogEnabled, % LogEnabled, w250 h210
+		if (StyleSelection) {
+			GuiControl, Choose, StyleChoice, %StyleSelection%
+		}
+
 		;this.Show() - removed
 	}
 }
@@ -797,6 +827,7 @@ Exit_Clicked:
 
 Crash_Toggle:
 	{
+		;msgbox, % CrashProtectStatus
 		switch CrashProtectStatus {
 			case "Crash Protect`nDisabled": {
 				CrashProtectStatus := "Crash Protect`nEnabled"
@@ -832,8 +863,51 @@ CrashProtect() {
 	return
 }
 
-SaveSettings()
+ExitFunc() {
+	SkinForm(0)
+	return
+}
+
+runWith(version){	
+	if (A_PtrSize=(version=32?4:8)) ;For 32 set to 4 otherwise 8 for 64 bit
+		Return
+	SplitPath, A_AhkPath, , ahkDir ;Get directory of AutoHotkey executable
+	if (!FileExist(correct := ahkDir "\AutoHotkeyU" version ".exe")) {
+		MsgBox, 0x10, "Error", % "Couldn't find the " version " bit Unicode version of Autohotkey in:`n" correct
+		ExitApp
+	}
+	Run,"%correct%" "%A_ScriptName%", %A_ScriptDir%
+	ExitApp
+}
+
+SkinForm(DLLPath, Param1 = "Apply", SkinName = ""){
+	if(Param1 = Apply) {
+		DllCall("LoadLibrary", str, DLLPath)
+		DllCall(DLLPath . "\USkinInit", Int, 0, Int, 0, AStr, SkinName)
+	} else if(Param1 = Remove) {
+		DllCall(DLLPath . "\USkinRemoveSkin")
+	} else if(Param1 = Restore) {
+		DllCall(DLLPath . "\USkinRestoreSkin")
+	} else if(Param1 = 0) {
+		DllCall(DLLPath . "\USkinExit")
+	}
+}
+
+SetStyle(SelectedStyle) {
+	if (SelectedStyle) {
+		SkinForm(StyleDLLPath, 0)
+		if (SelectedStyle == "Default") {
+			SkinForm(StyleDLLPath, Apply, StylePath . "Concave.msstyles")
+		} else {
+			SkinForm(StyleDLLPath, Apply, StylePath . SelectedStyle . ".msstyles")
+		}
+	}
+	return
+}
+
+Save_Settings:
 	{
+		oMyGUI.Submit()
 		CurrentSettings.alwayssavechests := AlwaysSaveChests
 		CurrentSettings.alwayssavecontracts := AlwaysSaveContracts
 		CurrentSettings.alwayssavecodes := AlwaysSaveCodes
@@ -844,24 +918,25 @@ SaveSettings()
 		CurrentSettings.logenabled := LogEnabled
 		CurrentSettings.nosavesetting := NoSaveSetting
 		CurrentSettings.servername := ServerName
+		CurrentSettings.style := StyleChoice
+		StyleSelection = StyleChoice
 		newsettings := JSON.stringify(CurrentSettings)
 		FileDelete, %SettingsFile%
 		FileAppend, %newsettings%, %SettingsFile%
 		LogFile("Settings have been saved")
 		SB_SetText("✅ Settings have been saved")
-		return
-	}
-
-Save_Settings:
-	{
-		oMyGUI.Submit()
-		SaveSettings()
+		if (StyleSelection != StyleChoice) {
+			StyleSelection = StyleChoice
+			SetStyle(%StyleSelection%)
+		}
 		return
 	}
 
 About_Clicked:
 	{
-		MsgBox, , About IdleCombos v%VersionNumber%, IdleCombos v%VersionNumber% by QuickMythril`nUpdates by Eldoen, dhusemann, NeyahPeterson, deathoone, Fmagdi, djravine `n`nSpecial thanks to all the idle dragoneers who inspired and assisted me!
+		;MsgBox, , User Details, % About
+		;CustomMsgBox("About", About, "Consolas", "s10")
+		ScrollBox(About, "p b1 h100 w700 f{s10, Consolas}", "About")
 		return
 	}
 
@@ -1192,7 +1267,7 @@ Open_Codes:
 		;MsgBox, , Results, % codemessage
 		ScrollBox(codemessage, "p b1 h200 w250", "Redeem Codes Results")
 		;ScrollBox(codemessage, "p b1 h200 w250 f{s10, Consolas}", "Redeem Codes Results")
-		;CustomMsgBox("Redeem Codes Results",codemessage,"Consolas","s14")
+		;CustomMsgBox("Redeem Codes Results", codemessage, "Consolas", "s14")
 		LogFile("Redeem Code Finished")
 		return
 	}
@@ -2838,7 +2913,7 @@ List_UserDetails:
 			userdetailslist := userdetailslist "Steam User ID : " UserIDSteam "`n"
 		}
 		;MsgBox, , User Details, % userdetailslist
-		;CustomMsgBox("User Details",userdetailslist,"Consolas","s14")
+		;CustomMsgBox("User Details", userdetailslist, "Consolas", "s14")
 		ScrollBox(userdetailslist, "p b1 h100 w700 f{s14, Consolas}", "User Details")
 		return	
 	}
@@ -2864,7 +2939,7 @@ List_ChampIDs:
 			id += 1
 		}
 		;MsgBox, , Champ ID List, % champidlist
-		;CustomMsgBox("Champion IDs and Names",champidlist,"Consolas","s14")
+		;CustomMsgBox("Champion IDs and Names", champidlist, "Consolas", "s14")
 		ScrollBox(champidlist, "p b1 h700 w1000 f{s14, Consolas}", "Champion IDs and Names")
 		return	
 	}
@@ -2891,12 +2966,12 @@ List_ChestIDs:
 			id += 1
 		}
 		;MsgBox, , Chest ID List, % chestidlist
-		;CustomMsgBox("Chest IDs and Names",chestidlist,"Consolas","s14")
+		;CustomMsgBox("Chest IDs and Names", chestidlist, "Consolas", "s14")
 		ScrollBox(chestidlist, "p b1 h700 w1000 f{s14, Consolas}", "Chest IDs and Names")
 		return	
 	}
 
-CustomMsgBox(Title,Message,Font="",FontOptions="",WindowColor="")
+CustomMsgBox(Title, Message, Font="", FontOptions="", WindowColor="")
 {
 	Gui,66:Destroy
 	Gui,66:Color,%WindowColor%
