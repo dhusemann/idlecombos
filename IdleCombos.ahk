@@ -6,6 +6,9 @@
 
 ;CHANGELOG
 
+;3.34
+;fix message box background colours with styles
+
 ;3.33
 ;add style support
 ;add styles: ayofe, lakrits, luminous, mac, paper
@@ -328,6 +331,7 @@ global LastBSMdCount := ""
 global LastBSLgCount := ""
 global LastBSHgCount := ""
 global foundCodeString := ""
+global BgColour := "FFFFFF"
 
 ;Style support
 global StyleDLLPath := A_ScriptDir "\USkin.dll" ;Location to the USkin.dll file
@@ -902,6 +906,13 @@ SetStyle(SelectedStyle) {
 		} else {
 			SkinForm(StyleDLLPath, Apply, StylePath . SelectedStyle . ".msstyles")
 		}
+		switch (SelectedStyle) {
+			case "Lakrits": BgColour := "222222"
+			case "Luminous": BgColour := "F4F4F3"
+			case "Mac": BgColour := "E3E3E3"
+			case "Paper": BgColour := "F6F7F9"
+			default: BgColour := "FFFFFF"
+		}
 	}
 	return
 }
@@ -936,7 +947,7 @@ Save_Settings:
 About_Clicked:
 	{
 		;MsgBox, , User Details, % About
-		;CustomMsgBox("About", About, "Consolas", "s10")
+		;CustomMsgBox("About", About, "Consolas", "s10", %BgColour%)
 		ScrollBox(About, "p b1 h100 w700 f{s10, Consolas}", "About")
 		return
 	}
@@ -1268,7 +1279,7 @@ Open_Codes:
 		;MsgBox, , Results, % codemessage
 		ScrollBox(codemessage, "p b1 h200 w250", "Redeem Codes Results")
 		;ScrollBox(codemessage, "p b1 h200 w250 f{s10, Consolas}", "Redeem Codes Results")
-		;CustomMsgBox("Redeem Codes Results", codemessage, "Consolas", "s14")
+		;CustomMsgBox("Redeem Codes Results", codemessage, "Consolas", "s14", %BgColour%)
 		LogFile("Redeem Code Finished")
 		return
 	}
@@ -2914,7 +2925,7 @@ List_UserDetails:
 			userdetailslist := userdetailslist "Steam User ID : " UserIDSteam "`n"
 		}
 		;MsgBox, , User Details, % userdetailslist
-		;CustomMsgBox("User Details", userdetailslist, "Consolas", "s14")
+		;CustomMsgBox("User Details", userdetailslist, "Consolas", "s14", %BgColour%)
 		ScrollBox(userdetailslist, "p b1 h100 w700 f{s14, Consolas}", "User Details")
 		return	
 	}
@@ -2940,7 +2951,7 @@ List_ChampIDs:
 			id += 1
 		}
 		;MsgBox, , Champ ID List, % champidlist
-		;CustomMsgBox("Champion IDs and Names", champidlist, "Consolas", "s14")
+		;CustomMsgBox("Champion IDs and Names", champidlist, "Consolas", "s14", %BgColour%)
 		ScrollBox(champidlist, "p b1 h700 w1000 f{s14, Consolas}", "Champion IDs and Names")
 		return	
 	}
@@ -2967,7 +2978,7 @@ List_ChestIDs:
 			id += 1
 		}
 		;MsgBox, , Chest ID List, % chestidlist
-		;CustomMsgBox("Chest IDs and Names", chestidlist, "Consolas", "s14")
+		;CustomMsgBox("Chest IDs and Names", chestidlist, "Consolas", "s14", %BgColour%)
 		ScrollBox(chestidlist, "p b1 h700 w1000 f{s14, Consolas}", "Chest IDs and Names")
 		return	
 	}
@@ -3736,7 +3747,8 @@ ScrollBox(String := "", Options := "", Label := "")
 			Gui, Font
 		Gui, Margin, 20, 20
 		Gui, +ToolWindow +MinSize200x200 +Resize
-		Gui, Color, FFFFFF
+		;Gui, Color, FFFFFF
+		Gui, Color, %BgColour%
 		Opt := "hwndGui_Hwnd ReadOnly -E0x200 "
 		if !(Options ~= "i)w(?!\d)")
 			Opt .= "+0x300000 -wrap "
