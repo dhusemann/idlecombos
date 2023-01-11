@@ -6,6 +6,9 @@
 
 ;CHANGELOG
 
+;3.35
+;Remove style system to fix dangerous file warning in chrome
+
 ;3.34
 ;fix message box background colours with styles
 
@@ -200,9 +203,10 @@ global AlwaysSaveCodes := 0
 global NoSaveSetting := 0
 global LogEnabled := 0
 global LoadGameClient := 0 ;0 none; 1 epic, 2 steam, 3 standalone
-global StyleSelection := "Default"
-global SettingsCheckValue := 16 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps7","style":"Default","user_id":0,"user_id_epic":0,"user_id_steam":0})
+;global StyleSelection := "Default"
+global SettingsCheckValue := 15 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps7","user_id":0,"user_id_epic":0,"user_id_steam":0})
+;global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps7","style":"Default","user_id":0,"user_id_epic":0,"user_id_steam":0})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -334,17 +338,17 @@ global foundCodeString := ""
 global BgColour := "FFFFFF"
 
 ;Style support
-global StyleDLLPath := A_ScriptDir "\USkin.dll" ;Location to the USkin.dll file
-global StylePath := A_ScriptDir "\styles\" ;Location where you saved the .msstyles files
-global CurrentStyle := "IdleCombos.msstyles"
-global StyleList := "Default||"
-Loop, % StylePath "*.msstyles" {
-	if (A_LoopFilename != "Default.msstyles") {
-		StyleList .= A_LoopFilename . "|"
-	}
-}
-StyleList := RegExReplace(StyleList, ".msstyles")
-RunWith(32) ;Force to start in 32 bit mode
+;global StyleDLLPath := A_ScriptDir "\USkin.dll" ;Location to the USkin.dll file
+;global StylePath := A_ScriptDir "\styles\" ;Location where you saved the .msstyles files
+;global CurrentStyle := "IdleCombos.msstyles"
+;global StyleList := "Default||"
+;Loop, % StylePath "*.msstyles" {
+;	if (A_LoopFilename != "Default.msstyles") {
+;		StyleList .= A_LoopFilename . "|"
+;	}
+;}
+;StyleList := RegExReplace(StyleList, ".msstyles")
+;RunWith(32) ;Force to start in 32 bit mode
 
 ;detect and set game installation paths
 if ( setGameInstallEpic() == false ) {
@@ -357,7 +361,7 @@ SetIcon()
 
 oMyGUI := new MyGui()
 
-OnExit("ExitFunc")
+;OnExit("ExitFunc")
 
 ;end startup
 return
@@ -597,9 +601,9 @@ class MyGui {
 
 		Gui, Tab, Settings
 		Gui, MyWindow:Add, Text, x15 y+10+p w95, Server Name:
-		Gui, MyWindow:Add, Text, x170 y37 w95, Style:
+		;Gui, MyWindow:Add, Text, x170 y37 w95, Style:
 		Gui, MyWindow:Add, Edit, vServerName x85 y33 w50
-		Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vStyleChoice, % StyleList
+		;Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vStyleChoice, % StyleList
 		Gui, MyWindow:Add, Checkbox, vLogEnabled x15 y+5+p, Logging Enabled?
 		Gui, MyWindow:Add, CheckBox, vGetDetailsonStart, Get User Details on start?
 		Gui, MyWindow:Add, CheckBox, vLaunchGameonStart, Launch game client on start?
@@ -662,8 +666,8 @@ class MyGui {
 		NoSaveSetting := CurrentSettings.nosavesetting
 		LogEnabled := CurrentSettings.logenabled
 		LoadGameClient := CurrentSettings.loadgameclient
-		StyleSelection := CurrentSettings.style
-		SetStyle(StyleSelection)
+		;StyleSelection := CurrentSettings.style
+		;SetStyle(StyleSelection)
 		
 		this.Update()
 		this.Show()
@@ -800,9 +804,9 @@ class MyGui {
 		GuiControl, MyWindow:, AlwaysSaveCodes, % AlwaysSaveCodes, w250 h210
 		GuiControl, MyWindow:, NoSaveSetting, % NoSaveSetting, w250 h210
 		GuiControl, MyWindow:, LogEnabled, % LogEnabled, w250 h210
-		if (StyleSelection) {
-			GuiControl, Choose, StyleChoice, %StyleSelection%
-		}
+		;if (StyleSelection) {
+		;	GuiControl, Choose, StyleChoice, %StyleSelection%
+		;}
 
 		;this.Show() - removed
 	}
@@ -868,54 +872,54 @@ CrashProtect() {
 	return
 }
 
-ExitFunc() {
-	SkinForm(0)
-	return
-}
+;ExitFunc() {
+;	SkinForm(0)
+;	return
+;}
 
-runWith(version){	
-	if (A_PtrSize=(version=32?4:8)) ;For 32 set to 4 otherwise 8 for 64 bit
-		Return
-	SplitPath, A_AhkPath, , ahkDir ;Get directory of AutoHotkey executable
-	if (!FileExist(correct := ahkDir "\AutoHotkeyU" version ".exe")) {
-		MsgBox, 0x10, "Error", % "Couldn't find the " version " bit Unicode version of Autohotkey in:`n" correct
-		ExitApp
-	}
-	Run,"%correct%" "%A_ScriptName%", %A_ScriptDir%
-	ExitApp
-}
+;runWith(version){	
+;	if (A_PtrSize=(version=32?4:8)) ;For 32 set to 4 otherwise 8 for 64 bit
+;		Return
+;	SplitPath, A_AhkPath, , ahkDir ;Get directory of AutoHotkey executable
+;	if (!FileExist(correct := ahkDir "\AutoHotkeyU" version ".exe")) {
+;		MsgBox, 0x10, "Error", % "Couldn't find the " version " bit Unicode version of Autohotkey in:`n" correct
+;		ExitApp
+;	}
+;	Run,"%correct%" "%A_ScriptName%", %A_ScriptDir%
+;	ExitApp
+;}
 
-SkinForm(DLLPath, Param1 = "Apply", SkinName = ""){
-	if(Param1 = Apply) {
-		DllCall("LoadLibrary", str, DLLPath)
-		DllCall(DLLPath . "\USkinInit", Int, 0, Int, 0, AStr, SkinName)
-	} else if(Param1 = Remove) {
-		DllCall(DLLPath . "\USkinRemoveSkin")
-	} else if(Param1 = Restore) {
-		DllCall(DLLPath . "\USkinRestoreSkin")
-	} else if(Param1 = 0) {
-		DllCall(DLLPath . "\USkinExit")
-	}
-}
+;SkinForm(DLLPath, Param1 = "Apply", SkinName = ""){
+;	if(Param1 = Apply) {
+;		DllCall("LoadLibrary", str, DLLPath)
+;		DllCall(DLLPath . "\USkinInit", Int, 0, Int, 0, AStr, SkinName)
+;	} else if(Param1 = Remove) {
+;		DllCall(DLLPath . "\USkinRemoveSkin")
+;	} else if(Param1 = Restore) {
+;		DllCall(DLLPath . "\USkinRestoreSkin")
+;	} else if(Param1 = 0) {
+;		DllCall(DLLPath . "\USkinExit")
+;	}
+;}
 
-SetStyle(SelectedStyle) {
-	if (SelectedStyle) {
-		SkinForm(StyleDLLPath, 0)
-		if (SelectedStyle == "Default") {
-			SkinForm(StyleDLLPath, Apply, StylePath . "Concave.msstyles")
-		} else {
-			SkinForm(StyleDLLPath, Apply, StylePath . SelectedStyle . ".msstyles")
-		}
-		switch (SelectedStyle) {
-			case "Lakrits": BgColour := "222222"
-			case "Luminous": BgColour := "F4F4F3"
-			case "Mac": BgColour := "E3E3E3"
-			case "Paper": BgColour := "F6F7F9"
-			default: BgColour := "FFFFFF"
-		}
-	}
-	return
-}
+;SetStyle(SelectedStyle) {
+;	if (SelectedStyle) {
+;		SkinForm(StyleDLLPath, 0)
+;		if (SelectedStyle == "Default") {
+;			SkinForm(StyleDLLPath, Apply, StylePath . "Concave.msstyles")
+;		} else {
+;			SkinForm(StyleDLLPath, Apply, StylePath . SelectedStyle . ".msstyles")
+;		}
+;		switch (SelectedStyle) {
+;			case "Lakrits": BgColour := "222222"
+;			case "Luminous": BgColour := "F4F4F3"
+;			case "Mac": BgColour := "E3E3E3"
+;			case "Paper": BgColour := "F6F7F9"
+;			default: BgColour := "FFFFFF"
+;		}
+;	}
+;	return
+;}
 
 Save_Settings:
 	{
@@ -930,17 +934,17 @@ Save_Settings:
 		CurrentSettings.logenabled := LogEnabled
 		CurrentSettings.nosavesetting := NoSaveSetting
 		CurrentSettings.servername := ServerName
-		CurrentSettings.style := StyleChoice
-		StyleSelection = StyleChoice
+		;CurrentSettings.style := StyleChoice
+		;StyleSelection = StyleChoice
 		newsettings := JSON.stringify(CurrentSettings)
 		FileDelete, %SettingsFile%
 		FileAppend, %newsettings%, %SettingsFile%
 		LogFile("Settings have been saved")
 		SB_SetText("✅ Settings have been saved")
-		if (StyleSelection != StyleChoice) {
-			StyleSelection = StyleChoice
-			SetStyle(%StyleSelection%)
-		}
+		;if (StyleSelection != StyleChoice) {
+		;	StyleSelection = StyleChoice
+		;	SetStyle(%StyleSelection%)
+		;}
 		return
 	}
 

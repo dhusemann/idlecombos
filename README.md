@@ -19,7 +19,6 @@ Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).
 - Briv Stack Calculator [github.com/Deatho0ne]
 - Manual starting/stopping adventures (Sometimes can fix stuck accounts)
 - Can reload game client on crash (Steam only)
-- Supports multiple styles</br><img src=https://i.imgur.com/F93d8g1.png>
 ## Requirements
 - Steam install _or_
 - Epic Games install _or_
