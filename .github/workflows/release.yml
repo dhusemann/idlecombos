@@ -20,12 +20,6 @@ jobs:
     - name: Copy files
       run: cp *.ahk *.md "$ARCHIVE_NAME"
     - name: Archive Release TAR.GZ
-      run: tar -czf "$ARCHIVE_NAME"-no-styles.tar.gz "$ARCHIVE_NAME"
-    - name: Archive Release ZIP
-      run: zip -r "$ARCHIVE_NAME"-no-styles.zip "$ARCHIVE_NAME"
-    - name: Add Styles
-      run: cp -r styles "$ARCHIVE_NAME"
-    - name: Archive Release TAR.GZ
       run: tar -czf "$ARCHIVE_NAME".tar.gz "$ARCHIVE_NAME"
     - name: Archive Release ZIP
       run: zip -r "$ARCHIVE_NAME".zip "$ARCHIVE_NAME"
