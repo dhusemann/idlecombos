@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Make Release Folder
-      run: mkdir "$ARCHIVE_NAME" && cp *.ahk *.md "$ARCHIVE_NAME"
+      run: mkdir "$ARCHIVE_NAME" && cp *.ahk *.md styles "$ARCHIVE_NAME"
     - name: Archive Release TAR.GZ
       run: tar -czf "$ARCHIVE_NAME".tar.gz "$ARCHIVE_NAME"
     - name: Archive Release ZIP
