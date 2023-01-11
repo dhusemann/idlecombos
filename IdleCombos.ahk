@@ -332,19 +332,14 @@ global foundCodeString := ""
 global StyleDLLPath := A_ScriptDir "\USkin.dll" ;Location to the USkin.dll file
 global StylePath := A_ScriptDir "\styles\" ;Location where you saved the .msstyles files
 global CurrentStyle := "IdleCombos.msstyles"
-RunWith(32) ;Force to start in 32 bit mode
-;SkinForm(StyleDLLPath, Apply, StylePath . CurrentStyle)
-
-global StyleArray := Object() ;Create StyleArray to hold styles
 global StyleList := "Default||"
 Loop, % StylePath "*.msstyles" {
 	if (A_LoopFilename != "Default.msstyles") {
-		StyleArray.insert(A_LoopFilename)
 		StyleList .= A_LoopFilename . "|"
 	}
 }
 StyleList := RegExReplace(StyleList, ".msstyles")
-;StyleTotal := StyleArray.MaxIndex() ;Get total number of styles
+RunWith(32) ;Force to start in 32 bit mode
 
 ;detect and set game installation paths
 if ( setGameInstallEpic() == false ) {
@@ -899,7 +894,6 @@ SkinForm(DLLPath, Param1 = "Apply", SkinName = ""){
 }
 
 SetStyle(SelectedStyle) {
-	;msgbox, % SelectedStyle
 	if (SelectedStyle) {
 		SkinForm(StyleDLLPath, 0)
 		if (SelectedStyle == "Default") {
