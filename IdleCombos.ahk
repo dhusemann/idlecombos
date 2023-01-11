@@ -6,6 +6,9 @@
 
 ;CHANGELOG
 
+;3.34
+;fix message box background colours with styles
+
 ;3.33
 ;add style support
 ;add styles: ayofe, lakrits, luminous, mac, paper
