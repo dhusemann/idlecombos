@@ -30,6 +30,6 @@ Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).
 - json.ahk (json parsing, included in exe) [github.com/Chunjee]
 - README.md (this file)
 ## How To Run
-- Install [AutoHotKey](https://www.autohotkey.com/) (Supports v1.1 or v2.0)
+- Install [AutoHotKey](https://www.autohotkey.com/) (Supports v1.1)
 - Checkout this REPO or download a [release](https://github.com/djravine/idlecombos/releases)
 - Right click the file `IdleCombos.ahk` and open with AutoHotKey</br><img src=https://i.imgur.com/UFWxScW.png>

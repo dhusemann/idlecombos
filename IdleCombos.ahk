@@ -6,11 +6,14 @@
 
 ;CHANGELOG
 
+;3.37
+;update switch statement to fix error with older versions
+;add ahk version to status bar
+
 ;3.36
 ;new tab: event
 ;basic testing - buy chests event
 ;basic testing - open chests event
-
 
 ;3.35
 ;Remove style system to fix dangerous file warning in chrome
@@ -472,6 +475,8 @@ class MyGui {
 		row_y := 5
 
 		Gui, Add, StatusBar, , %OutputStatus%
+		SB_SetParts(500, 100)
+		SB_SetText("`tAHK v" A_AhkVersion, 2)
 
 		Gui, MyWindow:Add, Button, x%col2_x% y%row_y% w60 gReload_Clicked, Reload
 		Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 gExit_Clicked, Exit
@@ -1407,7 +1412,7 @@ Buy_Chests(chestid) {
 			GetUserDetails()
 		}
 	}
-	switch {
+	switch true {
 		case (chestid = 1): {
 			maxbuy := Floor(CurrentGems/50)
 			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 200, 180
@@ -1515,7 +1520,7 @@ Open_Chests(chestid) {
 			GetUserDetails()
 		}
 	}
-	switch {
+	switch true {
 		case (chestid = 1): {
 			InputBox, count, Opening Chests, % "How many Silver Chests?`n(Owned: " CurrentSilvers ")`n(Max: " (CurrentSilvers + Floor(CurrentGems/50)) ")", , 200, 180
 			if ErrorLevel
