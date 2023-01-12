@@ -156,7 +156,7 @@
 
 ;Versions
 global VersionNumber := "3.35"
-global CurrentDictionary := "2.25"
+global CurrentDictionary := "2.26"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -311,6 +311,16 @@ global ZarielChallenges := ""
 global ZarielRequires := ""
 global ZarielCosts := ""
 
+;Event globals
+global EventID := ""
+global EventName := ""
+global EventDesc := ""
+global EventTokenName := ""
+global EventTokens := ""
+global EventHeroIDs := ""
+global EventChestIDs := ""
+global EventDetails := ""
+
 ;Web Tools globals
 global WebToolCodes := "https://incendar.com/idlechampions_codes.php#123"
 global WebToolGameViewer := "http://idlechampions.soulreaver.usermd.net"
@@ -368,7 +378,7 @@ return
 
 ;BEGIN: GUI Defs
 class MyGui {
-	Width := "550"
+	Width := "600"
 	Height := "275" ;"250"
 
 	__New() {
@@ -396,10 +406,10 @@ class MyGui {
 
 		Menu, ChestsSubmenu, Add, Buy &Silver, Buy_Silver
 		Menu, ChestsSubmenu, Add, Buy &Gold, Buy_Gold
-		;Menu, ChestsSubmenu, Add, Buy &Event, Buy_Event
+		Menu, ChestsSubmenu, Add, Buy &Event, Buy_Event
 		Menu, ChestsSubmenu, Add, Open S&ilver, Open_Silver
 		Menu, ChestsSubmenu, Add, Open G&old, Open_Gold
-		;Menu, ChestsSubmenu, Add, Open E&vent, Open_Event
+		Menu, ChestsSubmenu, Add, Open E&vent, Open_Event
 		Menu, ChestsSubmenu, Add, &Pity Timers, ShowPityTimers
 		Menu, ToolsSubmenu, Add, &Chests, :ChestsSubmenu
 
@@ -451,32 +461,32 @@ class MyGui {
 		Gui, Menu, IdleMenu
 
 		col1_x := 5
-		col2_x := 420
-		col3_x := 480
+		col2_x := 470
+		col3_x := 530
 		row_y := 5
 
-		Gui, Add, StatusBar,, %OutputStatus%
+		Gui, Add, StatusBar, , %OutputStatus%
 
 		Gui, MyWindow:Add, Button, x%col2_x% y%row_y% w60 gReload_Clicked, Reload
 		Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 gExit_Clicked, Exit
 
-		Gui, MyWindow:Add, Tab3, x%col1_x% y%row_y% w400 h250, Summary|Adventures|Inventory|Patrons|Champions|Settings|Log|
+		Gui, MyWindow:Add, Tab3, x%col1_x% y%row_y% w450 h250, Summary|Adventures|Inventory|Patrons|Champions|Event|Settings|Log|
 		Gui, Tab
 
 		row_y := row_y + 25
 		;Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 gUpdate_Clicked, Update
 		row_y := row_y + 25
 
-		Gui, MyWindow:Add, Text, x410 y53 vCrashProtectStatus, % CrashProtectStatus
+		Gui, MyWindow:Add, Text, x460 y53 vCrashProtectStatus, % CrashProtectStatus
 		Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 gCrash_Toggle, Toggle
 
-		Gui, MyWindow:Add, Text, x410 y100, Data Timestamp:
-		Gui, MyWindow:Add, Text, x410 y120 vLastUpdated w220, % LastUpdated
-		Gui, MyWindow:Add, Button, x410 y140 w60 gUpdate_Clicked, Update
+		Gui, MyWindow:Add, Text, x460 y100, Data Timestamp:
+		Gui, MyWindow:Add, Text, x460 y120 vLastUpdated w220, % LastUpdated
+		Gui, MyWindow:Add, Button, x460 y140 w60 gUpdate_Clicked, Update
 
 		Gui, Tab, Summary
-		Gui, MyWindow:Add, Text, vAchievementInfo x15 y33 w300, % AchievementInfo
-		Gui, MyWindow:Add, Text, vBlessingInfo x200 y33 w300 h210, % BlessingInfo
+		Gui, MyWindow:Add, Text, vAchievementInfo x15 y33 w350, % AchievementInfo
+		Gui, MyWindow:Add, Text, vBlessingInfo x200 y33 w350 h210, % BlessingInfo
 
 		Gui, Tab, Adventures
 		Gui, MyWindow:Add, Text, x15 y33 w130, Current Adventure:
@@ -597,7 +607,10 @@ class MyGui {
 		Gui, MyWindow:Add, Text, vZarielCosts x+2 w200 right, % ZarielCosts
 
 		Gui, Tab, Champions
-		Gui, MyWindow:Add, Text, vChampDetails x15 y33 w300 h180, % ChampDetails
+		Gui, MyWindow:Add, Text, vChampDetails x15 y33 w430 h230, % ChampDetails
+
+		Gui, Tab, Event
+		Gui, MyWindow:Add, Text, vEventDetails x15 y33 w430 h230, % EventDetails
 
 		Gui, Tab, Settings
 		Gui, MyWindow:Add, Text, x15 y+10+p w95, Server Name:
@@ -614,7 +627,7 @@ class MyGui {
 		Gui, MyWindow:Add, Button, gSave_Settings, Save Settings
 
 		Gui, Tab, Log
-		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w375, %OutputText%
+		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w425, %OutputText%
 		
 		;First run checks and setup
 		if !FileExist(SettingsFile) {
@@ -793,7 +806,10 @@ class MyGui {
 		GuiControl, MyWindow:, ZarielCosts, % ZarielCosts, w250 h210
 
 		;Champions
-		GuiControl, MyWindow:, ChampDetails, % ChampDetails, w250 h210
+		GuiControl, MyWindow:, ChampDetails, % ChampDetails, w430 h230
+
+		;Event
+		GuiControl, MyWindow:, EventDetails, % EventDetails, w430 h230
 
 		;Settings
 		GuiControl, MyWindow:, ServerName, % ServerName, w50 h210
@@ -1421,9 +1437,8 @@ Buy_Chests(chestid) {
 			}
 		}
 		case (chestid > 3 and chestid < 510): {
-			CurrentTokens := UserDetails.details.event_details.user_data.event_tokens ;Get current event tokens, need to check during event
-			maxbuy := Floor(CurrentTokens/10000)
-			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(Max: " maxbuy ")", , 200, 180
+			maxbuy := Floor(EventTokens/10000)
+			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 200, 180
 			if ErrorLevel
 				return
 			if (count = "alpha5") {
@@ -1435,7 +1450,7 @@ Buy_Chests(chestid) {
 				return
 			}
 			if (count > maxbuy) {
-				MsgBox, 4, , Insufficient Event Tokens detected for purchase.`nContinue anyway?
+				MsgBox, 4, , Insufficient %EventTokenName% detected for purchase.`nContinue anyway?
 				IfMsgBox, No
 				{
 					return
@@ -1449,6 +1464,7 @@ Buy_Chests(chestid) {
 	}
 	chestparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&chest_type_id=" chestid "&count="
 	gemsspent := 0
+	tokenspent := 0
 	while (count > 0) {
 		SB_SetText("⌛ Chests remaining to purchase: " count)
 		if (count < 101) {
@@ -1462,14 +1478,20 @@ Buy_Chests(chestid) {
 		if (chestresults.success == "0") {
 			MsgBox % "Error: " rawresults
 			LogFile("Gems spent: " gemsspent)
+			LogFile(EventTokenName " spent: " tokenspent)
 			GetUserDetails()
 			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
 		}
-		gemsspent += chestresults.currency_spent
+		if(chestid = 1 OR chestid = 2) {
+			gemsspent += chestresults.currency_spent
+		} else {
+			tokenspent += chestresults.currency_spent
+		}
 		Sleep 1000
 	}
 	LogFile("Gems spent: " gemsspent)
+	LogFile(EventTokenName " spent: " tokenspent)
 	GetUserDetails()
 	SB_SetText("✅ Chest purchase completed.")
 	return
@@ -1520,12 +1542,11 @@ Open_Chests(chestid) {
 		}
 		case (chestid > 3 and chestid < 510): {
 			CurrentChests := UserDetails.details.chests[%chestid%]
-			CurrentTokens := UserDetails.details.event_details.user_data.event_tokens ;Get current event currency, need to check during event
-			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(CurrentTokens/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
+			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(EventTokens/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
 			if ErrorLevel
 				return
 			if (count > CurrentChests) {
-				MsgBox, 4, , % "Spend " ((count - CurrentChests)*10000) " event tokens to purchase " (count - CurrentChests) " chests before opening?"
+				MsgBox, 4, , % "Spend " ((count - CurrentChests)*10000) " " EventTokenName " to purchase " (count - CurrentChests) " chests before opening?"
 				extracount := (count - CurrentChests)
 				IfMsgBox, Yes
 				{
@@ -2202,6 +2223,7 @@ GetUserDetails() {
 	CheckAchievements()
 	CheckBlessings()
 	CheckPatronProgress()
+	CheckEvents()
 	SB_SetText("✅ Loaded and Ready 😎")
 	LogFile("User Details - Loaded")
 	oMyGUI.Update()
@@ -2810,6 +2832,63 @@ CheckBlessings() {
 	if (BlessingInfo == "Blessing Details`n`n") {
 		BlessingInfo := "Blessing Details: N/A"
 	}
+}
+
+CheckEvents() {
+	EventNextID := UserDetails.details.next_event
+	EventID := 0
+	EventName := "N/A"
+	EventDesc := "No Event currently in Progress"
+	EventTokenName := "Tokens"
+	EventTokens := 0
+	EventHeroIDs := ""
+	EventHeros := "N/A"
+	EventChestIDs := ""
+	EventChests := "N/A"
+	for k, v in UserDetails.details.event_details {
+		if (v.event_id == EventNextID && v.active = "1") {
+			EventID := EventNextID
+			EventName := v.name
+			EventDesc := v.description
+			EventTokenName := v.details.event_token.name_plural
+			EventTokens := v.user_data.event_tokens
+			EventHeroCount := 0
+			EventHeroIDs := ""
+			EventHeroes := ""
+			EventChestCount := 0
+			EventChestIDs := ""
+			EventChests := ""
+			for l, w in v.details.years {
+				for m, x in w.hero_ids {
+					if (EventHeroCount > 0) {
+						EventHeroIDs .= ","
+						EventHeroes .= ", "
+					}
+					EventHeroIDs .= x
+					EventHeroes .= ChampFromID(x) " (" x ")"
+					EventHeroCount += 1
+				}
+				for m, x in w.chest_ids {
+					if (EventChestCount > 0) {
+						EventChestIDs .= ","
+						EventChests .= ", "
+					}
+					EventChestIDs .= x
+					EventChests .= ChestFromID(x) " (" x ")"
+					EventChestCount += 1
+				}
+			}
+		}
+	}
+	if (EventID != 0) {
+		InfoEventName := EventName " (ID:" EventID ")`n" EventDesc "`n`n"
+	} else {
+		InfoEventName := EventDesc "`n`n"
+	}
+	InfoEventTokens := EventTokenName ": " EventTokens "`n`n"
+	InfoEventHeroes := "Heroes: " EventHeroes "`n`n"
+	InfoEventChests := "Chests: " EventChests "`n`n"
+	EventDetails := InfoEventName InfoEventTokens InfoEventHeroes InfoEventChests
 }
 
 ServerCall(callname, parameters) {
