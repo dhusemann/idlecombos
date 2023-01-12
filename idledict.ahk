@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.25"
+global DictionaryVersion := "2.26"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -186,7 +186,7 @@ ChampFromID(id) {
 			case "115": namefromid := "Virgil"
 			case "116": namefromid := "Warduke"
 			case "117": namefromid := "Imoen"
-			case "118": namefromid := "UNKNOWN (" id ")"
+			case "118": namefromid := "Fen"
 			case "119": namefromid := "UNKNOWN (" id ")"
 			case "120": namefromid := "UNKNOWN (" id ")"
 		}
@@ -972,34 +972,34 @@ ChestFromID(id) {
 			case "434": namefromid := "Gold Warduke Chest"
 			case "435": namefromid := "Silver Imoen Chest"
 			case "436": namefromid := "Gold Imoen Chest"
-			case "437": namefromid := "Silver E6Y6 Chest"
-			case "438": namefromid := "UNKNOWN (" id ")"
+			case "437": namefromid := "Silver Fen Chest"
+			case "438": namefromid := "Gold Fen Chest"
 			case "439": namefromid := "Silver E7Y6 Chest"
-			case "440": namefromid := "UNKNOWN (" id ")"
+			case "440": namefromid := "Gold E7Y6 Chest"
 		}
 	}
 	else if (id < 461) {
 		switch id {
 			case "441": namefromid := "Silver E8Y6 Chest"
-			case "442": namefromid := "UNKNOWN (" id ")"
+			case "442": namefromid := "Gold E8Y6 Chest"
 			case "443": namefromid := "Silver E9Y6 Chest"
-			case "444": namefromid := "UNKNOWN (" id ")"
+			case "444": namefromid := "Gold E9Y6 Chest"
 			case "445": namefromid := "Silver E10Y6 Chest"
-			case "446": namefromid := "UNKNOWN (" id ")"
+			case "446": namefromid := "Gold E10Y6 Chest"
 			case "447": namefromid := "Silver E11Y6 Chest"
-			case "448": namefromid := "UNKNOWN (" id ")"
+			case "448": namefromid := "Gold E11Y6 Chest"
 			case "449": namefromid := "Silver E12Y6 Chest"
-			case "450": namefromid := "UNKNOWN (" id ")"
+			case "450": namefromid := "Gold E12Y6 Chest"
 			case "451": namefromid := "Silver E13Y6 Chest"
-			case "452": namefromid := "UNKNOWN (" id ")"
+			case "452": namefromid := "Gold E13Y6 Chest"
 			case "453": namefromid := "Silver E14Y6 Chest"
-			case "454": namefromid := "UNKNOWN (" id ")"
+			case "454": namefromid := "Gold E14Y6 Chest"
 			case "455": namefromid := "Silver E15Y6 Chest"
-			case "456": namefromid := "UNKNOWN (" id ")"
+			case "456": namefromid := "Gold E15Y6 Chest"
 			case "457": namefromid := "Silver E16Y6 Chest"
-			case "458": namefromid := "UNKNOWN (" id ")"
+			case "458": namefromid := "Gold E16Y6 Chest"
 			case "459": namefromid := "Silver E17Y6 Chest"
-			case "460": namefromid := "UNKNOWN (" id ")"
+			case "460": namefromid := "Gold E17Y6 Chest"
 		}
 	}
 	else if (id < 481) {
