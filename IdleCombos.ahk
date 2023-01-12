@@ -6,6 +6,12 @@
 
 ;CHANGELOG
 
+;3.36
+;new tab: event
+;basic testing - buy chests event
+;basic testing - open chests event
+
+
 ;3.35
 ;Remove style system to fix dangerous file warning in chrome
 
@@ -155,7 +161,7 @@
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
 ;Versions
-global VersionNumber := "3.35"
+global VersionNumber := "3.36"
 global CurrentDictionary := "2.26"
 
 ;Local File globals
