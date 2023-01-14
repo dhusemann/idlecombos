@@ -6,6 +6,9 @@
 
 ;CHANGELOG
 
+;3.39
+;update hotkeys
+
 ;3.38
 ;add hotkeys
 ;add list hotkeys to menu
@@ -255,8 +258,8 @@ global BlessingInfo := "`n`n`n`n`n`n"
 global ChampDetails := ""
 global TotalChamps := 0
 global About := "About IdleCombos v" VersionNumber " by QuickMythril`nUpdates by Eldoen, dhusemann, NeyahPeterson, deathoone, Fmagdi, djravine `n`nSpecial thanks to all the idle dragoneers who inspired and assisted me!"
-global HotkeyInfo := "CONTROL + NUMPAD/ - Tiny Blacksmith Contracts`nCONTROL + NUMPAD* - Small Blacksmith Contracts`nCONTROL + NUMPAD- - Medium Blacksmith Contracts`nCONTROL + NUMPAD+ - Large Blacksmith Contracts`nCONTROL + NUMPADENTER - Huge Blacksmith Contracts`n"
-HotkeyInfo := HotkeyInfo "CONTROL + NUMPAD1 - Buy Silver Chests`nCONTROL + NUMPAD2 - Buy Gold Chests`nCONTROL + NUMPAD3 - Buy Event Chests`nCONTROL + NUMPAD4 - Open Silver Chests`nCONTROL + NUMPAD5 - Open Gold Chests`nCONTROL + NUMPAD6 - Open Event Chests`n"
+global HotkeyInfo := "CONTROL + NUMPAD1 - Tiny Blacksmith Contracts`nCONTROL + NUMPAD2 - Small Blacksmith Contracts`nCONTROL + NUMPAD3 - Medium Blacksmith Contracts`nCONTROL + NUMPAD4 - Large Blacksmith Contracts`nCONTROL + NUMPAD5 - Huge Blacksmith Contracts`n"
+HotkeyInfo := HotkeyInfo "CONTROL + NUMPAD/ - Buy Silver Chests`nCONTROL + NUMPAD* - Buy Gold Chests`nCONTROL + NUMPAD- - Buy Event Chests`nCONTROL + NUMPAD7 - Open Silver Chests`nCONTROL + NUMPAD8 - Open Gold Chests`nCONTROL + NUMPAD9 - Open Event Chests`n"
 
 ;Inventory globals
 global CurrentGems := ""
@@ -853,18 +856,18 @@ class MyGui {
 ;$F9::Reload
 ;$F10::ExitApp
 ;Hotkeys - Blacksmith Contracts
-Control & NumpadDiv::UseBlacksmith(31) ;Tiny BS
-Control & NumpadMult::UseBlacksmith(32) ;Small BS
-Control & NumpadSub::UseBlacksmith(33) ;Medium BS
-Control & NumpadAdd::UseBlacksmith(34) ;Large BS
-Control & NumpadEnter::UseBlacksmith(1797) ;Huge BS
+Control & Numpad1::UseBlacksmith(31) ;Tiny BS
+Control & Numpad2::UseBlacksmith(32) ;Small BS
+Control & Numpad3::UseBlacksmith(33) ;Medium BS
+Control & Numpad4::UseBlacksmith(34) ;Large BS
+Control & Numpad5::UseBlacksmith(1797) ;Huge BS
 ;Hotkeys - Chests
-Control & Numpad1::BuySilver() ;Buy Chest - Silver
-Control & Numpad2::BuyGold() ;Buy Chest - Gold
-Control & Numpad3::BuyEvent() ;Buy Chest - Event
-Control & Numpad4::OpenSilver() ;Open Chest - Silver
-Control & Numpad5::OpenGold() ;Open Chest - Gold
-Control & Numpad6::OpenEvent() ;Open Chest - Event
+Control & NumpadDiv::BuySilver() ;Buy Chest - Silver
+Control & NumpadMult::BuyGold() ;Buy Chest - Gold
+Control & NumpadSub::BuyEvent() ;Buy Chest - Event
+Control & Numpad7::OpenSilver() ;Open Chest - Silver
+Control & Numpad8::OpenGold() ;Open Chest - Gold
+Control & Numpad9::OpenEvent() ;Open Chest - Event
 
 Update_Clicked:
 	{
