@@ -6,6 +6,9 @@
 
 ;CHANGELOG
 
+;3.40
+;Fix cancel of buy/chests window
+
 ;3.39
 ;update hotkeys
 
@@ -1026,6 +1029,7 @@ BuySilver()
 Buy_Silver:
 	{
 		BuySilver()
+		return
 	}
 
 BuyGold()
@@ -1037,6 +1041,7 @@ BuyGold()
 Buy_Gold:
 	{
 		BuyGold()
+		return
 	}
 
 BuyEvent()
@@ -1053,6 +1058,7 @@ BuyEvent()
 Buy_Event:
 	{
 		BuyEvent()
+		return
 	}
 
 OpenSilver()
@@ -1079,6 +1085,7 @@ OpenSilver()
 Open_Silver:
 	{
 		OpenSilver()
+		return
 	}
 
 OpenGold()
@@ -1105,6 +1112,7 @@ OpenGold()
 Open_Gold:
 	{
 		OpenGold()
+		return
 	}
 
 OpenEvent()
@@ -1136,6 +1144,7 @@ OpenEvent()
 Open_Event:
 	{
 		OpenEvent()
+		return
 	}
 
 Open_Codes:
