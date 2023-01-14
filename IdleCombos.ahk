@@ -6,6 +6,11 @@
 
 ;CHANGELOG
 
+;3.38
+;add hotkeys
+;add list hotkeys to menu
+;fix open event chest counts
+
 ;3.37
 ;update switch statement to fix error with older versions
 ;add ahk version to status bar
