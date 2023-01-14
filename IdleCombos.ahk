@@ -250,6 +250,8 @@ global BlessingInfo := "`n`n`n`n`n`n"
 global ChampDetails := ""
 global TotalChamps := 0
 global About := "About IdleCombos v" VersionNumber " by QuickMythril`nUpdates by Eldoen, dhusemann, NeyahPeterson, deathoone, Fmagdi, djravine `n`nSpecial thanks to all the idle dragoneers who inspired and assisted me!"
+global HotkeyInfo := "CONTROL + NUMPAD/ - Tiny Blacksmith Contracts`nCONTROL + NUMPAD* - Small Blacksmith Contracts`nCONTROL + NUMPAD- - Medium Blacksmith Contracts`nCONTROL + NUMPAD+ - Large Blacksmith Contracts`nCONTROL + NUMPADENTER - Huge Blacksmith Contracts`n"
+HotkeyInfo := HotkeyInfo "CONTROL + NUMPAD1 - Buy Silver Chests`nCONTROL + NUMPAD2 - Buy Gold Chests`nCONTROL + NUMPAD3 - Buy Event Chests`nCONTROL + NUMPAD4 - Open Silver Chests`nCONTROL + NUMPAD5 - Open Gold Chests`nCONTROL + NUMPAD6 - Open Event Chests`n"
 
 ;Inventory globals
 global CurrentGems := ""
@@ -463,7 +465,10 @@ class MyGui {
 		Menu, HelpSubmenu, Add, List &User Details, List_UserDetails
 		Menu, HelpSubmenu, Add, List &Champ IDs, List_ChampIDs
 		Menu, HelpSubmenu, Add, List C&hest IDs, List_ChestIDs
+		Menu, HelpSubmenu, Add, List Hot&keys, Hotkeys_Clicked
+		Menu, HelpSubmenu, Add
 		Menu, HelpSubmenu, Add, &About IdleCombos, About_Clicked
+		Menu, HelpSubmenu, Add
 		Menu, HelpSubmenu, Add, &Update Dictionary, Update_Dictionary
 		Menu, HelpSubmenu, Add, &Discord Support Server, Discord_Clicked
 		Menu, IdleMenu, Add, &Help, :HelpSubmenu
@@ -842,6 +847,19 @@ class MyGui {
 ;Hotkeys
 ;$F9::Reload
 ;$F10::ExitApp
+;Hotkeys - Blacksmith Contracts
+Control & NumpadDiv::UseBlacksmith(31) ;Tiny BS
+Control & NumpadMult::UseBlacksmith(32) ;Small BS
+Control & NumpadSub::UseBlacksmith(33) ;Medium BS
+Control & NumpadAdd::UseBlacksmith(34) ;Large BS
+Control & NumpadEnter::UseBlacksmith(1797) ;Huge BS
+;Hotkeys - Chests
+Control & Numpad1::BuySilver() ;Buy Chest - Silver
+Control & Numpad2::BuyGold() ;Buy Chest - Gold
+Control & Numpad3::BuyEvent() ;Buy Chest - Event
+Control & Numpad4::OpenSilver() ;Open Chest - Silver
+Control & Numpad5::OpenGold() ;Open Chest - Gold
+Control & Numpad6::OpenEvent() ;Open Chest - Event
 
 Update_Clicked:
 	{
@@ -983,19 +1001,37 @@ About_Clicked:
 		return
 	}
 
-Buy_Silver:
+Hotkeys_Clicked:
+	{
+		;MsgBox, , Hotkey Details, % HotkeyInfo
+		;CustomMsgBox("Hotkey Details", HotkeyInfo, "Consolas", "s10", %BgColour%)
+		ScrollBox(HotkeyInfo, "p b1 h200 w400 f{s10, Consolas}", "Hotkey Details")
+		return
+	}
+
+BuySilver()
 	{
 		Buy_Chests(1)
 		return
 	}
 
-Buy_Gold:
+Buy_Silver:
+	{
+		BuySilver()
+	}
+
+BuyGold()
 	{
 		Buy_Chests(2)
 		return
 	}
 
-Buy_Event:
+Buy_Gold:
+	{
+		BuyGold()
+	}
+
+BuyEvent()
 	{
 		InputBox, chestid, Opening Chests, % "Enter Chest ID?`n", , 200, 150
 		if ErrorLevel
@@ -1006,7 +1042,12 @@ Buy_Event:
 		return
 	}
 
-Open_Silver:
+Buy_Event:
+	{
+		BuyEvent()
+	}
+
+OpenSilver()
 	{
 		if (Not WinExist("ahk_exe IdleDragons.exe")) {
 			Open_Chests(1)
@@ -1027,7 +1068,12 @@ Open_Silver:
 		}
 	}
 
-Open_Gold:
+Open_Silver:
+	{
+		OpenSilver()
+	}
+
+OpenGold()
 	{
 		if (Not WinExist("ahk_exe IdleDragons.exe")) {
 			Open_Chests(2)
@@ -1048,7 +1094,12 @@ Open_Gold:
 		}
 	}
 
-Open_Event:
+Open_Gold:
+	{
+		OpenGold()
+	}
+
+OpenEvent()
 	{
 		if (Not WinExist("ahk_exe IdleDragons.exe")) {
 			InputBox, chestid, Opening Chests, % "Enter Chest ID?`n", , 200, 150
@@ -1072,6 +1123,11 @@ Open_Event:
 			;	return
 			;}
 		}
+	}
+
+Open_Event:
+	{
+		OpenEvent()
 	}
 
 Open_Codes:
@@ -1729,18 +1785,23 @@ UseBlacksmith(buffid) {
 		case 31:
 			currentcontracts := CurrentTinyBS
 			lastcontracts := LastBSTnCount
+			contractname := "Tiny"
 		case 32:
 			currentcontracts := CurrentSmBS
 			lastcontracts := LastBSSmCount
+			contractname := "Small"
 		case 33:
 			currentcontracts := CurrentMdBS
 			lastcontracts := LastBSMdCount
+			contractname := "Medium"
 		case 34:
 			currentcontracts := CurrentLgBS
 			lastcontracts := LastBSLgCount
+			contractname := "Large"
 		case 1797:
 			currentcontracts := CurrentHgBS
 			lastcontracts := LastBSHgCount
+			contractname := "Huge"
 	}
 	if !(lastcontracts) {
 		lastcontracts := currentcontracts
@@ -1749,42 +1810,32 @@ UseBlacksmith(buffid) {
 		lastcontracts := currentcontracts
 	}
 	if !(currentcontracts) {
-		MsgBox, 4, , No Blacksmith Contracts of that size detected. Check server for user details?
+		MsgBox, 4, , No %contractname% Blacksmith Contracts detected. Check server for user details?
 			IfMsgBox, Yes
 			{
 				GetUserDetails()
 			}
 	}
-	InputBox, count, Blacksmithing, % "How many Blacksmith Contracts?`n(Max: " currentcontracts ")", , 200, 180, , , , , %lastcontracts%
+	InputBox, count, Blacksmithing, % "How many " contractname " Blacksmith Contracts?`n(Max: " currentcontracts ")", , 200, 180, , , , , %lastcontracts%
 	if ErrorLevel
 		return
 	if (count > currentcontracts) {
-		MsgBox, 4, , Insufficient blacksmith contracts detected for use.`nContinue anyway?
+		MsgBox, 4, , Insufficient %contractname% Blacksmith Contracts detected for use.`nContinue anyway?
 		IfMsgBox, No
 		{
 			return
 		}
 	}
 	heroid := "error"
-	InputBox, heroid, Blacksmithing, % "Use contracts on which Champ? (Enter ID)", , 200, 180, , , , , %LastBSChamp%
+	InputBox, heroid, Blacksmithing, % "Use " contractname " Blacksmith Contracts on which Champ? (Enter ID)", , 200, 180, , , , , %LastBSChamp%
 	if ErrorLevel
 		return
-	while !(heroid is number) {
+	while !((heroid is number) OR ((heroid > 0) && (heroid < 107)) OR ((heroid > 112) && (heroid < 119))) {
 		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number", , 200, 180, , , , , %LastBSChamp%
 		if ErrorLevel
 			return
 	}
-	while !((heroid > 0) && (heroid < 115)) {
-		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number", , 200, 180, , , , , %LastBSChamp%
-		if ErrorLevel
-			return
-	}
-	while ((heroid > 106) && (heroid < 113)) {
-		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number", , 200, 180, , , , , %LastBSChamp%
-		if ErrorLevel
-			return
-	}
-	MsgBox, 4, , % "Use " count " contracts on " ChampFromID(heroid) "?"
+	MsgBox, 4, , % "Use " count " " contractname " Blacksmith Contracts on " ChampFromID(heroid) "?"
 	IfMsgBox, No
 	{
 		return
@@ -1806,7 +1857,7 @@ UseBlacksmith(buffid) {
 	slot5lvs := 0
 	slot6lvs := 0
 	while (count > 0) {
-		SB_SetText("⌛ Contracts remaining to use: " count)
+		SB_SetText("⌛ " contractname " Blacksmith Contracts remaining to use: " count)
 		if (count < 50) {
 			rawresults := ServerCall("useserverbuff", bscontractparams count)
 			count -= count
@@ -1837,9 +1888,9 @@ UseBlacksmith(buffid) {
 				case 34: contractsused := (CurrentLgBS - blacksmithresults.buffs_remaining)
 				case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 			}
-			LogFile("Contracts Used: " Floor(contractsused))
+			LogFile(contractname "Blacksmith Contracts Used: " Floor(contractsused))
 			GetUserDetails()
-			SB_SetText("⌛ Contracts remaining: " count " (Error)")
+			SB_SetText("⌛ " contractname " Blacksmith Contracts remaining: " count " (Error)")
 			return
 		}
 		rawactions := JSON.stringify(blacksmithresults.actions)
@@ -1864,9 +1915,9 @@ UseBlacksmith(buffid) {
 		case 34: contractsused := (CurrentLgBS - blacksmithresults.buffs_remaining)
 		case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 	}
-	LogFile("Contracts used on " ChampFromID(heroid) ": " Floor(contractsused))
+	LogFile(contractname " Blacksmith Contracts used on " ChampFromID(heroid) ": " Floor(contractsused))
 	GetUserDetails()
-	SB_SetText("✅ Blacksmith use completed")
+	SB_SetText("✅ " contractname " Blacksmith Contracts use completed")
 	return
 }
 
