@@ -1608,7 +1608,16 @@ Open_Chests(chestid) {
 			}
 		}
 		case (chestid > 3 and chestid < 510): {
-			CurrentChests := UserDetails.details.chests[%chestid%]
+			CurrentChests := 0
+			CurrentChestsLookup := ""
+			for k, v in UserDetails.details.chests {
+				if (k == chestid) {
+					CurrentChestsLookup := v
+				}
+			}
+			if(CurrentChestsLookup) {
+				CurrentChests := CurrentChestsLookup
+			}
 			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(EventTokens/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
 			if ErrorLevel
 				return
