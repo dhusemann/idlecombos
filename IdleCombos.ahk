@@ -7,7 +7,7 @@
 ;CHANGELOG
 
 ;3.40
-;Fix cancel of buy/chests window
+;fix cancel of buy/chests window
 
 ;3.39
 ;update hotkeys
@@ -27,7 +27,7 @@
 ;basic testing - open chests event
 
 ;3.35
-;Remove style system to fix dangerous file warning in chrome
+;Remove style system to fix dangerous file warning in chrome (3rd party dll)
 
 ;3.34
 ;fix message box background colours with styles
