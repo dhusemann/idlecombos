@@ -6,6 +6,9 @@
 
 ;CHANGELOG
 
+;3.41
+;fix redeem codes starting with '#' not working
+
 ;3.40
 ;fix cancel of buy/chests window
 
@@ -3761,7 +3764,8 @@ ShowPityTimers() {
 
 getChestCodes() {
 	clipContents := clipboard
-	regexpPattern := "P)\b(?<![A-Za-z0-9-/@#$`%^&!*])([A-Za-z0-9-@#$`%^&!*]{12,20})(?![A-Za-z0-9-/@#$`%^&!*])"
+	;regexpPattern := "P)\b(?<![A-Za-z0-9-/@#$`%^&!*])([A-Za-z0-9-@#$`%^&!*]{12,20})(?![A-Za-z0-9-/@#$`%^&!*])" ;Original
+	regexpPattern := "P)(?<![A-Za-z0-9-\/@#$`%^&!*_=+\(\)\{\}\[\]])([A-Za-z0-9-@#$%^&!*]{12,20})(?![A-Za-z0-9-\/@#$`%^&!*_=+\(\)\{\}\[\]])"
 	foundCodeString := ""
 	while (clipContents ~= regexpPattern) {
 		foundPos := RegExMatch(clipContents, regexpPattern, foundLength)
