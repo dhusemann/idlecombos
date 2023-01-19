@@ -6,8 +6,11 @@
 
 ;CHANGELOG
 
+;3.41
+;fix redeem codes starting with '#' not working
+
 ;3.40
-;Fix cancel of buy/chests window
+;fix cancel of buy/chests window
 
 ;3.39
 ;update hotkeys
@@ -27,7 +30,7 @@
 ;basic testing - open chests event
 
 ;3.35
-;Remove style system to fix dangerous file warning in chrome
+;Remove style system to fix dangerous file warning in chrome (3rd party dll)
 
 ;3.34
 ;fix message box background colours with styles
@@ -3761,7 +3764,8 @@ ShowPityTimers() {
 
 getChestCodes() {
 	clipContents := clipboard
-	regexpPattern := "P)\b(?<![A-Za-z0-9-/@#$`%^&!*])([A-Za-z0-9-@#$`%^&!*]{12,20})(?![A-Za-z0-9-/@#$`%^&!*])"
+	;regexpPattern := "P)\b(?<![A-Za-z0-9-/@#$`%^&!*])([A-Za-z0-9-@#$`%^&!*]{12,20})(?![A-Za-z0-9-/@#$`%^&!*])" ;Original
+	regexpPattern := "P)(?<![A-Za-z0-9-\/@#$`%^&!*_=+\(\)\{\}\[\]])([A-Za-z0-9-@#$%^&!*]{12,20})(?![A-Za-z0-9-\/@#$`%^&!*_=+\(\)\{\}\[\]])"
 	foundCodeString := ""
 	while (clipContents ~= regexpPattern) {
 		foundPos := RegExMatch(clipContents, regexpPattern, foundLength)
