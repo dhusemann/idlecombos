@@ -6,6 +6,9 @@
 
 ;CHANGELOG
 
+;3.42
+;remove tool windows to give back taskbar visibility
+
 ;3.41
 ;fix redeem codes starting with '#' not working
 
