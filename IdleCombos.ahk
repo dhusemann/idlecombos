@@ -1166,7 +1166,7 @@ Open_Codes:
 		; GUI
 		Gui, CodeWindow:New
 		Gui, Menu, MyMenuBar
-		Gui, CodeWindow:+ToolWindow -Resize -MaximizeBox +MinSize
+		Gui, CodeWindow: -Resize -MaximizeBox +MinSize
 		Gui, CodeWindow:Show, w230 h240, 📜 Codes
 		Gui, CodeWindow:Add, Edit, r12 vCodestoEnter w190 x20 y20, IDLE-CHAM-PION-SNOW
 		Gui, CodeWindow:Add, Button, gRedeem_Codes, Submit
@@ -1391,6 +1391,12 @@ Open_Codes:
 		return
 	}
 
+Close_Codes:
+	{
+		Gui, CodeWindow:Destroy
+		return
+	}
+
 Briv_Calc:
 	{
 		InputBox, BrivSlot4, Briv Slot 4, Please enter the percentage listed`non your Briv Slot 4 item., , 250, 150, , , , , %BrivSlot4%
@@ -1402,12 +1408,6 @@ Briv_Calc:
 			return
 		}
 		MsgBox, 0, BrivCalc Results, % SimulateBriv(10000)
-		return
-	}
-
-Close_Codes:
-	{
-		Gui, CodeWindow:Destroy
 		return
 	}
 
@@ -3170,7 +3170,7 @@ CustomMsgBox(Title, Message, Font="", FontOptions="", WindowColor="")
 
 	Gui,66:Add,Button,% "Default y+10 w75 g66OK xp+" (TextW / 2) - 38,OK
 
-	Gui,66:+ToolWindow
+	;Gui,66:+ToolWindow
 	Gui,66:-MinimizeBox
 	Gui,66:-MaximizeBox
 
@@ -3921,7 +3921,8 @@ ScrollBox(String := "", Options := "", Label := "")
 		else
 			Gui, Font
 		Gui, Margin, 20, 20
-		Gui, +ToolWindow +MinSize200x200 +Resize
+		;Gui, +ToolWindow +MinSize200x200 +Resize
+		Gui, +MinSize200x200 +Resize
 		;Gui, Color, FFFFFF
 		Gui, Color, %BgColour%
 		Opt := "hwndGui_Hwnd ReadOnly -E0x200 "
