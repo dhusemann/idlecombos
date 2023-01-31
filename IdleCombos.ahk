@@ -6,6 +6,9 @@
 
 ;CHANGELOG
 
+;3.43
+;update redeem codes as website has changed
+
 ;3.42
 ;remove tool windows to give back taskbar visibility
 
@@ -181,7 +184,7 @@
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
 ;Versions
-global VersionNumber := "3.41"
+global VersionNumber := "3.43"
 global CurrentDictionary := "2.26"
 
 ;Local File globals
@@ -1204,17 +1207,24 @@ Open_Codes:
 		return
 	}
 
+	Wait_For_Load(wb)
+	{
+		while wb.busy or wb.ReadyState != 4
+			Sleep, 1
+	}
+
 	Get_Codes_Autoload() {
-		Open_Web_Codes_Page()
-		winwait, ALL active IDLE Champions combination🔒 codes
-		sleep, 1000
-		send, ^a
-		clipboard := ""
-		send, ^c
-		ClipWait, 1
-		if WinExist("Redeem Codes")
+		;Use new COM Object to hide browser
+		wb := ComObjCreate("InternetExplorer.Application")
+		wb.Visible := False
+		wb.Navigate(WebToolCodes)
+		Wait_For_Load(wb)
+		Codes := wb.document.getElementByID("i11").innerText
+		clipboard := Codes
+		if WinExist("Redeem Codes") {
 			WinActivate
-		Paste()
+			Paste()
+		}
 		return
 	}
 
