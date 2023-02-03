@@ -353,7 +353,7 @@ global EventChestIDs := ""
 global EventDetails := ""
 
 ;Web Tools globals
-global WebToolCodes := "https://incendar.com/idlechampions_codes.php#123"
+global WebToolCodes := "https://incendar.com/idlechampions_codes.php#i11"
 global WebToolGameViewer := "http://idlechampions.soulreaver.usermd.net"
 global WebToolDataViewer := "https://idle.kleho.ru"
 global WebToolUtilities := "https://ic.byteglow.com"
@@ -1214,14 +1214,22 @@ Open_Codes:
 	}
 
 	Get_Codes_Autoload() {
+		;Old method
+		Open_Web_Codes_Page()
+		winwait, ALL active IDLE Champions combination🔒 codes
+		sleep, 1000
+		send, ^a
+		clipboard := ""
+		send, ^c
+		ClipWait, 1
 		;Use new COM Object to hide browser
-		wb := ComObjCreate("InternetExplorer.Application")
-		wb.Visible := False
-		wb.Navigate(WebToolCodes)
-		Wait_For_Load(wb)
-		Codes := wb.document.getElementByID("i11").innerText
-		clipboard := Codes
-		if WinExist("Redeem Codes") {
+		;wb := ComObjCreate("InternetExplorer.Application")
+		;wb.Visible := False
+		;wb.Navigate(WebToolCodes)
+		;Wait_For_Load(wb)
+		;Codes := wb.document.getElementByID("i11").innerText
+		;clipboard := Codes
+		if WinExist("📜 Codes") {
 			WinActivate
 			Paste()
 		}
