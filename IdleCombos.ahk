@@ -1,10 +1,16 @@
 ﻿#NoEnv
+#Persistent
 #SingleInstance Force
 #include %A_ScriptDir%
 #include JSON.ahk
 #include idledict.ahk
 
 ;CHANGELOG
+
+;3.44
+;revert redeem codes
+;add default values to chest prompts
+;change server call to see if its faster
 
 ;3.43
 ;update redeem codes as website has changed
@@ -184,7 +190,7 @@
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
 ;Versions
-global VersionNumber := "3.43"
+global VersionNumber := "3.44"
 global CurrentDictionary := "2.26"
 
 ;Local File globals
@@ -353,7 +359,7 @@ global EventChestIDs := ""
 global EventDetails := ""
 
 ;Web Tools globals
-global WebToolCodes := "https://incendar.com/idlechampions_codes.php#123"
+global WebToolCodes := "https://incendar.com/idlechampions_codes.php#i11"
 global WebToolGameViewer := "http://idlechampions.soulreaver.usermd.net"
 global WebToolDataViewer := "https://idle.kleho.ru"
 global WebToolUtilities := "https://ic.byteglow.com"
@@ -416,6 +422,10 @@ class MyGui {
 		Global
 		Gui, MyWindow:New
 		Gui, MyWindow:+Resize -MaximizeBox +MinSize
+
+		;Set Transparency
+		;Gui, +LastFound
+		;WinSet, Transparent, 180
 
 		Menu, ICSettingsSubmenu, Add, &View Settings, ViewICSettings
 		Menu, ICSettingsSubmenu, Add, &Framerate, SetFramerate
@@ -664,6 +674,11 @@ class MyGui {
 
 		Gui, Tab, Log
 		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w425, %OutputText%
+
+		this.Load()
+	}
+
+	Load() {
 		
 		;First run checks and setup
 		if !FileExist(SettingsFile) {
@@ -1214,14 +1229,22 @@ Open_Codes:
 	}
 
 	Get_Codes_Autoload() {
+		;Old method
+		Open_Web_Codes_Page()
+		winwait, ALL active IDLE Champions combination🔒 codes
+		sleep, 1000
+		send, ^a
+		clipboard := ""
+		send, ^c
+		ClipWait, 1
 		;Use new COM Object to hide browser
-		wb := ComObjCreate("InternetExplorer.Application")
-		wb.Visible := False
-		wb.Navigate(WebToolCodes)
-		Wait_For_Load(wb)
-		Codes := wb.document.getElementByID("i11").innerText
-		clipboard := Codes
-		if WinExist("Redeem Codes") {
+		;wb := ComObjCreate("InternetExplorer.Application")
+		;wb.Visible := False
+		;wb.Navigate(WebToolCodes)
+		;Wait_For_Load(wb)
+		;Codes := wb.document.getElementByID("i11").innerText
+		;clipboard := Codes
+		if WinExist("📜 Codes") {
 			WinActivate
 			Paste()
 		}
@@ -1504,7 +1527,7 @@ Buy_Chests(chestid) {
 	switch true {
 		case (chestid = 1): {
 			maxbuy := Floor(CurrentGems/50)
-			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 200, 180
+			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count > maxbuy) {
@@ -1517,7 +1540,7 @@ Buy_Chests(chestid) {
 		}
 		case (chestid = 2): {
 			maxbuy := Floor(CurrentGems/500)
-			InputBox, count, Buying Chests, % "How many Gold Chests?`n(Max: " maxbuy ")", , 200, 180
+			InputBox, count, Buying Chests, % "How many Gold Chests?`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count = "alpha5") {
@@ -1538,7 +1561,10 @@ Buy_Chests(chestid) {
 		}
 		case (chestid > 3 and chestid < 510): {
 			maxbuy := Floor(EventTokens/10000)
-			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 200, 180
+			if (maxbuy > 0) {
+				maxbuy := 0
+			}
+			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count = "alpha5") {
@@ -1611,7 +1637,7 @@ Open_Chests(chestid) {
 	}
 	switch true {
 		case (chestid = 1): {
-			InputBox, count, Opening Chests, % "How many Silver Chests?`n(Owned: " CurrentSilvers ")`n(Max: " (CurrentSilvers + Floor(CurrentGems/50)) ")", , 200, 180
+			InputBox, count, Opening Chests, % "How many Silver Chests?`n(Owned: " CurrentSilvers ")`n(Max: " (CurrentSilvers + Floor(CurrentGems/50)) ")", , 200, 180, , , , , %CurrentSilvers%
 			if ErrorLevel
 				return
 			if (count > CurrentSilvers) {
@@ -1626,7 +1652,7 @@ Open_Chests(chestid) {
 			}
 		}
 		case (chestid = 2): {
-			InputBox, count, Opening Chests, % "How many Gold Chests?`n(Owned: " CurrentGolds ")`n(Max: " (CurrentGolds + Floor(CurrentGems/500)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
+			InputBox, count, Opening Chests, % "How many Gold Chests?`n(Owned: " CurrentGolds ")`n(Max: " (CurrentGolds + Floor(CurrentGems/500)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240, , , , , %CurrentGolds%
 			if ErrorLevel
 				return
 			if (count > CurrentGolds) {
@@ -1651,7 +1677,7 @@ Open_Chests(chestid) {
 			if(CurrentChestsLookup) {
 				CurrentChests := CurrentChestsLookup
 			}
-			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(EventTokens/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
+			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(EventTokens/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240, , , , , %CurrentChests%
 			if ErrorLevel
 				return
 			if (count > CurrentChests) {
@@ -2335,6 +2361,7 @@ GetUserDetails() {
 }
 
 ParseAdventureData() {
+	SB_SetText("⌛ Parsing Data - Adventures... Please wait...")
 	InstanceList := [{},{},{},{}]
 	CoreList := ["Modest","Strong","Fast","Magic"]
 	MagList := ["K","M","B","t"]
@@ -2407,6 +2434,7 @@ ParseAdventureData() {
 }
 
 ParseTimestamps() {
+	SB_SetText("⌛ Parsing Data - Timestamps... Please wait...")
 	localdiff := (A_Now - A_NowUTC)
 	if (localdiff < -28000000) {
 		localdiff += 70000000
@@ -2440,6 +2468,7 @@ ParseTimestamps() {
 }
 
 ParseInventoryData() {
+	SB_SetText("⌛ Parsing Data - Inventory... Please wait...")
 	CurrentGems := UserDetails.details.red_rubies
 	SpentGems := UserDetails.details.red_rubies_spent
 	CurrentGolds := UserDetails.details.chests.2
@@ -2502,6 +2531,7 @@ ParseInventoryData() {
 }
 
 ParsePatronData() {
+	SB_SetText("⌛ Parsing Data - Patrons... Please wait...")
 	MagList := ["K","M","B","t"]
 	for k, v in UserDetails.details.patrons {
 		switch v.patron_id {
@@ -2654,6 +2684,7 @@ ParsePatronData() {
 }
 
 ParseLootData() {
+	SB_SetText("⌛ Parsing Data - Loot... Please wait...")
 	ChampionsUnlockedCount := 0
 	FamiliarsUnlockedCount := 0
 	CostumesUnlockedCount := 0
@@ -2701,6 +2732,7 @@ ParseLootData() {
 }
 
 ParseChampData() {
+	SB_SetText("⌛ Parsing Data - Champions... Please wait...")
 	TotalChamps := 0
 	MagList := ["K","M","B","t"]
 	for k, v in UserDetails.details.heroes {
@@ -2745,6 +2777,7 @@ ParseChampData() {
 }	
 
 CheckPatronProgress() {
+	SB_SetText("⌛ Parsing Data - Patrons... Please wait...")
 	if !(MirtVariants == "Locked") {
 		if (MirtFPCurrency = "5000") {
 			Gui, Font, cGreen
@@ -2840,6 +2873,7 @@ CheckPatronProgress() {
 }
 
 CheckAchievements() {
+	SB_SetText("⌛ Parsing Data - Achievements... Please wait...")
 	if (UserDetails.details.stats.asharra_bonds < 3) {
 		if !(UserDetails.details.stats.asharra_bond_human)
 			ashexotic := " human"
@@ -2895,6 +2929,7 @@ CheckAchievements() {
 }
 
 CheckBlessings() {
+	SB_SetText("⌛ Parsing Data - Blessings... Please wait...")
 
 	epiccount := ""
 	epicvalue := Round((1.02 ** EpicGearCount), 2)
@@ -2939,6 +2974,7 @@ CheckBlessings() {
 }
 
 CheckEvents() {
+	SB_SetText("⌛ Parsing Data - Events... Please wait...")
 	EventNextID := UserDetails.details.next_event
 	EventID := 0
 	EventName := "N/A"
@@ -2995,8 +3031,22 @@ CheckEvents() {
 	EventDetails := InfoEventName InfoEventTokens InfoEventHeroes InfoEventChests
 }
 
-ServerCall(callname, parameters) {
-	;servername from settings, instead of the hard coded value
+ServerCallNew(callname, parameters) {
+	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
+	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
+	WR := ComObjCreate("Msxml2.XMLHTTP.6.0")
+	Try {
+		WR.Open("GET", URLtoCall, false)
+		WR.Send()
+		data := WR.ResponseText
+		WR.Close()
+	}
+	LogFile("API Call: " callname)
+	return data
+}
+
+ServerCallOld(callname, parameters) {
+	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
 	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
 	WR := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 	;default values on the below in ms, 0 is INF
@@ -3010,6 +3060,15 @@ ServerCall(callname, parameters) {
 		data := WR.ResponseText
 		WR.Close()
 	}
+	LogFile("API Call: " callname)
+	return data
+}
+
+ServerCall(callname, parameters) {
+	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
+	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
+	URLDownloadToFile, %URLtoCall%, %UserDetailsFile%
+	FileRead, data, %UserDetailsFile%
 	LogFile("API Call: " callname)
 	return data
 }
@@ -3088,17 +3147,17 @@ Discord_Clicked:
 		return
 	}
 
-	Update_Dictionary() {
-		if !(DictionaryVersion == CurrentDictionary) {
-			FileDelete, %LocalDictionary%
-			UrlDownloadToFile, %DictionaryFile%, %LocalDictionary%
-			Reload
-			return
-		} else {
-			MsgBox % "Dictionary file up to date"
-		}
+Update_Dictionary() {
+	if !(DictionaryVersion == CurrentDictionary) {
+		FileDelete, %LocalDictionary%
+		UrlDownloadToFile, %DictionaryFile%, %LocalDictionary%
+		Reload
 		return
+	} else {
+		MsgBox % "Dictionary file up to date"
 	}
+	return
+}
 
 List_UserDetails:
 	{
