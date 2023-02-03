@@ -1512,7 +1512,7 @@ Buy_Chests(chestid) {
 	switch true {
 		case (chestid = 1): {
 			maxbuy := Floor(CurrentGems/50)
-			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 200, 180
+			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count > maxbuy) {
@@ -1525,7 +1525,7 @@ Buy_Chests(chestid) {
 		}
 		case (chestid = 2): {
 			maxbuy := Floor(CurrentGems/500)
-			InputBox, count, Buying Chests, % "How many Gold Chests?`n(Max: " maxbuy ")", , 200, 180
+			InputBox, count, Buying Chests, % "How many Gold Chests?`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count = "alpha5") {
@@ -1546,7 +1546,10 @@ Buy_Chests(chestid) {
 		}
 		case (chestid > 3 and chestid < 510): {
 			maxbuy := Floor(EventTokens/10000)
-			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 200, 180
+			if (maxbuy > 0) {
+				maxbuy := 0
+			}
+			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count = "alpha5") {
@@ -1619,7 +1622,7 @@ Open_Chests(chestid) {
 	}
 	switch true {
 		case (chestid = 1): {
-			InputBox, count, Opening Chests, % "How many Silver Chests?`n(Owned: " CurrentSilvers ")`n(Max: " (CurrentSilvers + Floor(CurrentGems/50)) ")", , 200, 180
+			InputBox, count, Opening Chests, % "How many Silver Chests?`n(Owned: " CurrentSilvers ")`n(Max: " (CurrentSilvers + Floor(CurrentGems/50)) ")", , 200, 180, , , , , %CurrentSilvers%
 			if ErrorLevel
 				return
 			if (count > CurrentSilvers) {
@@ -1634,7 +1637,7 @@ Open_Chests(chestid) {
 			}
 		}
 		case (chestid = 2): {
-			InputBox, count, Opening Chests, % "How many Gold Chests?`n(Owned: " CurrentGolds ")`n(Max: " (CurrentGolds + Floor(CurrentGems/500)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
+			InputBox, count, Opening Chests, % "How many Gold Chests?`n(Owned: " CurrentGolds ")`n(Max: " (CurrentGolds + Floor(CurrentGems/500)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240, , , , , %CurrentGolds%
 			if ErrorLevel
 				return
 			if (count > CurrentGolds) {
@@ -1659,7 +1662,7 @@ Open_Chests(chestid) {
 			if(CurrentChestsLookup) {
 				CurrentChests := CurrentChestsLookup
 			}
-			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(EventTokens/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240
+			InputBox, count, Opening Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Owned: " CurrentChests ")`n(Max: " (CurrentChests + Floor(EventTokens/10000)) ")`n`n(Feats earned using this app do not`ncount towards the related achievement.)", , 360, 240, , , , , %CurrentChests%
 			if ErrorLevel
 				return
 			if (count > CurrentChests) {
