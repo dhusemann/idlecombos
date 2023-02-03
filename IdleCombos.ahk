@@ -1,10 +1,15 @@
 ﻿#NoEnv
+#Persistent
 #SingleInstance Force
 #include %A_ScriptDir%
 #include JSON.ahk
 #include idledict.ahk
 
 ;CHANGELOG
+
+;3.44
+;revert redeem codes
+;add default values to chest prompts
 
 ;3.43
 ;update redeem codes as website has changed
@@ -417,6 +422,10 @@ class MyGui {
 		Gui, MyWindow:New
 		Gui, MyWindow:+Resize -MaximizeBox +MinSize
 
+		;Set Transparency
+		;Gui, +LastFound
+		;WinSet, Transparent, 180
+
 		Menu, ICSettingsSubmenu, Add, &View Settings, ViewICSettings
 		Menu, ICSettingsSubmenu, Add, &Framerate, SetFramerate
 		Menu, ICSettingsSubmenu, Add, &Particles, SetParticles
@@ -664,6 +673,11 @@ class MyGui {
 
 		Gui, Tab, Log
 		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w425, %OutputText%
+
+		this.Load()
+	}
+
+	Load() {
 		
 		;First run checks and setup
 		if !FileExist(SettingsFile) {
@@ -2346,6 +2360,7 @@ GetUserDetails() {
 }
 
 ParseAdventureData() {
+	SB_SetText("⌛ Parsing Data - Adventures... Please wait...")
 	InstanceList := [{},{},{},{}]
 	CoreList := ["Modest","Strong","Fast","Magic"]
 	MagList := ["K","M","B","t"]
@@ -2418,6 +2433,7 @@ ParseAdventureData() {
 }
 
 ParseTimestamps() {
+	SB_SetText("⌛ Parsing Data - Timestamps... Please wait...")
 	localdiff := (A_Now - A_NowUTC)
 	if (localdiff < -28000000) {
 		localdiff += 70000000
@@ -2451,6 +2467,7 @@ ParseTimestamps() {
 }
 
 ParseInventoryData() {
+	SB_SetText("⌛ Parsing Data - Inventory... Please wait...")
 	CurrentGems := UserDetails.details.red_rubies
 	SpentGems := UserDetails.details.red_rubies_spent
 	CurrentGolds := UserDetails.details.chests.2
@@ -2513,6 +2530,7 @@ ParseInventoryData() {
 }
 
 ParsePatronData() {
+	SB_SetText("⌛ Parsing Data - Patrons... Please wait...")
 	MagList := ["K","M","B","t"]
 	for k, v in UserDetails.details.patrons {
 		switch v.patron_id {
@@ -2665,6 +2683,7 @@ ParsePatronData() {
 }
 
 ParseLootData() {
+	SB_SetText("⌛ Parsing Data - Loot... Please wait...")
 	ChampionsUnlockedCount := 0
 	FamiliarsUnlockedCount := 0
 	CostumesUnlockedCount := 0
@@ -2712,6 +2731,7 @@ ParseLootData() {
 }
 
 ParseChampData() {
+	SB_SetText("⌛ Parsing Data - Champions... Please wait...")
 	TotalChamps := 0
 	MagList := ["K","M","B","t"]
 	for k, v in UserDetails.details.heroes {
@@ -2756,6 +2776,7 @@ ParseChampData() {
 }	
 
 CheckPatronProgress() {
+	SB_SetText("⌛ Parsing Data - Patrons... Please wait...")
 	if !(MirtVariants == "Locked") {
 		if (MirtFPCurrency = "5000") {
 			Gui, Font, cGreen
@@ -2851,6 +2872,7 @@ CheckPatronProgress() {
 }
 
 CheckAchievements() {
+	SB_SetText("⌛ Parsing Data - Achievements... Please wait...")
 	if (UserDetails.details.stats.asharra_bonds < 3) {
 		if !(UserDetails.details.stats.asharra_bond_human)
 			ashexotic := " human"
@@ -2906,6 +2928,7 @@ CheckAchievements() {
 }
 
 CheckBlessings() {
+	SB_SetText("⌛ Parsing Data - Blessings... Please wait...")
 
 	epiccount := ""
 	epicvalue := Round((1.02 ** EpicGearCount), 2)
@@ -2950,6 +2973,7 @@ CheckBlessings() {
 }
 
 CheckEvents() {
+	SB_SetText("⌛ Parsing Data - Events... Please wait...")
 	EventNextID := UserDetails.details.next_event
 	EventID := 0
 	EventName := "N/A"
@@ -3006,8 +3030,22 @@ CheckEvents() {
 	EventDetails := InfoEventName InfoEventTokens InfoEventHeroes InfoEventChests
 }
 
-ServerCall(callname, parameters) {
-	;servername from settings, instead of the hard coded value
+ServerCallNew(callname, parameters) {
+	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
+	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
+	WR := ComObjCreate("Msxml2.XMLHTTP.6.0")
+	Try {
+		WR.Open("GET", URLtoCall, false)
+		WR.Send()
+		data := WR.ResponseText
+		WR.Close()
+	}
+	LogFile("API Call: " callname)
+	return data
+}
+
+ServerCallOld(callname, parameters) {
+	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
 	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
 	WR := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 	;default values on the below in ms, 0 is INF
@@ -3021,6 +3059,15 @@ ServerCall(callname, parameters) {
 		data := WR.ResponseText
 		WR.Close()
 	}
+	LogFile("API Call: " callname)
+	return data
+}
+
+ServerCall(callname, parameters) {
+	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
+	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
+	URLDownloadToFile, %URLtoCall%, %UserDetailsFile%
+	FileRead, data, %UserDetailsFile%
 	LogFile("API Call: " callname)
 	return data
 }
@@ -3099,17 +3146,17 @@ Discord_Clicked:
 		return
 	}
 
-	Update_Dictionary() {
-		if !(DictionaryVersion == CurrentDictionary) {
-			FileDelete, %LocalDictionary%
-			UrlDownloadToFile, %DictionaryFile%, %LocalDictionary%
-			Reload
-			return
-		} else {
-			MsgBox % "Dictionary file up to date"
-		}
+Update_Dictionary() {
+	if !(DictionaryVersion == CurrentDictionary) {
+		FileDelete, %LocalDictionary%
+		UrlDownloadToFile, %DictionaryFile%, %LocalDictionary%
+		Reload
 		return
+	} else {
+		MsgBox % "Dictionary file up to date"
 	}
+	return
+}
 
 List_UserDetails:
 	{
