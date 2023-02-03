@@ -10,6 +10,7 @@
 ;3.44
 ;revert redeem codes
 ;add default values to chest prompts
+;change server call to see if its faster
 
 ;3.43
 ;update redeem codes as website has changed
