@@ -7,6 +7,10 @@
 
 ;CHANGELOG
 
+;3.45
+;revert server call to see if its faster
+;change default server name from 'ps7' to 'master'
+
 ;3.44
 ;revert redeem codes
 ;add default values to chest prompts
@@ -240,7 +244,7 @@ global LogEnabled := 0
 global LoadGameClient := 0 ;0 none; 1 epic, 2 steam, 3 standalone
 ;global StyleSelection := "Default"
 global SettingsCheckValue := 15 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps7","user_id":0,"user_id_epic":0,"user_id_steam":0})
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0})
 ;global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps7","style":"Default","user_id":0,"user_id_epic":0,"user_id_steam":0})
 
 ;Server globals
@@ -3031,21 +3035,7 @@ CheckEvents() {
 	EventDetails := InfoEventName InfoEventTokens InfoEventHeroes InfoEventChests
 }
 
-ServerCallNew(callname, parameters) {
-	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
-	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
-	WR := ComObjCreate("Msxml2.XMLHTTP.6.0")
-	Try {
-		WR.Open("GET", URLtoCall, false)
-		WR.Send()
-		data := WR.ResponseText
-		WR.Close()
-	}
-	LogFile("API Call: " callname)
-	return data
-}
-
-ServerCallOld(callname, parameters) {
+ServerCall(callname, parameters) {
 	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
 	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
 	WR := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -3064,7 +3054,21 @@ ServerCallOld(callname, parameters) {
 	return data
 }
 
-ServerCall(callname, parameters) {
+ServerCallNew(callname, parameters) {
+	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
+	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
+	WR := ComObjCreate("Msxml2.XMLHTTP.6.0")
+	Try {
+		WR.Open("GET", URLtoCall, false)
+		WR.Send()
+		data := WR.ResponseText
+		WR.Close()
+	}
+	LogFile("API Call: " callname)
+	return data
+}
+
+ServerCallAlt(callname, parameters) {
 	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
 	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
 	URLDownloadToFile, %URLtoCall%, %UserDetailsFile%
