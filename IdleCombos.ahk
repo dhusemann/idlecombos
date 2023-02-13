@@ -7,6 +7,10 @@
 
 ;CHANGELOG
 
+;3.47
+;update dictionary
+;update max hero id
+
 ;3.46
 ;add support for bounty contracts via gui
 
@@ -198,7 +202,7 @@
 
 ;Versions
 global VersionNumber := "3.46"
-global CurrentDictionary := "2.26"
+global CurrentDictionary := "2.27"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -1922,7 +1926,7 @@ UseBlacksmith(buffid) {
 	InputBox, heroid, Blacksmithing, % "Use " contractname " Blacksmith Contracts on which Champ? (Enter ID)", , 200, 180, , , , , %LastBSChamp%
 	if ErrorLevel
 		return
-	while !((heroid is number) OR ((heroid > 0) && (heroid < 107)) OR ((heroid > 112) && (heroid < 119))) {
+	while !((heroid is number) OR ((heroid > 0) && (heroid < 107)) OR ((heroid > 112) && (heroid < 123))) {
 		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number", , 200, 180, , , , , %LastBSChamp%
 		if ErrorLevel
 			return
@@ -3531,7 +3535,7 @@ List_ChampIDs:
 		champname := ""
 		id := 1
 		champidlist := ""
-		while (id < 121) {
+		while (id < 131) {
 			champname := ChampFromID(id)
 			StringLen, champnamelen, champname
 			while (champnamelen < 25) {
