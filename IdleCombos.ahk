@@ -7,6 +7,9 @@
 
 ;CHANGELOG
 
+;3.46
+;add support for bounty contracts via gui
+
 ;3.45
 ;revert server call to see if its faster
 ;change default server name from 'ps7' to 'master'
@@ -204,6 +207,7 @@ global SettingsFile := "idlecombosettings.json"
 global UserDetailsFile := "userdetails.json"
 global ChestOpenLogFile := "chestopenlog.json"
 global BlacksmithLogFile := "blacksmithlog.json"
+global BountyLogFile := "bountylog.json"
 global RedeemCodeLogFile := "redeemcodelog.json"
 global JournalFile := "journal.json"
 global CurrentSettings := []
@@ -282,6 +286,7 @@ global TotalChamps := 0
 global About := "About IdleCombos v" VersionNumber " by QuickMythril`nUpdates by Eldoen, dhusemann, NeyahPeterson, deathoone, Fmagdi, djravine `n`nSpecial thanks to all the idle dragoneers who inspired and assisted me!"
 global HotkeyInfo := "CONTROL + NUMPAD1 - Tiny Blacksmith Contracts`nCONTROL + NUMPAD2 - Small Blacksmith Contracts`nCONTROL + NUMPAD3 - Medium Blacksmith Contracts`nCONTROL + NUMPAD4 - Large Blacksmith Contracts`nCONTROL + NUMPAD5 - Huge Blacksmith Contracts`n"
 HotkeyInfo := HotkeyInfo "CONTROL + NUMPAD/ - Buy Silver Chests`nCONTROL + NUMPAD* - Buy Gold Chests`nCONTROL + NUMPAD- - Buy Event Chests`nCONTROL + NUMPAD7 - Open Silver Chests`nCONTROL + NUMPAD8 - Open Gold Chests`nCONTROL + NUMPAD9 - Open Event Chests`n"
+HotkeyInfo := HotkeyInfo "CONTROL + 7 - Tiny Bounty Contracts`nCONTROL + 8 - Small Bounty Contracts`nCONTROL + 9 - Medium Bounty Contracts`nCONTROL + 0 - Large Bounty Contracts`n"
 
 ;Inventory globals
 global CurrentGems := ""
@@ -385,6 +390,10 @@ global LastBSSmCount := ""
 global LastBSMdCount := ""
 global LastBSLgCount := ""
 global LastBSHgCount := ""
+global LastBountyTnCount := ""
+global LastBountySmCount := ""
+global LastBountyMdCount := ""
+global LastBountyLgCount := ""
 global foundCodeString := ""
 global BgColour := "FFFFFF"
 
@@ -466,6 +475,12 @@ class MyGui {
 		Menu, BlacksmithSubmenu, Add, &Item Level Report, GearReport
 		Menu, BlacksmithSubmenu, Add, &Active Patron Feats, PatronFeats
 		Menu, ToolsSubmenu, Add, &Blacksmith, :BlacksmithSubmenu
+
+		Menu, BountySubmenu, Add, Use &Tiny Contracts, Tiny_Bounty
+		Menu, BountySubmenu, Add, Use &Small Contracts, Sm_Bounty
+		Menu, BountySubmenu, Add, Use &Medium Contracts, Med_Bounty
+		Menu, BountySubmenu, Add, Use &Large Contracts, Lg_Bounty
+		Menu, ToolsSubmenu, Add, B&ounty, :BountySubmenu
 
 		Menu, ToolsSubmenu, Add, &Redeem Codes, Open_Codes
 
@@ -899,6 +914,11 @@ Control & NumpadSub::BuyEvent() ;Buy Chest - Event
 Control & Numpad7::OpenSilver() ;Open Chest - Silver
 Control & Numpad8::OpenGold() ;Open Chest - Gold
 Control & Numpad9::OpenEvent() ;Open Chest - Event
+;Hotkeys - Bounty Contracts
+Control & 7::UseBounty(17) ;Tiny Bounty
+Control & 8::UseBounty(18) ;Small Bounty
+Control & 9::UseBounty(19) ;Medium Bounty
+Control & 0::UseBounty(20) ;Large Bounty
 
 Update_Clicked:
 	{
@@ -1044,7 +1064,7 @@ Hotkeys_Clicked:
 	{
 		;MsgBox, , Hotkey Details, % HotkeyInfo
 		;CustomMsgBox("Hotkey Details", HotkeyInfo, "Consolas", "s10", %BgColour%)
-		ScrollBox(HotkeyInfo, "p b1 h200 w400 f{s10, Consolas}", "Hotkey Details")
+		ScrollBox(HotkeyInfo, "p b1 h250 w400 f{s10, Consolas}", "Hotkey Details")
 		return
 	}
 
@@ -1941,10 +1961,10 @@ UseBlacksmith(buffid) {
 			FileAppend, %rawresults%`n, %BlacksmithLogFile%
 		} else {
 			if !CurrentSettings.nosavesetting {
-				InputBox, dummyvar, Contracts Results, Save to File?, , 250, 150, , , , , % rawresults
+				InputBox, dummyvar, Blacksmith Contracts Results, Save to File?, , 250, 150, , , , , % rawresults
 				dummyvar := ""
 				if !ErrorLevel {
-					FileAppend, %rawresults%`n, %ContractLogFile%
+					FileAppend, %rawresults%`n, %BlacksmithLogFile%
 					tempsavesetting := 1
 				}
 			}
@@ -1990,6 +2010,331 @@ UseBlacksmith(buffid) {
 	LogFile(contractname " Blacksmith Contracts used on " ChampFromID(heroid) ": " Floor(contractsused))
 	GetUserDetails()
 	SB_SetText("✅ " contractname " Blacksmith Contracts use completed")
+	return
+}
+
+Tiny_Bounty:
+	{
+		UseBounty(17)
+		return
+	}
+
+Sm_Bounty:
+	{
+		UseBounty(18)
+		return
+	}
+
+Med_Bounty:
+	{
+		UseBounty(19)
+		return
+	}
+
+Lg_Bounty:
+	{
+		UseBounty(20)
+		return
+	}
+
+UseBounty(buffid) {
+	if !UserID {
+		MsgBox % "Need User ID & Hash"
+		FirstRun()
+	}
+	switch buffid {
+		case 17:
+			currentcontracts := CurrentTinyBounties
+			lastcontracts := LastBountyTnCount
+			contractname := "Tiny"
+		case 18:
+			currentcontracts := CurrentSmBounties
+			lastcontracts := LastBountySmCount
+			contractname := "Small"
+		case 19:
+			currentcontracts := CurrentMdBounties
+			lastcontracts := LastBountyMdCount
+			contractname := "Medium"
+		case 20:
+			currentcontracts := CurrentLgBounties
+			lastcontracts := LastBountyLgCount
+			contractname := "Large"
+	}
+	if !(lastcontracts) {
+		lastcontracts := currentcontracts
+	}
+	if (lastcontracts > currentcontracts) {
+		lastcontracts := currentcontracts
+	}
+	if !(currentcontracts) {
+		MsgBox, 4, , No %contractname% Bounty Contracts detected. Check server for user details?
+			IfMsgBox, Yes
+			{
+				GetUserDetails()
+			}
+	}
+	InputBox, count, Bounties, % "How many " contractname " Bounty Contracts?`n(Max: " currentcontracts ")", , 200, 180, , , , , %lastcontracts%
+	if ErrorLevel
+		return
+	if (count > currentcontracts) {
+		MsgBox, 4, , Insufficient %contractname% Bounty Contracts detected for use.`nContinue anyway?
+		IfMsgBox, No
+		{
+			return
+		}
+	}
+	MsgBox, 4, , % "Use " count " " contractname " Bounty Contracts?`n`nNOTE: Do not touch the mouse`nor keyboard until process completed"
+	IfMsgBox, No
+	{
+		return
+	}
+	;bounty cancel
+	WinGet, PID, PID, Idle Champions
+	WinActivate, ahk_pid %PID%
+	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_cancel.png
+	;msgbox % "CANCEL - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+	if (errorlevel == 0) {
+		MouseClick, left, ix+5, iy+5
+		sleep 1000
+	}
+	;inventory close
+	WinGet, PID, PID, Idle Champions
+	WinActivate, ahk_pid %PID%
+	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory_close.png
+	;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+	if (errorlevel == 0) {
+		MouseClick, left, ix+5, iy+5
+		sleep 1000
+	}
+	;inventory open
+	WinGet, PID, PID, Idle Champions
+	WinActivate, ahk_pid %PID%
+	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory.png
+	;msgbox % "INVENTORY - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+	if (errorlevel == 0) {
+		MouseClick, left, ix+15, iy+15
+		sleep 1000
+		contractsused := 0
+		page := 1
+		while (count > 0) {
+			found := 0
+			while (found == 0) { ;search pages for bounties
+				if (page == 5) {
+					msgbox % "[PROCESS COMPLETED]`n`nNo "contractname " Bounty Contracts found"
+					return
+				}
+				;search inventory page
+				WinGet, PID, PID, Idle Champions
+				WinActivate, ahk_pid %PID%
+				;bounty icon
+				switch buffid {
+					case 17:
+						ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_tn.png
+					case 18:
+						ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_sm.png
+					case 19:
+						ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_md.png
+					case 20:
+						ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_lg.png
+				}
+				;msgbox % "BOUNTY - PAGE " . page . " - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+				if (errorlevel == 0) {
+					WinGet, PID, PID, Idle Champions
+					WinActivate, ahk_pid %PID%
+					MouseClick, left, ix+15, iy+15
+					sleep 1000
+					found := 1
+				} else if (errorlevel == 1) {
+					page += 1
+					WinGet, PID, PID, Idle Champions
+					WinActivate, ahk_pid %PID%
+					;inventory next page
+					ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory_next.png
+					;msgbox % "INVENTORY NEXT - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+					if (errorlevel == 0) {
+						WinGet, PID, PID, Idle Champions
+						WinActivate, ahk_pid %PID%
+						MouseClick, left, ix+5, iy+5
+						MouseMove, ix+50, iy+5
+					}
+				}
+			}
+			if (found == 1) {
+				SB_SetText("⌛ " contractname " Bounty Contracts remaining to use: " count)
+				repeatcount := 0
+				if (count < 50) {
+					contractsused += count
+					repeatcount := count
+					count -= count
+				} else {
+					contractsused += 50
+					repeatcount := 50
+					count -= 50
+				}
+				repeatcount -= 1
+				;click next
+				WinGet, PID, PID, Idle Champions
+				WinActivate, ahk_pid %PID%
+				;bounty next/increase count
+				ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_next.png
+				;msgbox % "NEXT - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+				if (errorlevel == 0) {
+					loop %repeatcount% {
+						WinGet, PID, PID, Idle Champions
+						WinActivate, ahk_pid %PID%
+						MouseClick, left, ix+10, iy+10
+						sleep 15
+					}
+				}
+				;click go
+				WinGet, PID, PID, Idle Champions
+				WinActivate, ahk_pid %PID%
+				;bounty go
+				ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_go.png
+				;msgbox % "GO - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+				;bounty cancel
+				;ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_cancel.png
+				;msgbox % "CANCEL - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+				if (errorlevel == 0) {
+					WinGet, PID, PID, Idle Champions
+					WinActivate, ahk_pid %PID%
+					MouseClick, left, ix+15, iy+15
+					sleep 1000
+				}
+			}
+		}
+		msgbox % "[PROCESS COMPLETED]`n`n"contractname " Bounty Contracts used: " Floor(contractsused)
+		LogFile(contractname " Bounty Contracts used: " Floor(contractsused))
+		GetUserDetails()
+		SB_SetText("✅ " contractname " Bounty Contracts use completed")
+	}
+}
+
+UseBounty2(buffid) {
+	if !UserID {
+		MsgBox % "Need User ID & Hash"
+		FirstRun()
+	}
+	switch buffid {
+		case 17:
+			currentcontracts := CurrentTinyBounties
+			lastcontracts := LastBountyTnCount
+			contractname := "Tiny"
+		case 18:
+			currentcontracts := CurrentSmBounties
+			lastcontracts := LastBountySmCount
+			contractname := "Small"
+		case 19:
+			currentcontracts := CurrentMdBounties
+			lastcontracts := LastBountyMdCount
+			contractname := "Medium"
+		case 20:
+			currentcontracts := CurrentLgBounties
+			lastcontracts := LastBountyLgCount
+			contractname := "Large"
+	}
+	if !(lastcontracts) {
+		lastcontracts := currentcontracts
+	}
+	if (lastcontracts > currentcontracts) {
+		lastcontracts := currentcontracts
+	}
+	if !(currentcontracts) {
+		MsgBox, 4, , No %contractname% Bounty Contracts detected. Check server for user details?
+			IfMsgBox, Yes
+			{
+				GetUserDetails()
+			}
+	}
+	InputBox, count, Bounties, % "How many " contractname " Bounty Contracts?`n(Max: " currentcontracts ")", , 200, 180, , , , , %lastcontracts%
+	if ErrorLevel
+		return
+	if (count > currentcontracts) {
+		MsgBox, 4, , Insufficient %contractname% Bounty Contracts detected for use.`nContinue anyway?
+		IfMsgBox, No
+		{
+			return
+		}
+	}
+	MsgBox, 4, , % "Use " count " " contractname " Bounty Contracts?"
+	IfMsgBox, No
+	{
+		return
+	}
+	switch buffid {
+		case 17: LastBountyTnCount := count
+		case 18: LastBountySmCount := count
+		case 19: LastBountyMdCount := count
+		case 20: LastBountyLgCount := count
+	}	
+	bountycontractparams := "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&buff_id=" buffid "&num_uses="
+	tempsavesetting := 0
+	slot1lvs := 0
+	slot2lvs := 0
+	slot3lvs := 0
+	slot4lvs := 0
+	slot5lvs := 0
+	slot6lvs := 0
+	while (count > 0) {
+		SB_SetText("⌛ " contractname " Bounty Contracts remaining to use: " count)
+		if (count < 50) {
+			rawresults := ServerCall("useserverbuff", bountycontractparams count)
+			count -= count
+		} else {
+			rawresults := ServerCall("useserverbuff", bountycontractparams "50")
+			count -= 50
+		}
+		if (CurrentSettings.alwayssavecontracts || tempsavesetting) {
+			FileAppend, %rawresults%`n, %BountyLogFile%
+		} else {
+			if !CurrentSettings.nosavesetting {
+				InputBox, dummyvar, Bounty Contracts Results, Save to File?, , 250, 150, , , , , % rawresults
+				dummyvar := ""
+				if !ErrorLevel {
+					FileAppend, %rawresults%`n, %BountyLogFile%
+					tempsavesetting := 1
+				}
+			}
+		}
+		bountyresults := JSON.parse(rawresults)
+		if ((bountyresults.success == "0") || (bountyresults.okay == "0")) {
+			MsgBox % "Items gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
+			MsgBox % "Error: " rawresults
+			switch buffid {
+				case 17: contractsused := (CurrentTinyBounties - bountyresults.buffs_remaining)
+				case 18: contractsused := (CurrentSmBounties - bountyresults.buffs_remaining)
+				case 19: contractsused := (CurrentMdBounties - bountyresults.buffs_remaining)
+				case 20: contractsused := (CurrentLgBounties - bountyresults.buffs_remaining)
+			}
+			LogFile(contractname "Bounty Contracts Used: " Floor(contractsused))
+			GetUserDetails()
+			SB_SetText("⌛ " contractname " Bounty Contracts remaining: " count " (Error)")
+			return
+		}
+		rawactions := JSON.stringify(bountyresults.actions)
+		bountyactions := JSON.parse(rawactions)
+		for k, v in bountyactions {
+			switch v.slot_id {
+				case 1: slot1lvs += v.amount
+				case 2: slot2lvs += v.amount
+				case 3: slot3lvs += v.amount
+				case 4: slot4lvs += v.amount
+				case 5: slot5lvs += v.amount
+				case 6: slot6lvs += v.amount
+			}
+		}
+	}
+	MsgBox % "Items gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
+	tempsavesetting := 0
+	switch buffid {
+		case 17: contractsused := (CurrentTinyBounties - bountyresults.buffs_remaining)
+		case 18: contractsused := (CurrentSmBounties - bountyresults.buffs_remaining)
+		case 19: contractsused := (CurrentMdBounties - bountyresults.buffs_remaining)
+		case 20: contractsused := (CurrentLgBounties - bountyresults.buffs_remaining)
+	}
+	LogFile(contractname " Bounty Contracts used: " Floor(contractsused))
+	GetUserDetails()
+	SB_SetText("✅ " contractname " Bounty Contracts use completed")
 	return
 }
 
@@ -3167,12 +3512,12 @@ List_UserDetails:
 	{
 		userdetailslist := "Game Platform: " GamePlatform "`n"
 		userdetailslist := userdetailslist "User ID: " UserID "`n"
-		userdetailslist := userdetailslist "User Hash : " UserHash "`n"
+		userdetailslist := userdetailslist "User Hash: " UserHash "`n"
 		if UserIDEpic {
-			userdetailslist := userdetailslist "Epic Games User ID : " UserIDEpic "`n"
+			userdetailslist := userdetailslist "Epic Games User ID: " UserIDEpic "`n"
 		}
 		if UserIDSteam {
-			userdetailslist := userdetailslist "Steam User ID : " UserIDSteam "`n"
+			userdetailslist := userdetailslist "Steam User ID: " UserIDSteam "`n"
 		}
 		;MsgBox, , User Details, % userdetailslist
 		;CustomMsgBox("User Details", userdetailslist, "Consolas", "s14", %BgColour%)
