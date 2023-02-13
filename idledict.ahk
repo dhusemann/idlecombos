@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.26"
+global DictionaryVersion := "2.27"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -187,8 +187,22 @@ ChampFromID(id) {
 			case "116": namefromid := "Warduke"
 			case "117": namefromid := "Imoen"
 			case "118": namefromid := "Fen"
-			case "119": namefromid := "UNKNOWN (" id ")"
-			case "120": namefromid := "UNKNOWN (" id ")"
+			case "119": namefromid := "Brother Uriah"
+			case "120": namefromid := "Solaak"
+		}
+	}
+	else if (id < 131) {
+		switch id {
+			case "121": namefromid := "Miria"
+			case "122": namefromid := "Antrius"
+			case "123": namefromid := "UNKNOWN (" id ")"
+			case "124": namefromid := "UNKNOWN (" id ")"
+			case "125": namefromid := "UNKNOWN (" id ")"
+			case "126": namefromid := "UNKNOWN (" id ")"
+			case "127": namefromid := "UNKNOWN (" id ")"
+			case "128": namefromid := "UNKNOWN (" id ")"
+			case "129": namefromid := "UNKNOWN (" id ")"
+			case "130": namefromid := "UNKNOWN (" id ")"
 		}
 	}
 	else {
@@ -696,7 +710,7 @@ ChestFromID(id) {
 			case "202": namefromid := "Gold Dark Days Chest"
 			case "203": namefromid := "Gold Dusty Chest"
 			case "204": namefromid := "Gold Screened Chest"
-			case "205": namefromid := "Gold Mithral Hall Chest (NOT USED)"
+			case "205": namefromid := "Gold Mithral Hall Chest (DO NOT USE)"
 			case "206": namefromid := "Gold Hexed Chest"
 			case "207": namefromid := "Gold Arkhan's Army Chest"
 			case "208": namefromid := "Gold Stained Chest"
@@ -885,12 +899,12 @@ ChestFromID(id) {
 	else if (id < 381) {
 		switch id {
 			case "361": namefromid := "Gold Nahara Chest"
-			case "362": namefromid := "Silver Y5E15 Chest"
-			case "363": namefromid := "Gold Y5E15 Chest"
-			case "364": namefromid := "Silver Y5E16 Chest"
-			case "365": namefromid := "Gold Y5E16 Chest"
-			case "366": namefromid := "Silver Y5E17 Chest"
-			case "367": namefromid := "Gold Y5E17 Chest"
+			case "362": namefromid := "Silver Valentine Chest"
+			case "363": namefromid := "Gold Valentine Chest"
+			case "364": namefromid := "Silver Voronika Chest"
+			case "365": namefromid := "Gold Voronika Chest"
+			case "366": namefromid := "Silver Dob Chest"
+			case "367": namefromid := "Gold Dob Chest"
 			case "368": namefromid := "Gold Barred Chest"
 			case "369": namefromid := "Gold Charred Chest"
 			case "370": namefromid := "Gold Weighted Chest"
@@ -974,8 +988,8 @@ ChestFromID(id) {
 			case "436": namefromid := "Gold Imoen Chest"
 			case "437": namefromid := "Silver Fen Chest"
 			case "438": namefromid := "Gold Fen Chest"
-			case "439": namefromid := "Silver E7Y6 Chest"
-			case "440": namefromid := "Gold E7Y6 Chest"
+			case "439": namefromid := "Silver Brother Uriah Chest"
+			case "440": namefromid := "Gold Brother Uriah Chest"
 		}
 	}
 	else if (id < 461) {
@@ -1046,7 +1060,7 @@ ChestFromID(id) {
 			case "496": namefromid := "Gold Eldritch Lich Chest"
 			case "497": namefromid := "Gold Bracers of Defense Chest"
 			case "498": namefromid := "Gold Harmony Chest"
-			case "499": namefromid := "Gold S2 Chest (NYI)"
+			case "499": namefromid := "Gold Flayer Hunter Chest"
 			case "500": namefromid := "Gold Accessory Chest"
 		}
 	}

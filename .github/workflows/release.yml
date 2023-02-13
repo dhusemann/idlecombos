@@ -18,7 +18,7 @@ jobs:
     - name: Make Release Folder
       run: mkdir "$ARCHIVE_NAME"
     - name: Copy files
-      run: cp *.ahk *.md "$ARCHIVE_NAME"
+      run: cp -r *.ahk *.md images/*.png "$ARCHIVE_NAME"
     - name: Archive Release TAR.GZ
       run: tar -czf "$ARCHIVE_NAME".tar.gz "$ARCHIVE_NAME"
     - name: Archive Release ZIP
