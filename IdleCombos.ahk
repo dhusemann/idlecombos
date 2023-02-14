@@ -8,6 +8,9 @@
 ;CHANGELOG
 
 ;3.47
+;update server name to ps20
+
+;3.47
 ;update dictionary
 ;update max hero id
 
@@ -201,7 +204,7 @@
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
 ;Versions
-global VersionNumber := "3.47"
+global VersionNumber := "3.48"
 global CurrentDictionary := "2.27"
 
 ;Local File globals
@@ -240,7 +243,7 @@ StringTrimRight, ICSettingsFile, ICSettingsFile, 7
 ICSettingsFile := ICSettingsFile "LocalLow\Codename Entertainment\Idle Champions\localSettings.json"
 
 ;Settings globals
-global ServerName := "ps7"
+global ServerName := "ps20"
 global GetDetailsonStart := 0
 global LaunchGameonStart := 0
 global FirstRun := 1
@@ -252,7 +255,7 @@ global LogEnabled := 0
 global LoadGameClient := 0 ;0 none; 1 epic, 2 steam, 3 standalone
 ;global StyleSelection := "Default"
 global SettingsCheckValue := 15 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0})
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps20","user_id":0,"user_id_epic":0,"user_id_steam":0})
 ;global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps7","style":"Default","user_id":0,"user_id_epic":0,"user_id_steam":0})
 
 ;Server globals
