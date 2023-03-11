@@ -19,9 +19,9 @@ jobs:
       - name: Discord Publish
         uses: rjstone/discord-webhook-notify@v1
         with:
-          severity: success
-          description: "${{steps.latest_release.outputs.name}} has been released."
-          details: "**DOWNLOAD:** ${{steps.latest_release.outputs.html_url}}"
-          footer: ""
+          severity: info
+          description: "**NEW:** ${{steps.latest_release.outputs.name}} has been released."
+          details: "**DOWNLOAD:** [${{steps.latest_release.outputs.name}}](${{steps.latest_release.outputs.html_url}})"
+          footer: "PUBLISHED: ${{steps.latest_release.outputs.published_at}} ID: ${{steps.latest_release.outputs.id}}"
           text: ""
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
