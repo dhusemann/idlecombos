@@ -10,6 +10,7 @@
 ;3.49
 ;detect play server from log
 ;option to show tab as default
+;test new redeem codes auto load
 
 ;3.48
 ;update server name to ps20
@@ -769,6 +770,10 @@ class MyGui {
 		;StyleSelection := CurrentSettings.style
 		;SetStyle(StyleSelection)
 		TabActive := CurrentSettings.tabactive
+
+		if (TabActive) {
+			GuiControl, Choose, Tabs, % TabActive
+		}
 		
 		this.Update()
 		this.Show()
@@ -912,9 +917,9 @@ class MyGui {
 		;if (StyleSelection) {
 		;	GuiControl, Choose, StyleChoice, %StyleSelection%
 		;}
+
 		if (TabActive) {
 			GuiControl, Choose, TabActive, % TabActive
-			GuiControl, Choose, Tabs, % TabActive
 		}
 
 		;this.Show() - removed
@@ -1284,20 +1289,22 @@ Open_Codes:
 
 	Get_Codes_Autoload() {
 		;Old method
-		Open_Web_Codes_Page()
-		winwait, ALL active IDLE Champions combination🔒 codes
-		sleep, 1000
-		send, ^a
-		clipboard := ""
-		send, ^c
-		ClipWait, 1
+		; Open_Web_Codes_Page()
+		; winwait, ALL active Idle Champions of the Forgotten Realms chest combination🔒 codes
+		; sleep, 1000
+		; send, ^a
+		; clipboard := ""
+		; send, ^c
+		; ClipWait, 1
+
 		;Use new COM Object to hide browser
-		;wb := ComObjCreate("InternetExplorer.Application")
-		;wb.Visible := False
-		;wb.Navigate(WebToolCodes)
-		;Wait_For_Load(wb)
-		;Codes := wb.document.getElementByID("i11").innerText
-		;clipboard := Codes
+		wb := ComObjCreate("InternetExplorer.Application")
+		wb.Visible := False
+		wb.Navigate(WebToolCodes)
+		Wait_For_Load(wb)
+		Codes := wb.document.getElementByID("i11").innerText
+		clipboard := Codes
+
 		if WinExist("📜 Codes") {
 			WinActivate
 			Paste()
