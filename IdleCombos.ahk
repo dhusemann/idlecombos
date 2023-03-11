@@ -7,6 +7,11 @@
 
 ;CHANGELOG
 
+;3.49
+;detect play server from log
+;option to show tab as default
+;test new redeem codes auto load
+
 ;3.48
 ;update server name to ps20
 
@@ -204,7 +209,7 @@
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
 ;Versions
-global VersionNumber := "3.48"
+global VersionNumber := "3.49"
 global CurrentDictionary := "2.27"
 
 ;Local File globals
@@ -243,7 +248,7 @@ StringTrimRight, ICSettingsFile, ICSettingsFile, 7
 ICSettingsFile := ICSettingsFile "LocalLow\Codename Entertainment\Idle Champions\localSettings.json"
 
 ;Settings globals
-global ServerName := "ps20"
+global ServerName := "master"
 global GetDetailsonStart := 0
 global LaunchGameonStart := 0
 global FirstRun := 1
@@ -253,9 +258,11 @@ global AlwaysSaveCodes := 0
 global NoSaveSetting := 0
 global LogEnabled := 0
 global LoadGameClient := 0 ;0 none; 1 epic, 2 steam, 3 standalone
+global TabActive := "Summary"
+global TabList := "Summary|Adventures|Inventory|Patrons|Champions|Event|Settings|Log|"
 ;global StyleSelection := "Default"
-global SettingsCheckValue := 15 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps20","user_id":0,"user_id_epic":0,"user_id_steam":0})
+global SettingsCheckValue := 16 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary"})
 ;global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps7","style":"Default","user_id":0,"user_id_epic":0,"user_id_steam":0})
 
 ;Server globals
@@ -542,7 +549,7 @@ class MyGui {
 		Gui, MyWindow:Add, Button, x%col2_x% y%row_y% w60 gReload_Clicked, Reload
 		Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 gExit_Clicked, Exit
 
-		Gui, MyWindow:Add, Tab3, x%col1_x% y%row_y% w450 h250, Summary|Adventures|Inventory|Patrons|Champions|Event|Settings|Log|
+		Gui, MyWindow:Add, Tab3, vTabs x%col1_x% y%row_y% w450 h250 TabActive, % TabList
 		Gui, Tab
 
 		row_y := row_y + 25
@@ -687,8 +694,10 @@ class MyGui {
 		Gui, Tab, Settings
 		Gui, MyWindow:Add, Text, x15 y+10+p w95, Server Name:
 		;Gui, MyWindow:Add, Text, x170 y37 w95, Style:
+		Gui, MyWindow:Add, Text, x170 y37 w95, Tab:
 		Gui, MyWindow:Add, Edit, vServerName x85 y33 w50
 		;Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vStyleChoice, % StyleList
+		Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vTabActive, % TabList
 		Gui, MyWindow:Add, Checkbox, vLogEnabled x15 y+5+p, Logging Enabled?
 		Gui, MyWindow:Add, CheckBox, vGetDetailsonStart, Get User Details on start?
 		Gui, MyWindow:Add, CheckBox, vLaunchGameonStart, Launch game client on start?
@@ -714,6 +723,8 @@ class MyGui {
 		}
 		FileRead, rawsettings, %SettingsFile%
 		CurrentSettings := JSON.parse(rawsettings)
+		; MsgBox, % rawsettings
+		; MsgBox, % CurrentSettings.Count()
 		if !(CurrentSettings.Count() == SettingsCheckValue) {
 			FileDelete, %SettingsFile%
 			FileAppend, %NewSettings%, %SettingsFile%
@@ -758,6 +769,11 @@ class MyGui {
 		LoadGameClient := CurrentSettings.loadgameclient
 		;StyleSelection := CurrentSettings.style
 		;SetStyle(StyleSelection)
+		TabActive := CurrentSettings.tabactive
+
+		if (TabActive) {
+			GuiControl, Choose, Tabs, % TabActive
+		}
 		
 		this.Update()
 		this.Show()
@@ -776,6 +792,7 @@ class MyGui {
 		LogFile("IdleCombos v" VersionNumber " started.")
 		LogFile("Settings File: '" SettingsFile "' - Loaded")
 
+		GetPlayServerFromWRL()
 		if (GetDetailsonStart == "1") {
 			GetUserDetails()
 		}
@@ -900,6 +917,10 @@ class MyGui {
 		;if (StyleSelection) {
 		;	GuiControl, Choose, StyleChoice, %StyleSelection%
 		;}
+
+		if (TabActive) {
+			GuiControl, Choose, TabActive, % TabActive
+		}
 
 		;this.Show() - removed
 	}
@@ -1032,30 +1053,37 @@ CrashProtect() {
 ;	return
 ;}
 
+SaveSettings()
+{
+	oMyGUI.Submit()
+	CurrentSettings.alwayssavechests := AlwaysSaveChests
+	CurrentSettings.alwayssavecontracts := AlwaysSaveContracts
+	CurrentSettings.alwayssavecodes := AlwaysSaveCodes
+	CurrentSettings.getdetailsonstart := GetDetailsonStart
+	CurrentSettings.instance_id := InstanceID
+	CurrentSettings.launchgameonstart := LaunchGameonStart
+	CurrentSettings.loadgameclient := LoadGameClient
+	CurrentSettings.logenabled := LogEnabled
+	CurrentSettings.nosavesetting := NoSaveSetting
+	CurrentSettings.servername := ServerName
+	CurrentSettings.tabactive := TabActive
+	;CurrentSettings.style := StyleChoice
+	;StyleSelection = StyleChoice
+	newsettings := JSON.stringify(CurrentSettings)
+	FileDelete, %SettingsFile%
+	FileAppend, %newsettings%, %SettingsFile%
+	LogFile("Settings have been saved")
+	SB_SetText("✅ Settings have been saved")
+	;if (StyleSelection != StyleChoice) {
+	;	StyleSelection = StyleChoice
+	;	SetStyle(%StyleSelection%)
+	;}
+	return
+}
+
 Save_Settings:
 	{
-		oMyGUI.Submit()
-		CurrentSettings.alwayssavechests := AlwaysSaveChests
-		CurrentSettings.alwayssavecontracts := AlwaysSaveContracts
-		CurrentSettings.alwayssavecodes := AlwaysSaveCodes
-		CurrentSettings.getdetailsonstart := GetDetailsonStart
-		CurrentSettings.instance_id := InstanceID
-		CurrentSettings.launchgameonstart := LaunchGameonStart
-		CurrentSettings.loadgameclient := LoadGameClient
-		CurrentSettings.logenabled := LogEnabled
-		CurrentSettings.nosavesetting := NoSaveSetting
-		CurrentSettings.servername := ServerName
-		;CurrentSettings.style := StyleChoice
-		;StyleSelection = StyleChoice
-		newsettings := JSON.stringify(CurrentSettings)
-		FileDelete, %SettingsFile%
-		FileAppend, %newsettings%, %SettingsFile%
-		LogFile("Settings have been saved")
-		SB_SetText("✅ Settings have been saved")
-		;if (StyleSelection != StyleChoice) {
-		;	StyleSelection = StyleChoice
-		;	SetStyle(%StyleSelection%)
-		;}
+		SaveSettings()
 		return
 	}
 
@@ -1261,20 +1289,22 @@ Open_Codes:
 
 	Get_Codes_Autoload() {
 		;Old method
-		Open_Web_Codes_Page()
-		winwait, ALL active IDLE Champions combination🔒 codes
-		sleep, 1000
-		send, ^a
-		clipboard := ""
-		send, ^c
-		ClipWait, 1
+		; Open_Web_Codes_Page()
+		; winwait, ALL active Idle Champions of the Forgotten Realms chest combination🔒 codes
+		; sleep, 1000
+		; send, ^a
+		; clipboard := ""
+		; send, ^c
+		; ClipWait, 1
+
 		;Use new COM Object to hide browser
-		;wb := ComObjCreate("InternetExplorer.Application")
-		;wb.Visible := False
-		;wb.Navigate(WebToolCodes)
-		;Wait_For_Load(wb)
-		;Codes := wb.document.getElementByID("i11").innerText
-		;clipboard := Codes
+		wb := ComObjCreate("InternetExplorer.Application")
+		wb.Visible := False
+		wb.Navigate(WebToolCodes)
+		Wait_For_Load(wb)
+		Codes := wb.document.getElementByID("i11").innerText
+		clipboard := Codes
+
 		if WinExist("📜 Codes") {
 			WinActivate
 			Paste()
@@ -2682,6 +2712,34 @@ GetIDFromWRL() {
 	oData3 := ; Free the memory.
 	oData4 := ; Free the memory.
 	oData5 := ; Free the memory.
+	return
+}
+
+GetPlayServerFromWRL() {
+	FileRead, oData, %WRLFile%
+	if ErrorLevel {
+		MsgBox, 4, , Could not find webRequestLog.txt file.`nChoose install directory manually?
+		IfMsgBox, Yes
+		{
+			FileSelectFile, WRLFile, 1, webRequestLog.txt, Select webRequestLog file, webRequestLog.txt
+			if ErrorLevel
+				return
+			FileRead, oData, %WRLFile%
+		} else {
+			return
+		}
+	}
+	FoundPos := InStr(oData, "http://", 0, -1, 1)
+	oData2 := SubStr(oData, (FoundPos + 7))
+	FoundPos := InStr(oData2, ".idlechampions.com/~idledragons/")
+	NewServerName := ""
+	StringLeft, NewServerName, oData2, (FoundPos - 1)
+	if (NewServerName != ServerName){
+		ServerName := NewServerName
+		SaveSettings()
+	}
+	oData := ; Free the memory.
+	oData2 := ; Free the memory.
 	return
 }
 
