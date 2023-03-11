@@ -7,6 +7,11 @@
 
 ;CHANGELOG
 
+;3.50
+;readme update
+;add discord link
+;add github link
+
 ;3.49
 ;detect play server from log
 ;option to show tab as default
@@ -297,7 +302,7 @@ global AchievementInfo := "Welcome to IdleCombos!`n`nPlease setup your game clie
 global BlessingInfo := "`n`n`n`n`n`n"
 global ChampDetails := ""
 global TotalChamps := 0
-global About := "About IdleCombos v" VersionNumber " by QuickMythril`nUpdates by Eldoen, dhusemann, NeyahPeterson, deathoone, Fmagdi, djravine `n`nSpecial thanks to all the idle dragoneers who inspired and assisted me!"
+global About := "IdleCombos v" VersionNumber "`n`nOriginal by QuickMythril`nMaintained by DJRavine`nUpdates by Eldoen, dhusemann, NeyahPeterson, deathoone, Fmagdi`n`nSpecial thanks to all the idle dragoneers who inspired and assisted me!"
 global HotkeyInfo := "CONTROL + NUMPAD1 - Tiny Blacksmith Contracts`nCONTROL + NUMPAD2 - Small Blacksmith Contracts`nCONTROL + NUMPAD3 - Medium Blacksmith Contracts`nCONTROL + NUMPAD4 - Large Blacksmith Contracts`nCONTROL + NUMPAD5 - Huge Blacksmith Contracts`n"
 HotkeyInfo := HotkeyInfo "CONTROL + NUMPAD/ - Buy Silver Chests`nCONTROL + NUMPAD* - Buy Gold Chests`nCONTROL + NUMPAD- - Buy Event Chests`nCONTROL + NUMPAD7 - Open Silver Chests`nCONTROL + NUMPAD8 - Open Gold Chests`nCONTROL + NUMPAD9 - Open Event Chests`n"
 HotkeyInfo := HotkeyInfo "CONTROL + 7 - Tiny Bounty Contracts`nCONTROL + 8 - Small Bounty Contracts`nCONTROL + 9 - Medium Bounty Contracts`nCONTROL + 0 - Large Bounty Contracts`n"
@@ -382,6 +387,8 @@ global EventChestIDs := ""
 global EventDetails := ""
 
 ;Web Tools globals
+global WebToolGithub := "https://github.com/djravine/idlecombos"
+global WebToolDiscord := "https://discord.gg/wFtrGqd3ZQ"
 global WebToolCodes := "https://incendar.com/idlechampions_codes.php#i11"
 global WebToolGameViewer := "http://idlechampions.soulreaver.usermd.net"
 global WebToolDataViewer := "https://idle.kleho.ru"
@@ -522,8 +529,8 @@ class MyGui {
 
 		Menu, HelpSubmenu, Add, &Run Setup, FirstRun
 		Menu, HelpSubmenu, Add, Clear &Log, Clear_Log
+		Menu, HelpSubmenu, Add, &Update Dictionary, Update_Dictionary
 		Menu, HelpSubmenu, Add, Download &Journal, Get_Journal
-		Menu, HelpSubmenu, Add, CNE &Support Ticket, Open_Ticket
 		Menu, HelpSubmenu, Add
 		Menu, HelpSubmenu, Add, List &User Details, List_UserDetails
 		Menu, HelpSubmenu, Add, List &Champ IDs, List_ChampIDs
@@ -531,9 +538,9 @@ class MyGui {
 		Menu, HelpSubmenu, Add, List Hot&keys, Hotkeys_Clicked
 		Menu, HelpSubmenu, Add
 		Menu, HelpSubmenu, Add, &About IdleCombos, About_Clicked
-		Menu, HelpSubmenu, Add
-		Menu, HelpSubmenu, Add, &Update Dictionary, Update_Dictionary
+		Menu, HelpSubmenu, Add, &Github Project, Github_Clicked
 		Menu, HelpSubmenu, Add, &Discord Support Server, Discord_Clicked
+		Menu, HelpSubmenu, Add, CNE &Support Ticket, Open_Ticket
 		Menu, IdleMenu, Add, &Help, :HelpSubmenu
 		Gui, Menu, IdleMenu
 
@@ -1091,7 +1098,7 @@ About_Clicked:
 	{
 		;MsgBox, , User Details, % About
 		;CustomMsgBox("About", About, "Consolas", "s10", %BgColour%)
-		ScrollBox(About, "p b1 h100 w700 f{s10, Consolas}", "About")
+		ScrollBox(About, "p b1 h100 w510 f{s10, Consolas}", "About")
 		return
 	}
 
@@ -3557,7 +3564,13 @@ Open_Ticket:
 
 Discord_Clicked:
 	{
-		Run, % "https://discord.com/invite/N3U8xtB"
+		Run, % WebToolDiscord
+		return
+	}
+
+Github_Clicked:
+	{
+		Run, % WebToolGithub
 		return
 	}
 
