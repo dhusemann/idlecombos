@@ -7,6 +7,9 @@
 
 ;CHANGELOG
 
+;3.51
+;update dictionary with miria chests
+
 ;3.50
 ;readme update
 ;add discord link
@@ -215,7 +218,7 @@
 
 ;Versions
 global VersionNumber := "3.50"
-global CurrentDictionary := "2.27"
+global CurrentDictionary := "2.28"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -2631,6 +2634,7 @@ FirstRun() {
 		GetIdFromWRL()
 		LogFile("Platform: " GamePlatform)
 		LogFile("User ID: " UserID " & Hash: " UserHash " detected in WRL")
+		GetPlayServerFromWRL()
 	} else {
 		MsgBox, 4, , Choose install directory manually?
 		IfMsgBox, Yes
