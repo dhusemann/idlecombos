@@ -7,6 +7,10 @@
 
 ;CHANGELOG
 
+;3.51
+;fix event chests max buy amount
+;update dictionary with miria chests
+
 ;3.50
 ;readme update
 ;add discord link
@@ -214,8 +218,8 @@
 ;Special thanks to all the idle dragoneers who inspired and assisted me!
 
 ;Versions
-global VersionNumber := "3.50"
-global CurrentDictionary := "2.27"
+global VersionNumber := "3.51"
+global CurrentDictionary := "2.28"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -1629,9 +1633,6 @@ Buy_Chests(chestid) {
 		}
 		case (chestid > 3 and chestid < 510): {
 			maxbuy := Floor(EventTokens/10000)
-			if (maxbuy > 0) {
-				maxbuy := 0
-			}
 			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
@@ -2631,6 +2632,7 @@ FirstRun() {
 		GetIdFromWRL()
 		LogFile("Platform: " GamePlatform)
 		LogFile("User ID: " UserID " & Hash: " UserHash " detected in WRL")
+		GetPlayServerFromWRL()
 	} else {
 		MsgBox, 4, , Choose install directory manually?
 		IfMsgBox, Yes

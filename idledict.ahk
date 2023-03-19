@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.27"
+global DictionaryVersion := "2.28"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -996,8 +996,8 @@ ChestFromID(id) {
 		switch id {
 			case "441": namefromid := "Silver E8Y6 Chest"
 			case "442": namefromid := "Gold E8Y6 Chest"
-			case "443": namefromid := "Silver E9Y6 Chest"
-			case "444": namefromid := "Gold E9Y6 Chest"
+			case "443": namefromid := "Silver Miria Chest"
+			case "444": namefromid := "Gold Miria Chest"
 			case "445": namefromid := "Silver E10Y6 Chest"
 			case "446": namefromid := "Gold E10Y6 Chest"
 			case "447": namefromid := "Silver E11Y6 Chest"
