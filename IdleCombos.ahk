@@ -8,6 +8,7 @@
 ;CHANGELOG
 
 ;3.51
+;fix event chests max buy amount
 ;update dictionary with miria chests
 
 ;3.50
@@ -1632,9 +1633,6 @@ Buy_Chests(chestid) {
 		}
 		case (chestid > 3 and chestid < 510): {
 			maxbuy := Floor(EventTokens/10000)
-			if (maxbuy > 0) {
-				maxbuy := 0
-			}
 			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
