@@ -2739,7 +2739,7 @@ GetPlayServerFromWRL() {
 		}
 	}
 	FoundPos1 := InStr(oData, "Error connecting:", 0, -1, 1)
-	if(FoundPos1 != -1){
+	if(FoundPos1 != 0){
 		oData1 := SubStr(oData, (FoundPos1 + 17))
 		FoundPos1 := InStr(oData1, "<br/>")
 		ServerError := ""
