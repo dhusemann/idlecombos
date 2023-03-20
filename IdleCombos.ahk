@@ -2738,11 +2738,20 @@ GetPlayServerFromWRL() {
 			return
 		}
 	}
-	FoundPos := InStr(oData, "http://", 0, -1, 1)
-	oData2 := SubStr(oData, (FoundPos + 7))
-	FoundPos := InStr(oData2, ".idlechampions.com/~idledragons/")
+	FoundPos1 := InStr(oData, "Error connecting:", 0, -1, 1)
+	if(FoundPos1 != -1){
+		oData1 := SubStr(oData, (FoundPos1 + 17))
+		FoundPos1 := InStr(oData1, "<br/>")
+		ServerError := ""
+		StringLeft, ServerError, oData1, (FoundPos1 - 1)
+		MsgBox, % "Server Error: " ServerError
+		return
+	}
+	FoundPos2 := InStr(oData, "http://", 0, -1, 1)
+	oData2 := SubStr(oData, (FoundPos2 + 7))
+	FoundPos2 := InStr(oData2, ".idlechampions.com/~idledragons/")
 	NewServerName := ""
-	StringLeft, NewServerName, oData2, (FoundPos - 1)
+	StringLeft, NewServerName, oData2, (FoundPos1 - 1)
 	if (NewServerName != ServerName){
 		ServerName := NewServerName
 		SaveSettings()
