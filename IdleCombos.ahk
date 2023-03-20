@@ -2747,11 +2747,11 @@ GetPlayServerFromWRL() {
 		MsgBox, % "Server Error: " ServerError
 		return
 	}
-	FoundPos2 := InStr(oData, "http://", 0, -1, 1)
-	oData2 := SubStr(oData, (FoundPos2 + 7))
-	FoundPos2 := InStr(oData2, ".idlechampions.com/~idledragons/")
+	FoundPos2 := InStr(oData, "play_server")
+	oData2 := SubStr(oData, (FoundPos2 + 24))
+	FoundPos2 := InStr(oData2, ".idlechampions.com\/~idledragons\/")
 	NewServerName := ""
-	StringLeft, NewServerName, oData2, (FoundPos1 - 1)
+	StringLeft, NewServerName, oData2, (FoundPos2 - 1)
 	if (NewServerName != ServerName){
 		ServerName := NewServerName
 		SaveSettings()
