@@ -7,6 +7,10 @@
 
 ;CHANGELOG
 
+;3.52
+;better play server detection
+;detection of server error
+
 ;3.51
 ;fix event chests max buy amount
 ;update dictionary with miria chests
