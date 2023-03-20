@@ -277,6 +277,7 @@ global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts"
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
 global CodestoEnter := ""
+global ServerError := ""
 
 ;User info globals
 global UserID := 0
@@ -1427,7 +1428,7 @@ Open_Codes:
 			CodeCount := % (CodeCount-1)
 			CodeNum := % (CodeTotal-CodeCount)
 			if (CurrentSettings.alwayssavecodes || tempsavesetting) {
-				FileAppend, %sCode%`n, %RedeemCodeLogFile%
+				FileAppend, "{""submit_code"":""" %sCode% """}"`n, %RedeemCodeLogFile%
 				FileAppend, %rawresults%`n, %RedeemCodeLogFile%
 			} else if !(CurrentSettings.nosavesetting) {
 				MsgBox, 4, , "Save to File?"
@@ -2742,9 +2743,10 @@ GetPlayServerFromWRL() {
 	if(FoundPos1 != 0){
 		oData1 := SubStr(oData, (FoundPos1 + 17))
 		FoundPos1 := InStr(oData1, "<br/>")
-		ServerError := ""
-		StringLeft, ServerError, oData1, (FoundPos1 - 1)
-		MsgBox, % "Server Error: " ServerError
+		sServerError := ""
+		StringLeft, sServerError, oData1, (FoundPos1 - 1)
+		; MsgBox, % "Server Error: " sServerError
+		ServerError := sServerError
 		return
 	}
 	FoundPos2 := InStr(oData, "play_server")
@@ -2766,29 +2768,34 @@ GetUserDetails() {
 	SB_SetText("⌛ Loading Data... Please wait...")
 	getuserparams := DummyData "&include_free_play_objectives=true&instance_key=1&user_id=" UserID "&hash=" UserHash
 	rawdetails := ServerCall("getuserdetails", getuserparams)
-	FileDelete, %UserDetailsFile%
-	FileAppend, %rawdetails%, %UserDetailsFile%
-	UserDetails := JSON.parse(rawdetails)
-	InstanceID := UserDetails.details.instance_id
-	CurrentSettings.instance_id := InstanceID
-	CurrentSettings.loadgameclient := LoadGameClient
-	ActiveInstance := UserDetails.details.active_game_instance_id
-	newsettings := JSON.stringify(CurrentSettings)
-	FileDelete, %SettingsFile%
-	FileAppend, %newsettings%, %SettingsFile%
-	ParseChampData()
-	ParseAdventureData()
-	ParseTimestamps()
-	ParseInventoryData()
-	ParsePatronData()
-	ParseLootData()
-	CheckAchievements()
-	CheckBlessings()
-	CheckPatronProgress()
-	CheckEvents()
-	SB_SetText("✅ Loaded and Ready 😎")
-	LogFile("User Details - Loaded")
-	oMyGUI.Update()
+	if ( ServerError != "") {
+		SB_SetText("❌ API Error: " ServerError " - Try to close and reopen Idle Champions - Server might be in Maintenance? 😟")
+		ServerError := ""
+	} else {
+		FileDelete, %UserDetailsFile%
+		FileAppend, %rawdetails%, %UserDetailsFile%
+		UserDetails := JSON.parse(rawdetails)
+		InstanceID := UserDetails.details.instance_id
+		CurrentSettings.instance_id := InstanceID
+		CurrentSettings.loadgameclient := LoadGameClient
+		ActiveInstance := UserDetails.details.active_game_instance_id
+		newsettings := JSON.stringify(CurrentSettings)
+		FileDelete, %SettingsFile%
+		FileAppend, %newsettings%, %SettingsFile%
+		ParseChampData()
+		ParseAdventureData()
+		ParseTimestamps()
+		ParseInventoryData()
+		ParsePatronData()
+		ParseLootData()
+		CheckAchievements()
+		CheckBlessings()
+		CheckPatronProgress()
+		CheckEvents()
+		SB_SetText("✅ Loaded and Ready 😎")
+		LogFile("User Details - Loaded")
+		oMyGUI.Update()
+	}
 	return
 }
 
@@ -3463,6 +3470,20 @@ CheckEvents() {
 	EventDetails := InfoEventName InfoEventTokens InfoEventHeroes InfoEventChests
 }
 
+CheckServerCallError(data) {
+	FoundPos1 := InStr(data, "Error connecting:", 0, -1, 1)
+	if(FoundPos1 != 0){
+		data1 := SubStr(data, (FoundPos1 + 17))
+		FoundPos1 := InStr(data1, "<br/>")
+		sServerError := ""
+		StringLeft, sServerError, data1, (FoundPos1 - 1)
+		; MsgBox, % "Server Error: " sServerError
+		ServerError := sServerError
+		return false
+	}
+	return true
+}
+
 ServerCall(callname, parameters) {
 	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
 	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
@@ -3479,6 +3500,9 @@ ServerCall(callname, parameters) {
 		WR.Close()
 	}
 	LogFile("API Call: " callname)
+	if( !CheckServerCallError(data) ) {
+		return
+	}
 	return data
 }
 
@@ -3493,6 +3517,9 @@ ServerCallNew(callname, parameters) {
 		WR.Close()
 	}
 	LogFile("API Call: " callname)
+	if( !CheckServerCallError(data) ) {
+		return
+	}
 	return data
 }
 
@@ -3502,6 +3529,9 @@ ServerCallAlt(callname, parameters) {
 	URLDownloadToFile, %URLtoCall%, %UserDetailsFile%
 	FileRead, data, %UserDetailsFile%
 	LogFile("API Call: " callname)
+	if( !CheckServerCallError(data) ) {
+		return
+	}
 	return data
 }
 
