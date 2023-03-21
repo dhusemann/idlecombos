@@ -1,8 +1,8 @@
-# idlecombos
+# IDLE COMBOS
 
 Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).
 
-**v3.51** is the current supported Version.
+**v3.52** is the current supported Version. [View changelog.](https://github.com/djravine/idlecombos/blob/master/CHANGELOG.md)
 
 <img src="https://i.imgur.com/LoeTt9r.png">
 

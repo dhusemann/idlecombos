@@ -5,220 +5,8 @@
 #include JSON.ahk
 #include idledict.ahk
 
-;CHANGELOG
-
-;3.51
-;fix event chests max buy amount
-;update dictionary with miria chests
-
-;3.50
-;readme update
-;add discord link
-;add github link
-
-;3.49
-;detect play server from log
-;option to show tab as default
-;test new redeem codes auto load
-
-;3.48
-;update server name to ps20
-
-;3.47
-;update dictionary
-;update max hero id
-
-;3.46
-;add support for bounty contracts via gui
-
-;3.45
-;revert server call to see if its faster
-;change default server name from 'ps7' to 'master'
-
-;3.44
-;revert redeem codes
-;add default values to chest prompts
-;change server call to see if its faster
-
-;3.43
-;update redeem codes as website has changed
-
-;3.42
-;remove tool windows to give back taskbar visibility
-
-;3.41
-;fix redeem codes starting with '#' not working
-
-;3.40
-;fix cancel of buy/chests window
-
-;3.39
-;update hotkeys
-
-;3.38
-;add hotkeys
-;add list hotkeys to menu
-;fix open event chest counts
-
-;3.37
-;update switch statement to fix error with older versions
-;add ahk version to status bar
-
-;3.36
-;new tab: event
-;basic testing - buy chests event
-;basic testing - open chests event
-
-;3.35
-;Remove style system to fix dangerous file warning in chrome (3rd party dll)
-
-;3.34
-;fix message box background colours with styles
-
-;3.33
-;add style support
-;add styles: ayofe, lakrits, luminous, mac, paper
-
-;3.32
-;save last loaded game client
-;add buy chests event
-;add open chests event
-;add list chest ids
-;store blacksmith contract last used count
-;update buy/open chests menu hotkeys
-;update blacksmith contracts menu hotkeys
-;increase the font size of the "List Champ IDs"
-;increase the font size of the "List User Details"
-
-;3.31
-;add warduke to dictionary
-;add imoen to dictionary
-;add missing chests to dictionary
-
-;3.30
-;support for standalone game and launcher
-
-;3.29
-;add virgil to dictionary
-;add missing chests to dictionary
-;add missing champ ids to chest ids to dictionary
-;hide unknown characters from pity timers
-
-;3.28
-;add egbert to dictionary
-;add kent to dictionary
-
-;3.27
-;fix pity timers due to change in json structure
-
-;3.26
-;overhaul logging system
-;major manual syntax cleanup
-;fix double user details loading bug
-;update icon
-;change to init loading class
-;emojis on status bars
-;champions tab using human readable numbers
-;patron tab spacing
-
-;3.25
-;patron tab bugs fixed
-;patron tab added current influence and coins
-;remove old files
-
-;3.24
-;add menu item to show User Details: UID, Hash, Platform
-;update message boxes to have selectable text so we can copy and paste
-;add web tool - SoulReaver Data Viewer
-;fix CNE Open Ticket using correct Steam/Epic ID's and hashes
-
-;3.23
-;update performance parsing in adventure list (thanks Fmagdi)
-;automatic workflow to make releases
-
-;3.22
-;add voronika to dictionary
-;add menu items to detect game folder
-;code syntax formatting
-
-;3.21
-;add valetine to dictionary
-;update redeem code results order
-;Add 'how to run' in README.md
-
-;3.20
-;add working detection for Epic Games installation
-;update to Redeem Codes
-;autoomation to retrieve Redeem Codes via web
-;add minimum GUI windows sizes
-;other minor fixes
-
-;3.10
-;add working core 4 and party 4 (thanks Fmagdi)
-;hopeful fix for opening to many chest ban (thanks deathoone)
-;support for huge contracts (thanks NeyahPeterson)
-
-;3.00
-;disabled log files by default
-
-;2.00
-;2/15/22 servers settle down, reduce timer to .5 secs for Chest
-;open routine 
-;work to clean up chest open message box with help from community
-;TODO::note community help names from discord.
-;work to clean up menu so links work in progress, most of it backed Out 
-;due to a wierd git conflict that would never resolve and roll back to earlier
-;client. including most of the work that had been done to limit log files locally
-;once steam idlecombos working merge recent changes into egs client, and maybe
-;make the dhani paint work. Or focus Idlecombos.
-
-;1.98
-;update idledict content, 
-;added NERDS as evergreen for equipment screen
-
-;1.97
-;include fixes for single instance from mikebaldi
-
-;1.96
-;update dict file to latest content and versioned to 1.96 
-
-;1.95
-;disabled opening chest while client is open,
-
-;1.94
-;Updated Cleaned up UI around redeam codes with mikebaldi1980 Help
-;added in party 3 and core 3 with code from HPX
-;updated Eunomiac code to copy and find code from discord combination channel
-;should be robust enough to find chest code in most channel but haven't verified
-
-;1.93
-;more work to clean up window for combination code.
-
-;1.92
-;added Eunomiac code to copy and find code from discord combination channel
-
-;1.91
-;Added DeathoEye Server update
-;Neal's Json escape code for redeaming codes
-;updated dict file to 1.91 champs, chest and feats up to UserDetailsFile
-
-;1.90
-;-Patron Zariel
-;-Dictionary file updated to 1.9
-
-;1.80
-;-Pity Timer for Golds on Inventory Tab
-;-Event Pity Timers in the Chests menu
-;-More info on number of tokens/FPs available
-;-Kleho image now works for Events & TGs
-;-Fix for "Chests Opened: 0" in log output
-;-Dictionary file updated to 1.8
-;-(Also resized the window finally) :P
-
-;Special thanks to all the idle dragoneers who inspired and assisted me!
-
 ;Versions
-global VersionNumber := "3.51"
+global VersionNumber := "3.52"
 global CurrentDictionary := "2.28"
 
 ;Local File globals
@@ -277,6 +65,7 @@ global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts"
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
 global CodestoEnter := ""
+global ServerError := ""
 
 ;User info globals
 global UserID := 0
@@ -1427,7 +1216,7 @@ Open_Codes:
 			CodeCount := % (CodeCount-1)
 			CodeNum := % (CodeTotal-CodeCount)
 			if (CurrentSettings.alwayssavecodes || tempsavesetting) {
-				FileAppend, %sCode%`n, %RedeemCodeLogFile%
+				FileAppend, "{""submit_code"":""" %sCode% """}"`n, %RedeemCodeLogFile%
 				FileAppend, %rawresults%`n, %RedeemCodeLogFile%
 			} else if !(CurrentSettings.nosavesetting) {
 				MsgBox, 4, , "Save to File?"
@@ -2738,11 +2527,21 @@ GetPlayServerFromWRL() {
 			return
 		}
 	}
-	FoundPos := InStr(oData, "http://", 0, -1, 1)
-	oData2 := SubStr(oData, (FoundPos + 7))
-	FoundPos := InStr(oData2, ".idlechampions.com/~idledragons/")
+	FoundPos1 := InStr(oData, "Error connecting:", 0, -1, 1)
+	if(FoundPos1 != 0){
+		oData1 := SubStr(oData, (FoundPos1 + 17))
+		FoundPos1 := InStr(oData1, "<br/>")
+		sServerError := ""
+		StringLeft, sServerError, oData1, (FoundPos1 - 1)
+		; MsgBox, % "Server Error: " sServerError
+		ServerError := sServerError
+		return
+	}
+	FoundPos2 := InStr(oData, "play_server")
+	oData2 := SubStr(oData, (FoundPos2 + 24))
+	FoundPos2 := InStr(oData2, ".idlechampions.com\/~idledragons\/")
 	NewServerName := ""
-	StringLeft, NewServerName, oData2, (FoundPos - 1)
+	StringLeft, NewServerName, oData2, (FoundPos2 - 1)
 	if (NewServerName != ServerName){
 		ServerName := NewServerName
 		SaveSettings()
@@ -2757,29 +2556,34 @@ GetUserDetails() {
 	SB_SetText("⌛ Loading Data... Please wait...")
 	getuserparams := DummyData "&include_free_play_objectives=true&instance_key=1&user_id=" UserID "&hash=" UserHash
 	rawdetails := ServerCall("getuserdetails", getuserparams)
-	FileDelete, %UserDetailsFile%
-	FileAppend, %rawdetails%, %UserDetailsFile%
-	UserDetails := JSON.parse(rawdetails)
-	InstanceID := UserDetails.details.instance_id
-	CurrentSettings.instance_id := InstanceID
-	CurrentSettings.loadgameclient := LoadGameClient
-	ActiveInstance := UserDetails.details.active_game_instance_id
-	newsettings := JSON.stringify(CurrentSettings)
-	FileDelete, %SettingsFile%
-	FileAppend, %newsettings%, %SettingsFile%
-	ParseChampData()
-	ParseAdventureData()
-	ParseTimestamps()
-	ParseInventoryData()
-	ParsePatronData()
-	ParseLootData()
-	CheckAchievements()
-	CheckBlessings()
-	CheckPatronProgress()
-	CheckEvents()
-	SB_SetText("✅ Loaded and Ready 😎")
-	LogFile("User Details - Loaded")
-	oMyGUI.Update()
+	if ( ServerError != "") {
+		SB_SetText("❌ API Error: " ServerError " - Try to close and reopen Idle Champions - Server might be in Maintenance? 😟")
+		ServerError := ""
+	} else {
+		FileDelete, %UserDetailsFile%
+		FileAppend, %rawdetails%, %UserDetailsFile%
+		UserDetails := JSON.parse(rawdetails)
+		InstanceID := UserDetails.details.instance_id
+		CurrentSettings.instance_id := InstanceID
+		CurrentSettings.loadgameclient := LoadGameClient
+		ActiveInstance := UserDetails.details.active_game_instance_id
+		newsettings := JSON.stringify(CurrentSettings)
+		FileDelete, %SettingsFile%
+		FileAppend, %newsettings%, %SettingsFile%
+		ParseChampData()
+		ParseAdventureData()
+		ParseTimestamps()
+		ParseInventoryData()
+		ParsePatronData()
+		ParseLootData()
+		CheckAchievements()
+		CheckBlessings()
+		CheckPatronProgress()
+		CheckEvents()
+		SB_SetText("✅ Loaded and Ready 😎")
+		LogFile("User Details - Loaded")
+		oMyGUI.Update()
+	}
 	return
 }
 
@@ -3454,6 +3258,20 @@ CheckEvents() {
 	EventDetails := InfoEventName InfoEventTokens InfoEventHeroes InfoEventChests
 }
 
+CheckServerCallError(data) {
+	FoundPos1 := InStr(data, "Error connecting:", 0, -1, 1)
+	if(FoundPos1 != 0){
+		data1 := SubStr(data, (FoundPos1 + 17))
+		FoundPos1 := InStr(data1, "<br/>")
+		sServerError := ""
+		StringLeft, sServerError, data1, (FoundPos1 - 1)
+		; MsgBox, % "Server Error: " sServerError
+		ServerError := sServerError
+		return false
+	}
+	return true
+}
+
 ServerCall(callname, parameters) {
 	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
 	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
@@ -3470,6 +3288,9 @@ ServerCall(callname, parameters) {
 		WR.Close()
 	}
 	LogFile("API Call: " callname)
+	if( !CheckServerCallError(data) ) {
+		return
+	}
 	return data
 }
 
@@ -3484,6 +3305,9 @@ ServerCallNew(callname, parameters) {
 		WR.Close()
 	}
 	LogFile("API Call: " callname)
+	if( !CheckServerCallError(data) ) {
+		return
+	}
 	return data
 }
 
@@ -3493,6 +3317,9 @@ ServerCallAlt(callname, parameters) {
 	URLDownloadToFile, %URLtoCall%, %UserDetailsFile%
 	FileRead, data, %UserDetailsFile%
 	LogFile("API Call: " callname)
+	if( !CheckServerCallError(data) ) {
+		return
+	}
 	return data
 }
 
