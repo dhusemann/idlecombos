@@ -6,7 +6,7 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.52"
+global VersionNumber := "3.53"
 global CurrentDictionary := "2.28"
 
 ;Local File globals
@@ -509,6 +509,8 @@ class MyGui {
 
 		Gui, Tab, Log
 		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w425, %OutputText%
+
+		GuiControl, Focus, SysTabControl321
 
 		this.Load()
 	}
@@ -2545,6 +2547,7 @@ GetPlayServerFromWRL() {
 	if (NewServerName != ServerName){
 		ServerName := NewServerName
 		SaveSettings()
+		LogFile("Play Server Detected - " NewServerName)
 	}
 	oData := ; Free the memory.
 	oData2 := ; Free the memory.
