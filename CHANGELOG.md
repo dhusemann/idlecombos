@@ -5,6 +5,10 @@ To all the idle dragoneers who inspired and assisted me!
 
 ------
 
+## 3.53
+* Log new play server detection
+* Focus tabs on launch
+
 ## 3.52
 * Move changelog to its own file
 * Better play server detection
