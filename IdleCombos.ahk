@@ -57,9 +57,10 @@ global LogEnabled := 0
 global LoadGameClient := 0 ;0 none; 1 epic, 2 steam, 3 standalone
 global TabActive := "Summary"
 global TabList := "Summary|Adventures|Inventory|Patrons|Champions|Event|Settings|Log|"
+global ServerDetection := 1
 ;global StyleSelection := "Default"
-global SettingsCheckValue := 16 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary"})
+global SettingsCheckValue := 17 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","serverdetection":1})
 ;global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps7","style":"Default","user_id":0,"user_id_epic":0,"user_id_steam":0})
 
 ;Server globals
@@ -499,6 +500,7 @@ class MyGui {
 		;Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vStyleChoice, % StyleList
 		Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vTabActive, % TabList
 		Gui, MyWindow:Add, Checkbox, vLogEnabled x15 y+5+p, Logging Enabled?
+		Gui, MyWindow:Add, CheckBox, vServerDetection, Get Server Name on start?
 		Gui, MyWindow:Add, CheckBox, vGetDetailsonStart, Get User Details on start?
 		Gui, MyWindow:Add, CheckBox, vLaunchGameonStart, Launch game client on start?
 		Gui, MyWindow:Add, CheckBox, vAlwaysSaveChests, Always save Chest Open Results to file?
@@ -562,6 +564,7 @@ class MyGui {
 		;Load current settings
 		ServerName := CurrentSettings.servername
 		GetDetailsonStart := CurrentSettings.getdetailsonstart
+		ServerDetection := CurrentSettings.serverdetection
 		LaunchGameonStart := CurrentSettings.launchgameonstart
 		AlwaysSaveChests := CurrentSettings.alwayssavechests
 		AlwaysSaveContracts := CurrentSettings.alwayssavecontracts
@@ -710,6 +713,7 @@ class MyGui {
 
 		;Settings
 		GuiControl, MyWindow:, ServerName, % ServerName, w50 h210
+		GuiControl, MyWindow:, ServerDetection, % ServerDetection, w250 h210
 		GuiControl, MyWindow:, GetDetailsonStart, % GetDetailsonStart, w250 h210
 		GuiControl, MyWindow:, LaunchGameonStart, % LaunchGameonStart, w250 h210
 		GuiControl, MyWindow:, AlwaysSaveChests, % AlwaysSaveChests, w250 h210
@@ -865,6 +869,7 @@ SaveSettings()
 	CurrentSettings.getdetailsonstart := GetDetailsonStart
 	CurrentSettings.instance_id := InstanceID
 	CurrentSettings.launchgameonstart := LaunchGameonStart
+	CurrentSettings.serverdetection := ServerDetection
 	CurrentSettings.loadgameclient := LoadGameClient
 	CurrentSettings.logenabled := LogEnabled
 	CurrentSettings.nosavesetting := NoSaveSetting
@@ -2582,20 +2587,27 @@ GetPlayServerFromWRL() {
 		StringLeft, sServerError, oData1, (FoundPos1 - 1)
 		; MsgBox, % "Server Error: " sServerError
 		ServerError := sServerError
+		oData := ; Free the memory.
+		oData1 := ; Free the memory.
 		return
 	}
-	FoundPos2 := InStr(oData, "play_server")
-	oData2 := SubStr(oData, (FoundPos2 + 24))
-	FoundPos2 := InStr(oData2, ".idlechampions.com\/~idledragons\/")
-	NewServerName := ""
-	StringLeft, NewServerName, oData2, (FoundPos2 - 1)
-	if (NewServerName != ServerName){
-		ServerName := NewServerName
-		SaveSettings()
-		LogFile("Play Server Detected - " NewServerName)
+	if ( ServerDetection = 1 ) {
+		LogFile("Detecting play server")
+		FoundPos2 := InStr(oData, "play_server")
+		oData2 := SubStr(oData, (FoundPos2 + 14))
+		FoundPos2 := InStr(oData2, ":\/\/")
+		oData3 := SubStr(oData2, (FoundPos2 + 5))
+		FoundPos2 := InStr(oData3, ".idlechampions.com\/~idledragons\/")
+		NewServerName := ""
+		StringLeft, NewServerName, oData3, (FoundPos2 - 1)
+		if (NewServerName != ServerName){
+			ServerName := NewServerName
+			SaveSettings()
+			LogFile("Play Server Detected - " NewServerName)
+		}
+		oData := ; Free the memory.
+		oData2 := ; Free the memory.
 	}
-	oData := ; Free the memory.
-	oData2 := ; Free the memory.
 	return
 }
 
