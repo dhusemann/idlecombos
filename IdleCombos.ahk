@@ -603,7 +603,8 @@ class MyGui {
 		}
 
 		this.Update()
-		SendMessage, 0x115, 7, 0, Edit1, A
+
+		SendMessage, 0x115, 7, 0, Edit2, A ; Scroll to the bottom of the log
 	}
 
 	Show() {
@@ -627,7 +628,7 @@ class MyGui {
 
 	Update() {
 		GuiControl, MyWindow:, OutputText, % OutputText, w250 h210
-		SendMessage, 0x115, 7, 0, Edit1
+		SendMessage, 0x115, 7, 0, Edit2 ; Scroll to the bottom of the log
 		GuiControl, MyWindow:, CrashProtectStatus, % CrashProtectStatus, w250 h210
 		GuiControl, MyWindow:, AchievementInfo, % AchievementInfo, w250 h210
 		GuiControl, MyWindow:, BlessingInfo, % BlessingInfo, w250 h210
@@ -1919,7 +1920,7 @@ UseBounty(buffid) {
 			return
 		}
 	}
-	MsgBox, 4, , % "Use " count " " contractname " Bounty Contracts?`n`nNOTE: Do not touch the mouse`nor keyboard until process completed"
+	MsgBox, 4, , % "Use " count " " contractname " Bounty Contracts?`n`nNOTE: Do not touch the mouse or keyboard until process completed`n`nAUTO PROGRESS will be temporarily turned off for this process"
 	IfMsgBox, No
 	{
 		return
@@ -1931,7 +1932,7 @@ UseBounty(buffid) {
 	;msgbox % "CANCEL - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
 	if (errorlevel == 0) {
 		MouseClick, left, ix+5, iy+5
-		sleep 1000
+		sleep 500
 	}
 	;inventory close
 	WinGet, PID, PID, Idle Champions
@@ -1940,7 +1941,18 @@ UseBounty(buffid) {
 	;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
 	if (errorlevel == 0) {
 		MouseClick, left, ix+5, iy+5
-		sleep 1000
+		sleep 500
+	}
+	;turn auto progress off
+	autoprogress := 0
+	WinGet, PID, PID, Idle Champions
+	WinActivate, ahk_pid %PID%
+	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/auto_progress_on.png
+	;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+	if (errorlevel == 0) {
+		autoprogress := 1
+		MouseClick, left, ix+5, iy+5
+		sleep 50
 	}
 	;inventory open
 	WinGet, PID, PID, Idle Champions
@@ -1949,7 +1961,7 @@ UseBounty(buffid) {
 	;msgbox % "INVENTORY - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
 	if (errorlevel == 0) {
 		MouseClick, left, ix+15, iy+15
-		sleep 1000
+		sleep 500
 		contractsused := 0
 		page := 1
 		while (count > 0) {
@@ -1978,7 +1990,7 @@ UseBounty(buffid) {
 					WinGet, PID, PID, Idle Champions
 					WinActivate, ahk_pid %PID%
 					MouseClick, left, ix+15, iy+15
-					sleep 1000
+					sleep 500
 					found := 1
 				} else if (errorlevel == 1) {
 					page += 1
@@ -1992,6 +2004,7 @@ UseBounty(buffid) {
 						WinActivate, ahk_pid %PID%
 						MouseClick, left, ix+5, iy+5
 						MouseMove, ix+50, iy+5
+						sleep 500
 					}
 				}
 			}
@@ -2019,7 +2032,7 @@ UseBounty(buffid) {
 						WinGet, PID, PID, Idle Champions
 						WinActivate, ahk_pid %PID%
 						MouseClick, left, ix+10, iy+10
-						sleep 15
+						sleep 20
 					}
 				}
 				;click go
@@ -2035,8 +2048,40 @@ UseBounty(buffid) {
 					WinGet, PID, PID, Idle Champions
 					WinActivate, ahk_pid %PID%
 					MouseClick, left, ix+15, iy+15
-					sleep 1000
+					sleep 750
 				}
+				if (repeatcount = 49) {
+					;additional cancel
+					WinGet, PID, PID, Idle Champions
+					WinActivate, ahk_pid %PID%
+					ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/additional_cancel.png
+					;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+					if (errorlevel == 0) {
+						MouseClick, left, ix+5, iy+5
+						sleep 500
+					}
+				}
+			}
+		}
+		;inventory close
+		WinGet, PID, PID, Idle Champions
+		WinActivate, ahk_pid %PID%
+		ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory_close.png
+		;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+		if (errorlevel == 0) {
+			MouseClick, left, ix+5, iy+5
+			;sleep 500
+		}
+		if (autoprogress == 1) {
+			sleep 500
+			;turn auto progress on
+			WinGet, PID, PID, Idle Champions
+			WinActivate, ahk_pid %PID%
+			ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/auto_progress_off.png
+			;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+			if (errorlevel == 0) {
+				MouseClick, left, ix+5, iy+5
+				;sleep 500
 			}
 		}
 		msgbox % "[PROCESS COMPLETED]`n`n"contractname " Bounty Contracts used: " Floor(contractsused)
