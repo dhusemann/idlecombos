@@ -5,6 +5,9 @@ To all the idle dragoneers who inspired and assisted me!
 
 ------
 
+## 3.54
+* Bounty Contracts fixed and tuned
+
 ## 3.53
 * Log new play server detection
 * Focus tabs on launch
