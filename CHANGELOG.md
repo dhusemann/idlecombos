@@ -5,6 +5,9 @@ To all the idle dragoneers who inspired and assisted me!
 
 ------
 
+## 3.55
+* Better server detection and option to disable server detection
+
 ## 3.54
 * Bounty Contracts fixed and tuned
 
