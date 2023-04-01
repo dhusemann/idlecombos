@@ -2,13 +2,13 @@
 
 Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).
 
-**v3.55** is the current supported Version. [View changelog.](https://github.com/djravine/idlecombos/blob/master/CHANGELOG.md)
+**v3.56** is the current supported Version. [View changelog.](https://github.com/djravine/idlecombos/blob/master/CHANGELOG.md)
 
 ![Screenshot](https://i.imgur.com/LoeTt9r.png)
 
 ## Important Notes
 
-* Steam Launcher will not open Idlechampions if Steam is not open and logged in.
+* Steam Launcher will not open Idle Champions if Steam is not open and logged in.
 
 ## Features
 
@@ -30,10 +30,10 @@ Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).
 
 ## Includes
 
-* IdleCombos.ahk (current AHK version)
-* idledict.ahk (ID definitions file)
-* json.ahk (json parsing, included in exe) [github.com/Chunjee]
-* README.md (this file)
+* IdleCombos.ahk (Current AHK version)
+* idledict.ahk (ID Definitions file)
+* json.ahk (JSON parsing) [github.com/Chunjee]
+* README.md (This file)
 
 ## How To Run
 
@@ -47,4 +47,4 @@ Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).
 
 ## Discord
 
-- We have just setup a new [Discord Support Server](https://discord.gg/wFtrGqd3ZQ)
+* We have just setup a [Discord Support Server](https://discord.gg/wFtrGqd3ZQ)
