@@ -7,7 +7,7 @@
 
 ;Versions
 global VersionNumber := "3.55"
-global CurrentDictionary := "2.28"
+global CurrentDictionary := "2.29"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -183,7 +183,10 @@ global EventDetails := ""
 ;Web Tools globals
 global WebToolGithub := "https://github.com/djravine/idlecombos"
 global WebToolDiscord := "https://discord.gg/wFtrGqd3ZQ"
-global WebToolCodes := "https://incendar.com/idlechampions_codes.php#i11"
+global WebToolCodes := "https://incendar.com/idlechampions_codes.php"
+global WebToolCodesRecent := "#i11"
+global WebToolCodesSpecial := "#i22"
+global WebToolCodesPermanent := "#i33"
 global WebToolGameViewer := "http://idlechampions.soulreaver.usermd.net"
 global WebToolDataViewer := "https://idle.kleho.ru"
 global WebToolUtilities := "https://ic.byteglow.com"
@@ -1041,11 +1044,15 @@ Open_Event:
 Open_Codes:
 	{
 		; GUI MENU
-		Menu, FileMenu, Add, Auto&Load (Web)`tCtrl+L, Get_Codes_Autoload
-		Menu, FileMenu, Add, AutoLoad && &Run (Web)`tCtrl+R, Get_Codes_Autoload_Run
+		Menu, FileMenu, Add, Auto Load Recent (Web)`tCtrl+L, Get_Codes_Autoload_Recent
+		Menu, FileMenu, Add, Auto Load Special (Web)`tCtrl+M, Get_Codes_Autoload_Special
+		Menu, FileMenu, Add, Auto Load Permanent (Web)`tCtrl+N, Get_Codes_Autoload_Permanent
+		Menu, FileMenu, Add, Auto Load &Recent && Run (Web)`tCtrl+R, Get_Codes_Autoload_Run_Recent
+		Menu, FileMenu, Add, Auto Load &Special && Run (Web)`tCtrl+E, Get_Codes_Autoload_Run_Special
+		Menu, FileMenu, Add, Auto Load &Permanent && Run (Web)`tCtrl+P, Get_Codes_Autoload_Run_Permanent
 		Menu, FileMenu, Add, &Submit`tCtrl+S, Redeem_Codes
 		Menu, EditMenu, Add, Paste`tCtrl+V, Paste
-		Menu, EditMenu, Add, Delete`tDel, Delete
+		Menu, EditMenu, Add, Clear`tDel, Delete
 		Menu, HelpMenu, Add, Open &Codes (Web)`tCtrl+O, Open_Web_Codes_Page
 		Menu, MyMenuBar, Add, &File, :FileMenu
 		Menu, MyMenuBar, Add, &Edit, :EditMenu
@@ -1055,11 +1062,15 @@ Open_Codes:
 		Gui, CodeWindow:New
 		Gui, Menu, MyMenuBar
 		Gui, CodeWindow: -Resize -MaximizeBox +MinSize
-		Gui, CodeWindow:Show, w230 h240, 📜 Codes
+		Gui, CodeWindow:Show, w230 h270, 📜 Codes
 		Gui, CodeWindow:Add, Edit, r12 vCodestoEnter w190 x20 y20, IDLE-CHAM-PION-SNOW
-		Gui, CodeWindow:Add, Button, gRedeem_Codes, Submit
-		Gui, CodeWindow:Add, Button, x+35 gPaste, Paste
-		Gui, CodeWindow:Add, Button, x+35 gClose_Codes, Close
+		Gui, CodeWindow:Add, Button, vButton_Recent gGet_Codes_Autoload_Run_Recent, Recent
+		Gui, CodeWindow:Add, Button, x+15 vButton_Special gGet_Codes_Autoload_Run_Special, Special
+		Gui, CodeWindow:Add, Button, x+15 vButton_Permanent gGet_Codes_Autoload_Run_Permanent, Permanent
+		Gui, CodeWindow:Add, Button, x20 vButton_Submit gRedeem_Codes, Submit
+		Gui, CodeWindow:Add, Button, x+10 vButton_Paste gPaste, Paste
+		Gui, CodeWindow:Add, Button, x+10 vButton_Delete gDelete, Clear
+		Gui, CodeWindow:Add, Button, x+10 gClose_Codes, Close
 
 		; STATUS BAR
 		Gui, Add, StatusBar, vCodesOutputStatus, ❗ Codes: 0/1 - Waiting... (1 code per line)
@@ -1085,7 +1096,12 @@ Open_Codes:
 	}
 
 	Open_Web_Codes_Page() {
-		Run, %WebToolCodes%
+		Run, WebToolCodes
+		return
+	}
+
+	Open_Web_Codes_Page_Element(TextboxID) {
+		Run, %WebToolCodes%%TextboxID%
 		return
 	}
 
@@ -1095,33 +1111,78 @@ Open_Codes:
 			Sleep, 1
 	}
 
-	Get_Codes_Autoload() {
+	Get_Codes_Autoload_Recent() {
+		Get_Codes_Autoload(WebToolCodesRecent)
+		return
+	}
+
+	Get_Codes_Autoload_Special() {
+		Get_Codes_Autoload(WebToolCodesSpecial)
+		return
+	}
+
+	Get_Codes_Autoload_Permanent() {
+		Get_Codes_Autoload(WebToolCodesPermanent)
+		return
+	}
+
+	Get_Codes_Autoload(TextboxID) {
+		; MsgBox, % TextboxID
+
 		;Old method
-		; Open_Web_Codes_Page()
+		; Open_Web_Codes_Page_Element(TextboxID)
 		; winwait, ALL active Idle Champions of the Forgotten Realms chest combination🔒 codes
-		; sleep, 1000
+		; sleep, 1500
 		; send, ^a
 		; clipboard := ""
 		; send, ^c
 		; ClipWait, 1
 
 		;Use new COM Object to hide browser
-		wb := ComObjCreate("InternetExplorer.Application")
-		wb.Visible := False
-		wb.Navigate(WebToolCodes)
-		Wait_For_Load(wb)
-		Codes := wb.document.getElementByID("i11").innerText
-		clipboard := Codes
+		try {
+			wb := ComObjCreate("InternetExplorer.Application")
+			wb.Visible := False
+			wb.Navigate(WebToolCodes)
+			Wait_For_Load(wb)
+			if(SubStr(TextboxID, 1, 1) == "#") {
+				TextboxIDTrim := SubStr(TextboxID, 2, 10)
+			} else {
+				TextboxIDTrim := TextboxID
+			}
+			; MsgBox, % TextboxIDTrim
+			Codes := wb.document.getElementByID(TextboxIDTrim).innerText
+			clipboard := Codes
+			wb.quit()
+		} catch e {
+			MsgBox, An exception was thrown!`n%e%
+			return
+		}
 
 		if WinExist("📜 Codes") {
 			WinActivate
+			Delete()
 			Paste()
 		}
 		return
 	}
 
-	Get_Codes_Autoload_Run() {
-		Get_Codes_Autoload()
+	Get_Codes_Autoload_Run_Recent() {
+		Get_Codes_Autoload_Run(WebToolCodesRecent)
+		return
+	}
+
+	Get_Codes_Autoload_Run_Special() {
+		Get_Codes_Autoload_Run(WebToolCodesSpecial)
+		return
+	}
+
+	Get_Codes_Autoload_Run_Permanent() {
+		Get_Codes_Autoload_Run(WebToolCodesPermanent)
+		return
+	}
+
+	Get_Codes_Autoload_Run(TextboxID) {
+		Get_Codes_Autoload(TextboxID)
 		Redeem_Codes()
 		return
 	}
@@ -1132,167 +1193,186 @@ Open_Codes:
 		Gui, CodeWindow:Add, Text, x+45, Codes Remaining:
 		CodeList := StrSplit(CodestoEnter, "`n")
 		CodeCount := CodeList.Length()
-		CodeNum := 1
-		CodeTotal := CodeCount
-		CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Starting..."
-		GuiControl, , CodesOutputStatus, % CodesPending
-		usedcodes := ""
-		someonescodes := ""
-		expiredcodes := ""
-		earlycodes := ""
-		invalidcodes := ""
-		codegolds := 0
-		codesilvers := 0
-		codesupplys := 0
-		otherchests := ""
-		codeepics := ""
-		codetgps := 0
-		codepolish := 0
-		tempsavesetting := 0
-		for k, v in CodeList {
-			v := StrReplace(v, "`r")
-			v := StrReplace(v, "`n")
-			v := Trim(v)
-			CurrentCode := v
-			sCode := RegExReplace(CurrentCode, "&", Replacement := "%26")
-			sCode := RegExReplace(sCode, "#", Replacement := "%23")
-			if !UserID {
-				MsgBox % "Need User ID & Hash"
-				FirstRun()
-			}
-			codeparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&code=" sCode
-			rawresults := ServerCall("redeemcoupon", codeparams)
-			coderesults := JSON.parse(rawresults)
-			rawloot := JSON.stringify(coderesults.loot_details)
-			codeloot := JSON.parse(rawloot)
-			if (coderesults.failure_reason == "Outdated instance id") {
-				MsgBox, 4, , % "Outdated instance id. Update from server?"
-				IfMsgBox, Yes
-				{
-					GetUserDetails()
-					Gui, CodeWindow:Default
-					while (InstanceID == 0) {
-						sleep, 2000
-					}
-					codeparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&code=" sCode
-					rawresults := ServerCall("redeemcoupon", codeparams)
-					coderesults := JSON.parse(rawresults)
-					rawloot := JSON.stringify(coderesults.loot_details)
-					codeloot := JSON.parse(rawloot)
-				} else {
-					return
+		if (CodeCount == 0) {
+			CodesPending := "🚫 Codes: 0/0 - No Codes Found..."
+			GuiControl, , CodesOutputStatus, % CodesPending
+		} else {
+			; Disable Buttons
+			GuiControl, Disable, Button_Recent
+			GuiControl, Disable, Button_Special
+			GuiControl, Disable, Button_Permanent
+			GuiControl, Disable, Button_Submit
+			GuiControl, Disable, Button_Paste
+			GuiControl, Disable, Button_Delete
+			CodeNum := 1
+			CodeTotal := CodeCount
+			CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Starting..."
+			GuiControl, , CodesOutputStatus, % CodesPending
+			usedcodes := ""
+			someonescodes := ""
+			expiredcodes := ""
+			earlycodes := ""
+			invalidcodes := ""
+			codegolds := 0
+			codesilvers := 0
+			codesupplys := 0
+			otherchests := ""
+			codeepics := ""
+			codetgps := 0
+			codepolish := 0
+			tempsavesetting := 0
+			for k, v in CodeList {
+				v := StrReplace(v, "`r")
+				v := StrReplace(v, "`n")
+				v := Trim(v)
+				CurrentCode := v
+				sCode := RegExReplace(CurrentCode, "&", Replacement := "%26")
+				sCode := RegExReplace(sCode, "#", Replacement := "%23")
+				if !UserID {
+					MsgBox % "Need User ID & Hash"
+					FirstRun()
 				}
-			}
-			if (coderesults.failure_reason == "You have already redeemed this combination.") {
-				usedcodes := usedcodes sCode "`n"
-			} else if (coderesults.failure_reason == "Someone has already redeemed this combination.") {
-				someonescodes := someonescodes sCode "`n"
-			} else if (coderesults.failure_reason == "This offer has expired") {
-				expiredcodes := expiredcodes sCode "`n"
-			} else if (coderesults.failure_reason == "You can not yet redeem this combination.") {
-				earlycodes := earlycodes sCode "`n"
-			} else if (coderesults.failure_reason == "This is not a valid combination.") {
-				invalidcodes := invalidcodes sCode "`n"
-			} else {
-				for kk, vv in codeloot {
-					if (vv.chest_type_id == "2") {
-						codegolds += vv.count
-					} else if (vv.chest_type_id == "37") {
-						codesupplys += vv.count
-					} else if (vv.chest_type_id == "1") {
-						codesilvers += vv.count
-					} else if (vv.chest_type_id) {
-						otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
-					} else if (vv.add_time_gate_key_piece) {
-						codetgps += vv.count
-					} else if (vv.add_inventory_buff_id) {
-						switch vv.add_inventory_buff_id {
-							case 4: codeepics := codeepics "STR (" vv.count "), "
-							case 8: codeepics := codeepics "GF (" vv.count "), "
-							case 16: codeepics := codeepics "HP (" vv.count "), "
-							case 20: codeepics := codeepics "Bounty (" vv.count "), "
-							case 34: codeepics := codeepics "BS (" vv.count "), "
-							case 35: codeepics := codeepics "Spec (" vv.count "), "
-							case 40: codeepics := codeepics "FB (" vv.count "), "
-							case 77: codeepics := codeepics "Spd (" vv.count "), "
-							case 36: codepolish += vv.count
-							default: codeepics := codeepics vv.add_inventory_buff_id " (" vv.count "), "
+				codeparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&code=" sCode
+				rawresults := ServerCall("redeemcoupon", codeparams)
+				coderesults := JSON.parse(rawresults)
+				rawloot := JSON.stringify(coderesults.loot_details)
+				codeloot := JSON.parse(rawloot)
+				if (coderesults.failure_reason == "Outdated instance id") {
+					MsgBox, 4, , % "Outdated instance id. Update from server?"
+					IfMsgBox, Yes
+					{
+						GetUserDetails()
+						Gui, CodeWindow:Default
+						while (InstanceID == 0) {
+							sleep, 2000
+						}
+						codeparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&code=" sCode
+						rawresults := ServerCall("redeemcoupon", codeparams)
+						coderesults := JSON.parse(rawresults)
+						rawloot := JSON.stringify(coderesults.loot_details)
+						codeloot := JSON.parse(rawloot)
+					} else {
+						return
+					}
+				}
+				if (coderesults.failure_reason == "You have already redeemed this combination.") {
+					usedcodes := usedcodes sCode "`n"
+				} else if (coderesults.failure_reason == "Someone has already redeemed this combination.") {
+					someonescodes := someonescodes sCode "`n"
+				} else if (coderesults.failure_reason == "This offer has expired") {
+					expiredcodes := expiredcodes sCode "`n"
+				} else if (coderesults.failure_reason == "You can not yet redeem this combination.") {
+					earlycodes := earlycodes sCode "`n"
+				} else if (coderesults.failure_reason == "This is not a valid combination.") {
+					invalidcodes := invalidcodes sCode "`n"
+				} else {
+					for kk, vv in codeloot {
+						if (vv.chest_type_id == "2") {
+							codegolds += vv.count
+						} else if (vv.chest_type_id == "37") {
+							codesupplys += vv.count
+						} else if (vv.chest_type_id == "1") {
+							codesilvers += vv.count
+						} else if (vv.chest_type_id) {
+							otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
+						} else if (vv.add_time_gate_key_piece) {
+							codetgps += vv.count
+						} else if (vv.add_inventory_buff_id) {
+							switch vv.add_inventory_buff_id {
+								case 4: codeepics := codeepics "STR (" vv.count "), "
+								case 8: codeepics := codeepics "GF (" vv.count "), "
+								case 16: codeepics := codeepics "HP (" vv.count "), "
+								case 20: codeepics := codeepics "Bounty (" vv.count "), "
+								case 34: codeepics := codeepics "BS (" vv.count "), "
+								case 35: codeepics := codeepics "Spec (" vv.count "), "
+								case 40: codeepics := codeepics "FB (" vv.count "), "
+								case 77: codeepics := codeepics "Spd (" vv.count "), "
+								case 36: codepolish += vv.count
+								default: codeepics := codeepics vv.add_inventory_buff_id " (" vv.count "), "
+							}
 						}
 					}
-				}
-			} 
-			CodeCount := % (CodeCount-1)
-			CodeNum := % (CodeTotal-CodeCount)
-			if (CurrentSettings.alwayssavecodes || tempsavesetting) {
-				FileAppend, "{""submit_code"":""" %sCode% """}"`n, %RedeemCodeLogFile%
-				FileAppend, %rawresults%`n, %RedeemCodeLogFile%
-			} else if !(CurrentSettings.nosavesetting) {
-				MsgBox, 4, , "Save to File?"
-				IfMsgBox, Yes
-				{
-					tempsavesetting := 1
-					FileAppend, %sCode%`n, %RedeemCodeLogFile%
+				} 
+				CodeCount := % (CodeCount-1)
+				CodeNum := % (CodeTotal-CodeCount)
+				if (CurrentSettings.alwayssavecodes || tempsavesetting) {
+					FileAppend, "{""submit_code"":""" %sCode% """}"`n, %RedeemCodeLogFile%
 					FileAppend, %rawresults%`n, %RedeemCodeLogFile%
+				} else if !(CurrentSettings.nosavesetting) {
+					MsgBox, 4, , "Save to File?"
+					IfMsgBox, Yes
+					{
+						tempsavesetting := 1
+						FileAppend, %sCode%`n, %RedeemCodeLogFile%
+						FileAppend, %rawresults%`n, %RedeemCodeLogFile%
+					}
 				}
+				sleep, 1000
+				CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Submitting..."
+				GuiControl, , CodesOutputStatus, % CodesPending
 			}
-			sleep, 1000
-			CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Submitting..."
+			CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Loading Results..."
+			codemessage := ""
+			if (codegolds > 0) {
+				codemessage := codemessage "Gold Chests:`n" codegolds "`n"
+			}
+			if (codesilvers > 0) {
+				codemessage := codemessage "Silver Chests:`n" codesilvers "`n"
+			}
+			if (codesupplys > 0) {
+				codemessage := codemessage "Supply Chests:`n" codesupplys "`n"
+			}
+			if !(otherchests == "") {
+				;StringTrimRight, otherchests, otherchests, 2
+				codemessage := codemessage "Other Chests:`n" otherchests "`n"
+			}
+			if (codepolish > 0) {
+				codemessage := codemessage "Potions of Polish:`n" codepolish "`n"
+			}
+			if (codetgps > 0) {
+				codemessage := codemessage "Time Gate Pieces:`n" codetgps "`n"
+			}
+			if !(codeepics == "") {
+				StringTrimRight, codeepics, codeepics, 2
+				codemessage := codemessage "Epic Consumables:`n" codeepics "`n"
+			}
+			if !(earlycodes == "") {
+				codemessage := codemessage "Cannot Redeem Yet:`n" earlycodes "`n"
+			}
+			if !(someonescodes == "") {
+				codemessage := codemessage "Someone Else Has Used:`n" someonescodes "`n"
+			}
+			if !(expiredcodes == "") {
+				codemessage := codemessage "Expired:`n" expiredcodes "`n"
+			}
+			if !(invalidcodes == "") {
+				codemessage := codemessage "Invalid:`n" invalidcodes "`n"
+			}
+			if !(usedcodes == "") {
+				codemessage := codemessage "You Already Used:`n" usedcodes "`n"
+			}
+			if (codemessage == "") {
+				codemessage := "Unknown or No Results"
+			}
+			GuiControl, , CodesOutputStatus, % CodesPending, w350 h210
+			GetUserDetails()
+			oMyGUI.Update()
+			Gui, CodeWindow: Default
+			CodesPending := "✅ Codes: " CodeTotal "/" CodeTotal " - Completed! 😎"
 			GuiControl, , CodesOutputStatus, % CodesPending
+			; Enable Buttons
+			GuiControl, Enable, Button_Recent
+			GuiControl, Enable, Button_Special
+			GuiControl, Enable, Button_Permanent
+			GuiControl, Enable, Button_Submit
+			GuiControl, Enable, Button_Paste
+			GuiControl, Enable, Button_Delete
+			;MsgBox, , Results, % codemessage
+			ScrollBox(codemessage, "p b1 h200 w250", "Redeem Codes Results")
+			;ScrollBox(codemessage, "p b1 h200 w250 f{s10, Consolas}", "Redeem Codes Results")
+			;CustomMsgBox("Redeem Codes Results", codemessage, "Consolas", "s14", %BgColour%)
+			LogFile("Redeem Code Finished")
 		}
-		CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Loading Results..."
-		codemessage := ""
-		if (codegolds > 0) {
-			codemessage := codemessage "Gold Chests:`n" codegolds "`n"
-		}
-		if (codesilvers > 0) {
-			codemessage := codemessage "Silver Chests:`n" codesilvers "`n"
-		}
-		if (codesupplys > 0) {
-			codemessage := codemessage "Supply Chests:`n" codesupplys "`n"
-		}
-		if !(otherchests == "") {
-			;StringTrimRight, otherchests, otherchests, 2
-			codemessage := codemessage "Other Chests:`n" otherchests "`n"
-		}
-		if (codepolish > 0) {
-			codemessage := codemessage "Potions of Polish:`n" codepolish "`n"
-		}
-		if (codetgps > 0) {
-			codemessage := codemessage "Time Gate Pieces:`n" codetgps "`n"
-		}
-		if !(codeepics == "") {
-			StringTrimRight, codeepics, codeepics, 2
-			codemessage := codemessage "Epic Consumables:`n" codeepics "`n"
-		}
-		if !(earlycodes == "") {
-			codemessage := codemessage "Cannot Redeem Yet:`n" earlycodes "`n"
-		}
-		if !(someonescodes == "") {
-			codemessage := codemessage "Someone Else Has Used:`n" someonescodes "`n"
-		}
-		if !(expiredcodes == "") {
-			codemessage := codemessage "Expired:`n" expiredcodes "`n"
-		}
-		if !(invalidcodes == "") {
-			codemessage := codemessage "Invalid:`n" invalidcodes "`n"
-		}
-		if !(usedcodes == "") {
-			codemessage := codemessage "You Already Used:`n" usedcodes "`n"
-		}
-		if (codemessage == "") {
-			codemessage := "Unknown or No Results"
-		}
-		GuiControl, , CodesOutputStatus, % CodesPending, w350 h210
-		GetUserDetails()
-		oMyGUI.Update()
-		Gui, CodeWindow: Default
-		CodesPending := "✅ Codes: " CodeTotal "/" CodeTotal " - Completed! 😎"
-		GuiControl, , CodesOutputStatus, % CodesPending
-		;MsgBox, , Results, % codemessage
-		ScrollBox(codemessage, "p b1 h200 w250", "Redeem Codes Results")
-		;ScrollBox(codemessage, "p b1 h200 w250 f{s10, Consolas}", "Redeem Codes Results")
-		;CustomMsgBox("Redeem Codes Results", codemessage, "Consolas", "s14", %BgColour%)
-		LogFile("Redeem Code Finished")
 		return
 	}
 
