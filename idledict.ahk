@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.28"
+global DictionaryVersion := "2.29"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -994,12 +994,12 @@ ChestFromID(id) {
 	}
 	else if (id < 461) {
 		switch id {
-			case "441": namefromid := "Silver E8Y6 Chest"
-			case "442": namefromid := "Gold E8Y6 Chest"
+			case "441": namefromid := "Silver Solaak Chest"
+			case "442": namefromid := "Gold Solaak Chest"
 			case "443": namefromid := "Silver Miria Chest"
 			case "444": namefromid := "Gold Miria Chest"
-			case "445": namefromid := "Silver E10Y6 Chest"
-			case "446": namefromid := "Gold E10Y6 Chest"
+			case "445": namefromid := "Silver Antrius Chest"
+			case "446": namefromid := "Gold Antrius Chest"
 			case "447": namefromid := "Silver E11Y6 Chest"
 			case "448": namefromid := "Gold E11Y6 Chest"
 			case "449": namefromid := "Silver E12Y6 Chest"
