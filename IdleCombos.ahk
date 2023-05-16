@@ -6,8 +6,8 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.56"
-global CurrentDictionary := "2.29"
+global VersionNumber := "3.57"
+global CurrentDictionary := "2.30"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -380,13 +380,13 @@ class MyGui {
 		Gui, MyWindow:Add, Text, vCurrentChampions x+2 w50, % CurrentChampions
 		Gui, MyWindow:Add, Text, x15 y+p w130, Current Area:
 		Gui, MyWindow:Add, Text, vCurrentArea x+2 w50, % CurrentArea
-		Gui, MyWindow:Add, Text, x15 y88 w130, Background Adventure:
+		Gui, MyWindow:Add, Text, x15 y88 w130, Background1 Adventure:
 		Gui, MyWindow:Add, Text, vBackgroundAdventure x+2 w50, % BackgroundAdventure
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background Patron:
+		Gui, MyWindow:Add, Text, x15 y+p w130, Background1 Patron:
 		Gui, MyWindow:Add, Text, vBackgroundPatron x+2 w50, % BackgroundPatron
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background Champions:
+		Gui, MyWindow:Add, Text, x15 y+p w130, Background1 Champions:
 		Gui, MyWindow:Add, Text, vBackgroundChampions x+2 w50, % BackgroundChampions
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background Area:
+		Gui, MyWindow:Add, Text, x15 y+p w130, Background1 Area:
 		Gui, MyWindow:Add, Text, vBackgroundArea x+2 w50, % BackgroundArea
 		Gui, MyWindow:Add, Text, x15 y143 w130, Background2 Adventure:
 		Gui, MyWindow:Add, Text, vBackground2Adventure x+2 w50, % Background2Adventure
@@ -2755,7 +2755,7 @@ ParseAdventureData() {
 		core_humxp := Format("{:.2f}",v.exp_total / (1000 ** Floor(log(v.exp_total)/3))) MagList[Floor(log(v.exp_total)/3)]
 		if (core_level > 15) 
 			core_level := core_level " - Max 15"
-		InstanceList[v.instance_id].core := InstanceList[v.instance_id].core "`nXP: " core_humxp " (Lv " core_level ")`n" core_tolevel "/" core_levelxp " (" core_pcttolevel "%)"
+		InstanceList[v.instance_id].core := InstanceList[v.instance_id].core "`nXP: " core_humxp " (Lvl " core_level ")`n" core_tolevel "/" core_levelxp " (" core_pcttolevel "%)"
 	}
 	
 	ChampionsActiveCount := 0
