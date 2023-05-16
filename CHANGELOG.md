@@ -16,6 +16,7 @@ To all the idle dragoneers who inspired and assisted me!
 * Update dictionary with BBEG chests
 * Add Strongheart to dictionary
 * Update dictionary with Strongheart chests
+* Minor text updates
 
 ## 3.56
 
