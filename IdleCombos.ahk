@@ -7,7 +7,7 @@
 
 ;Versions
 global VersionNumber := "3.56"
-global CurrentDictionary := "2.29"
+global CurrentDictionary := "2.30"
 
 ;Local File globals
 global OutputLogFile := ""

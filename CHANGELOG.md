@@ -6,9 +6,20 @@ To all the idle dragoneers who inspired and assisted me!
 
 ------
 
+## 3.57
+
+* Add Nixie to dictionary
+* Update dictionary with Nixie chests
+* Add Evandra to dictionary
+* Update dictionary with Evandra chests
+* Add BBEG to dictionary
+* Update dictionary with BBEG chests
+* Add Strongheart to dictionary
+* Update dictionary with Strongheart chests
+
 ## 3.56
 
-* Update dictionary with solaak and antrius chests
+* Update dictionary with Solaak and Antrius chests
 * Add buttons to the redeem codes gui to auto load and run chest codes
 
 ## 3.55
@@ -33,7 +44,7 @@ To all the idle dragoneers who inspired and assisted me!
 ## 3.51
 
 * Fix event chests max buy amount
-* Update dictionary with miria chests
+* Update dictionary with Miria chests
 
 ## 3.50
 
