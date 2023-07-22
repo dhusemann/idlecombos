@@ -6,6 +6,11 @@ To all the idle dragoneers who inspired and assisted me!
 
 ------
 
+## 3.58
+
+* Add Vin Ursa to dictionary
+* Add Lae'zel to dictionary
+
 ## 3.57
 
 * Add Nixie to dictionary

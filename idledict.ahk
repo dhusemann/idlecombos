@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.30"
+global DictionaryVersion := "2.31"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -199,10 +199,24 @@ ChampFromID(id) {
 			case "124": namefromid := "Evandra"
 			case "125": namefromid := "BBEG"
 			case "126": namefromid := "Strongheart"
-			case "127": namefromid := "UNKNOWN (" id ")"
-			case "128": namefromid := "UNKNOWN (" id ")"
-			case "129": namefromid := "UNKNOWN (" id ")"
+			case "127": namefromid := "Vin Ursa"
+			case "128": namefromid := "Lae'zel"
+			case "129": namefromid := "E17Y6"
 			case "130": namefromid := "UNKNOWN (" id ")"
+		}
+	}
+	else if (id < 141) {
+		switch id {
+			case "131": namefromid := "UNKNOWN (" id ")"
+			case "132": namefromid := "UNKNOWN (" id ")"
+			case "133": namefromid := "UNKNOWN (" id ")"
+			case "134": namefromid := "UNKNOWN (" id ")"
+			case "135": namefromid := "UNKNOWN (" id ")"
+			case "136": namefromid := "UNKNOWN (" id ")"
+			case "137": namefromid := "UNKNOWN (" id ")"
+			case "138": namefromid := "UNKNOWN (" id ")"
+			case "139": namefromid := "UNKNOWN (" id ")"
+			case "140": namefromid := "UNKNOWN (" id ")"
 		}
 	}
 	else {
