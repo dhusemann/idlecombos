@@ -7,7 +7,7 @@
 
 ;Versions
 global VersionNumber := "3.57"
-global CurrentDictionary := "2.30"
+global CurrentDictionary := "2.31"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -1844,7 +1844,7 @@ UseBlacksmith(buffid) {
 	InputBox, heroid, Blacksmithing, % "Use " contractname " Blacksmith Contracts on which Champ? (Enter ID)", , 200, 180, , , , , %LastBSChamp%
 	if ErrorLevel
 		return
-	while !((heroid is number) OR ((heroid > 0) && (heroid < 107)) OR ((heroid > 112) && (heroid < 123))) {
+	while !((heroid is number) OR ((heroid > 0) && (heroid < 107)) OR ((heroid > 112) && (heroid < 130))) {
 		InputBox, heroid, Blacksmithing, % "Please enter a valid Champ ID number", , 200, 180, , , , , %LastBSChamp%
 		if ErrorLevel
 			return
@@ -3578,7 +3578,7 @@ List_ChampIDs:
 		champname := ""
 		id := 1
 		champidlist := ""
-		while (id < 131) {
+		while (id < 141) {
 			champname := ChampFromID(id)
 			StringLen, champnamelen, champname
 			while (champnamelen < 25) {
