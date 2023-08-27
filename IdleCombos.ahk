@@ -2645,6 +2645,11 @@ GetIDFromWRL() {
 	return
 }
 
+StrReverse(String) {
+	String .= "", DllCall("msvcrt.dll\_wcsrev", "Ptr", &String, "CDecl")
+    return String
+}
+
 GetPlayServerFromWRL() {
 	FileRead, oData, %WRLFile%
 	if ErrorLevel {
@@ -2672,23 +2677,41 @@ GetPlayServerFromWRL() {
 		return
 	}
 	if ( ServerDetection = 1 ) {
-		LogFile("Detecting play server")
-		FoundPos2 := InStr(oData, "play_server")
-		oData2 := SubStr(oData, (FoundPos2 + 14))
-		FoundPos2 := InStr(oData2, ":\/\/")
-		oData3 := SubStr(oData2, (FoundPos2 + 5))
-		FoundPos2 := InStr(oData3, ".idlechampions.com\/~idledragons\/")
-		NewServerName := ""
-		StringLeft, NewServerName, oData3, (FoundPos2 - 1)
-		if (NewServerName != ServerName){
-			ServerName := NewServerName
-			SaveSettings()
-			LogFile("Play Server Detected - " NewServerName)
-		}
-		oData := ; Free the memory.
-		oData2 := ; Free the memory.
+		GetPlayServer(oData)
 	}
 	return
+}
+
+GetPlayServer(oData) {
+	LogFile("Detecting play server")
+
+	searchString = "play_server"
+	; ScrollBox(oData, "p b1 h700 w1000 f{s10, Consolas}", "oData")
+
+	; reversedData := StrReverse(oData)
+	; ScrollBox(reversedData, "p b1 h700 w1000 f{s10, Consolas}", "reversedData")
+	; MsgBox, % "searchString - " StrReverse(searchString)
+	; position := InStr(reversedData, StrReverse(searchString))
+	; FoundPos2 := StrLen(oData) - (FoundPos2 + StrLen(searchString)) + 1
+	
+	FoundPos2 := InStr(oData, searchString)
+	; MsgBox, % "FoundPos2 - " FoundPos2
+	oData2 := SubStr(oData, (FoundPos2 + 14))
+	
+	; MsgBox, % "oData2 - " oData2
+	FoundPos2 := InStr(oData2, ":\/\/")
+	oData3 := SubStr(oData2, (FoundPos2 + 5))
+	; MsgBox, % "oData3 - " oData3
+	FoundPos2 := InStr(oData3, ".idlechampions.com\/~idledragons\/")
+	NewServerName := ""
+	StringLeft, NewServerName, oData3, (FoundPos2 - 1)
+	if (NewServerName != ServerName){
+		ServerName := NewServerName
+		SaveSettings()
+		LogFile("Play Server Detected - " NewServerName)
+	}
+	oData := ; Free the memory.
+	oData2 := ; Free the memory.
 }
 
 GetUserDetails() {
@@ -2696,33 +2719,41 @@ GetUserDetails() {
 	SB_SetText("⌛ Loading Data... Please wait...")
 	getuserparams := DummyData "&include_free_play_objectives=true&instance_key=1&user_id=" UserID "&hash=" UserHash
 	rawdetails := ServerCall("getuserdetails", getuserparams)
+	; ScrollBox(rawdetails, "p b1 h700 w1000 f{s10, Consolas}", "rawdetails")
 	if ( ServerError != "") {
 		SB_SetText("❌ API Error: " ServerError " - Try to close and reopen Idle Champions - Server might be in Maintenance? 😟")
 		ServerError := ""
 	} else {
-		FileDelete, %UserDetailsFile%
-		FileAppend, %rawdetails%, %UserDetailsFile%
-		UserDetails := JSON.parse(rawdetails)
-		InstanceID := UserDetails.details.instance_id
-		CurrentSettings.instance_id := InstanceID
-		CurrentSettings.loadgameclient := LoadGameClient
-		ActiveInstance := UserDetails.details.active_game_instance_id
-		newsettings := JSON.stringify(CurrentSettings)
-		FileDelete, %SettingsFile%
-		FileAppend, %newsettings%, %SettingsFile%
-		ParseChampData()
-		ParseAdventureData()
-		ParseTimestamps()
-		ParseInventoryData()
-		ParsePatronData()
-		ParseLootData()
-		CheckAchievements()
-		CheckBlessings()
-		CheckPatronProgress()
-		CheckEvents()
-		SB_SetText("✅ Loaded and Ready 😎")
-		LogFile("User Details - Loaded")
-		oMyGUI.Update()
+		swtichPlayServer := InStr(rawdetails, "switch_play_server")
+		; MsgBox, % "swtichPlayServer - " swtichPlayServer
+		if(swtichPlayServer > 0) {
+			GetPlayServer(rawdetails)
+			GetUserDetails()
+		} else {
+			FileDelete, %UserDetailsFile%
+			FileAppend, %rawdetails%, %UserDetailsFile%
+			UserDetails := JSON.parse(rawdetails)
+			InstanceID := UserDetails.details.instance_id
+			CurrentSettings.instance_id := InstanceID
+			CurrentSettings.loadgameclient := LoadGameClient
+			ActiveInstance := UserDetails.details.active_game_instance_id
+			newsettings := JSON.stringify(CurrentSettings)
+			FileDelete, %SettingsFile%
+			FileAppend, %newsettings%, %SettingsFile%
+			ParseChampData()
+			ParseAdventureData()
+			ParseTimestamps()
+			ParseInventoryData()
+			ParsePatronData()
+			ParseLootData()
+			CheckAchievements()
+			CheckBlessings()
+			CheckPatronProgress()
+			CheckEvents()
+			SB_SetText("✅ Loaded and Ready 😎")
+			LogFile("User Details - Loaded")
+			oMyGUI.Update()
+		}
 	}
 	return
 }
