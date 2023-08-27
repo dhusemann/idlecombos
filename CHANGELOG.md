@@ -6,6 +6,10 @@ To all the idle dragoneers who inspired and assisted me!
 
 ------
 
+## 3.59
+
+* Fix bug with data loading due to new changes in API
+
 ## 3.58
 
 * Add Vin Ursa to dictionary
