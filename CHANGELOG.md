@@ -6,6 +6,11 @@ To all the idle dragoneers who inspired and assisted me!
 
 ------
 
+## 3.60
+
+* Add WebRequestLog file to settings
+* Fix play server detection when swapping clients
+
 ## 3.59
 
 * Fix bug with data loading due to new changes in API
