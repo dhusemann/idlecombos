@@ -6,7 +6,7 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.59"
+global VersionNumber := "3.60"
 global CurrentDictionary := "2.31"
 
 ;Local File globals
@@ -59,9 +59,8 @@ global TabActive := "Summary"
 global TabList := "Summary|Adventures|Inventory|Patrons|Champions|Event|Settings|Log|"
 global ServerDetection := 1
 ;global StyleSelection := "Default"
-global SettingsCheckValue := 17 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","serverdetection":1})
-;global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"ps7","style":"Default","user_id":0,"user_id_epic":0,"user_id_steam":0})
+global SettingsCheckValue := 18 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","serverdetection":1,"wrlpath":""})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -575,6 +574,7 @@ class MyGui {
 		NoSaveSetting := CurrentSettings.nosavesetting
 		LogEnabled := CurrentSettings.logenabled
 		LoadGameClient := CurrentSettings.loadgameclient
+		WRLFile := CurrentSettings.wrlpath
 		;StyleSelection := CurrentSettings.style
 		;SetStyle(StyleSelection)
 		TabActive := CurrentSettings.tabactive
@@ -878,6 +878,7 @@ SaveSettings()
 	CurrentSettings.nosavesetting := NoSaveSetting
 	CurrentSettings.servername := ServerName
 	CurrentSettings.tabactive := TabActive
+	CurrentSettings.wrlpath := WRLFile
 	;CurrentSettings.style := StyleChoice
 	;StyleSelection = StyleChoice
 	newsettings := JSON.stringify(CurrentSettings)
@@ -2579,6 +2580,7 @@ FirstRun() {
 	CurrentSettings.user_id_steam := UserIDSteam
 	CurrentSettings.hash := UserHash
 	CurrentSettings.firstrun := 1
+	CurrentSettings.wrlpath := WRLFile
 	newsettings := JSON.stringify(CurrentSettings)
 	FileDelete, %SettingsFile%
 	FileAppend, %newsettings%, %SettingsFile%
@@ -2705,20 +2707,30 @@ GetPlayServer(oData) {
 	FoundPos2 := InStr(oData3, ".idlechampions.com\/~idledragons\/")
 	NewServerName := ""
 	StringLeft, NewServerName, oData3, (FoundPos2 - 1)
+	playservername := ServerName
 	if (NewServerName != ServerName){
 		ServerName := NewServerName
+		playservername := NewServerName
 		SaveSettings()
+		Sleep, 250
 		LogFile("Play Server Detected - " NewServerName)
 	}
 	oData := ; Free the memory.
 	oData2 := ; Free the memory.
+	return playservername
 }
 
-GetUserDetails() {
+GetUserDetails(newservername = "") {
+	If (newservername = "") {
+		playservername := ServerName
+	} else {
+		playservername := newservername
+	}
 	Gui, MyWindow:Default
 	SB_SetText("⌛ Loading Data... Please wait...")
+	; LogFile("Server Name: " playservername)
 	getuserparams := DummyData "&include_free_play_objectives=true&instance_key=1&user_id=" UserID "&hash=" UserHash
-	rawdetails := ServerCall("getuserdetails", getuserparams)
+	rawdetails := ServerCall("getuserdetails", getuserparams, playservername)
 	; ScrollBox(rawdetails, "p b1 h700 w1000 f{s10, Consolas}", "rawdetails")
 	if ( ServerError != "") {
 		SB_SetText("❌ API Error: " ServerError " - Try to close and reopen Idle Champions - Server might be in Maintenance? 😟")
@@ -2727,8 +2739,8 @@ GetUserDetails() {
 		swtichPlayServer := InStr(rawdetails, "switch_play_server")
 		; MsgBox, % "swtichPlayServer - " swtichPlayServer
 		if(swtichPlayServer > 0) {
-			GetPlayServer(rawdetails)
-			GetUserDetails()
+			playservername := GetPlayServer(rawdetails)
+			GetUserDetails(playservername)
 		} else {
 			FileDelete, %UserDetailsFile%
 			FileAppend, %rawdetails%, %UserDetailsFile%
@@ -3443,9 +3455,14 @@ CheckServerCallError(data) {
 	return true
 }
 
-ServerCall(callname, parameters) {
-	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
-	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
+ServerCall(callname, parameters, newservername = "") {
+	If (newservername = "") {
+		playservername := ServerName
+	} else {
+		playservername := newservername
+	}
+	; SB_SetText("⌛ Contacting API Server (" playservername ")... '" callname "'... Please wait...")
+	URLtoCall := "http://" playservername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
 	WR := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 	;default values on the below in ms, 0 is INF
 	;from https://docs.microsoft.com/en-us/windows/win32/winhttp/iwinhttprequest-settimeouts
@@ -3458,16 +3475,21 @@ ServerCall(callname, parameters) {
 		data := WR.ResponseText
 		WR.Close()
 	}
-	LogFile("API Call: " callname)
+	LogFile("API Call (" playservername "): " callname)
 	if( !CheckServerCallError(data) ) {
 		return
 	}
 	return data
 }
 
-ServerCallNew(callname, parameters) {
-	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
-	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
+ServerCallNew(callname, parameters, newservername = "") {
+	If (newservername = "") {
+		playservername := ServerName
+	} else {
+		playservername := newservername
+	}
+	; SB_SetText("⌛ Contacting API Server (" ServerName ")... '" callname "'... Please wait...")
+	URLtoCall := "http://" ServerName ".idlechampions.com/~idledragons/post.php?call=" callname parameters
 	WR := ComObjCreate("Msxml2.XMLHTTP.6.0")
 	Try {
 		WR.Open("GET", URLtoCall, false)
@@ -3475,19 +3497,24 @@ ServerCallNew(callname, parameters) {
 		data := WR.ResponseText
 		WR.Close()
 	}
-	LogFile("API Call: " callname)
+	LogFile("API Call (" ServerName "): " callname)
 	if( !CheckServerCallError(data) ) {
 		return
 	}
 	return data
 }
 
-ServerCallAlt(callname, parameters) {
-	;SB_SetText("⌛ Contacting API Server... '" callname "'... Please wait...")
-	URLtoCall := "http://" servername ".idlechampions.com/~idledragons/post.php?call=" callname parameters
+ServerCallAlt(callname, parameters, newservername = "") {
+	If (newservername = "") {
+		playservername := ServerName
+	} else {
+		playservername := newservername
+	}
+	; SB_SetText("⌛ Contacting API Server (" ServerName ")... '" callname "'... Please wait...")
+	URLtoCall := "http://" ServerName ".idlechampions.com/~idledragons/post.php?call=" callname parameters
 	URLDownloadToFile, %URLtoCall%, %UserDetailsFile%
 	FileRead, data, %UserDetailsFile%
-	LogFile("API Call: " callname)
+	LogFile("API Call (" ServerName "): " callname)
 	if( !CheckServerCallError(data) ) {
 		return
 	}
