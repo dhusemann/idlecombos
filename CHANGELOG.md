@@ -6,6 +6,21 @@ To all the idle dragoneers who inspired and assisted me!
 
 ------
 
+## 3.61
+
+* This update is brought to you by [Emmotes](https://github.com/Emmotes)
+* Add Astarion to dictionary
+* Update dictionary with Astarion chests
+* Add Commodore Krux to dictionary
+* Update dictionary with Commodore Krux chests
+* Add Certainty Dran to dictionary
+* Update dictionary with Certainty Dran chests
+* Add Thellora to dictionary
+* Update dictionary with Thellora chests
+* Add Jang Sao to dictionary
+* Update dictionary with Jang Sao chests
+* Update dictionary with many more chests
+
 ## 3.60
 
 * Add WebRequestLog file to settings

@@ -6,8 +6,8 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.60"
-global CurrentDictionary := "2.31"
+global VersionNumber := "3.61"
+global CurrentDictionary := "2.32"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -3636,7 +3636,7 @@ List_ChampIDs:
 		champname := ""
 		id := 1
 		champidlist := ""
-		while (id < 141) {
+		while (id < 155) {
 			champname := ChampFromID(id)
 			StringLen, champnamelen, champname
 			while (champnamelen < 25) {
@@ -3663,7 +3663,7 @@ List_ChestIDs:
 		chestname := ""
 		id := 1
 		chestidlist := ""
-		while (id < 510) {
+		while (id < 586) {
 			chestname := ChestFromID(id)
 			StringLen, chestnamelen, chestname
 			while (chestnamelen < 40) {
