@@ -2,9 +2,14 @@
 
 ## Special Thanks
 
-To all the idle dragoneers who inspired and assisted me!
+To all the Idle Dragoneers who inspired and assisted me!
 
 ------
+
+## 3.62
+
+* Add counts in redeem codes
+* Add server detection in redeem codes
 
 ## 3.61
 
