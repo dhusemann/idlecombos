@@ -6,7 +6,7 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.61"
+global VersionNumber := "3.62"
 global CurrentDictionary := "2.32"
 
 ;Local File globals
