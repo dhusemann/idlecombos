@@ -502,7 +502,7 @@ class MyGui {
 		;Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vStyleChoice, % StyleList
 		Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vTabActive, % TabList
 		Gui, MyWindow:Add, Checkbox, vLogEnabled x15 y+5+p, Logging Enabled?
-		Gui, MyWindow:Add, CheckBox, vServerDetection, Get Server Name on start?
+		Gui, MyWindow:Add, CheckBox, vServerDetection, Get Play Server Name automatically?
 		Gui, MyWindow:Add, CheckBox, vGetDetailsonStart, Get User Details on start?
 		Gui, MyWindow:Add, CheckBox, vLaunchGameonStart, Launch game client on start?
 		Gui, MyWindow:Add, CheckBox, vAlwaysSaveChests, Always save Chest Open Results to file?
