@@ -1207,21 +1207,36 @@ Open_Codes:
 			GuiControl, Disable, Button_Delete
 			CodeNum := 1
 			CodeTotal := CodeCount
-			CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Starting..."
-			GuiControl, , CodesOutputStatus, % CodesPending
+			usedcodescount := 0
 			usedcodes := ""
+			someonescodescount := 0
 			someonescodes := ""
+			expiredcodescount := 0
 			expiredcodes := ""
+			earlycodescount := 0
 			earlycodes := ""
+			invalidcodescount := 0
 			invalidcodes := ""
 			codegolds := 0
 			codesilvers := 0
 			codesupplys := 0
+			otherchestscount := 0
+			otherchestsarray := []
 			otherchests := ""
+			codeepicscount := 0
 			codeepics := ""
 			codetgps := 0
 			codepolish := 0
 			tempsavesetting := 0
+			if (ServerDetection == 1) {
+				CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Getting User Details..."
+				GuiControl, , CodesOutputStatus, % CodesPending
+				GetUserDetails()
+				sleep, 2000
+			}
+			Gui, CodeWindow: Default
+			CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Starting..."
+			GuiControl, , CodesOutputStatus, % CodesPending
 			for k, v in CodeList {
 				v := StrReplace(v, "`r")
 				v := StrReplace(v, "`n")
@@ -1257,14 +1272,19 @@ Open_Codes:
 					}
 				}
 				if (coderesults.failure_reason == "You have already redeemed this combination.") {
+					usedcodescount += 1
 					usedcodes := usedcodes sCode "`n"
 				} else if (coderesults.failure_reason == "Someone has already redeemed this combination.") {
+					someonescodescount += 1
 					someonescodes := someonescodes sCode "`n"
 				} else if (coderesults.failure_reason == "This offer has expired") {
+					expiredcodescount += 1
 					expiredcodes := expiredcodes sCode "`n"
 				} else if (coderesults.failure_reason == "You can not yet redeem this combination.") {
+					earlycodescount += 1
 					earlycodes := earlycodes sCode "`n"
 				} else if (coderesults.failure_reason == "This is not a valid combination.") {
+					invalidcodescount += 1
 					invalidcodes := invalidcodes sCode "`n"
 				} else {
 					for kk, vv in codeloot {
@@ -1276,9 +1296,17 @@ Open_Codes:
 							codesilvers += vv.count
 						} else if (vv.chest_type_id) {
 							otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
+							otherchestscount += vv.count
+							othercheststype:= ChestFromID(vv.chest_type_id)
+							if !IsObject(otherchestsarray[othercheststype]) {
+								otherchestsarray[othercheststype] := 1
+							} else {
+								otherchestsarray[othercheststype] += vv.count
+							}
 						} else if (vv.add_time_gate_key_piece) {
 							codetgps += vv.count
 						} else if (vv.add_inventory_buff_id) {
+							codeepicscount += vv.count
 							switch vv.add_inventory_buff_id {
 								case 4: codeepics := codeepics "STR (" vv.count "), "
 								case 8: codeepics := codeepics "GF (" vv.count "), "
@@ -1289,6 +1317,7 @@ Open_Codes:
 								case 40: codeepics := codeepics "FB (" vv.count "), "
 								case 77: codeepics := codeepics "Spd (" vv.count "), "
 								case 36: codepolish += vv.count
+										 codeepicscount -= vv.count
 								default: codeepics := codeepics vv.add_inventory_buff_id " (" vv.count "), "
 							}
 						}
@@ -1308,7 +1337,8 @@ Open_Codes:
 						FileAppend, %rawresults%`n, %RedeemCodeLogFile%
 					}
 				}
-				sleep, 1000
+				sleep, 500
+				Gui, CodeWindow: Default
 				CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Submitting..."
 				GuiControl, , CodesOutputStatus, % CodesPending
 			}
@@ -1325,7 +1355,13 @@ Open_Codes:
 			}
 			if !(otherchests == "") {
 				;StringTrimRight, otherchests, otherchests, 2
-				codemessage := codemessage "Other Chests:`n" otherchests "`n"
+				codemessage := codemessage "Other Chests (" otherchestselement "):`n" otherchests "`n"
+			}
+			if (otherchestscount > 0) {
+				codemessage := codemessage "Other Chests [Sorted] (" otherchestselement "):`n"
+				for otherchestsindex, otherchestselement in otherchestsarray {
+					codemessage := codemessage otherchestsindex " (" otherchestselement ")" "`n"
+				}
 			}
 			if (codepolish > 0) {
 				codemessage := codemessage "Potions of Polish:`n" codepolish "`n"
@@ -1335,22 +1371,22 @@ Open_Codes:
 			}
 			if !(codeepics == "") {
 				StringTrimRight, codeepics, codeepics, 2
-				codemessage := codemessage "Epic Consumables:`n" codeepics "`n"
+				codemessage := codemessage "Epic Consumables (" codeepicscount "):`n" codeepics "`n`n"
 			}
 			if !(earlycodes == "") {
-				codemessage := codemessage "Cannot Redeem Yet:`n" earlycodes "`n"
+				codemessage := codemessage "Cannot Redeem Yet (" earlycodescount "):`n" earlycodes "`n"
 			}
 			if !(someonescodes == "") {
-				codemessage := codemessage "Someone Else Has Used:`n" someonescodes "`n"
+				codemessage := codemessage "Someone Else Has Used (" someonescodescount "):`n" someonescodes "`n"
 			}
 			if !(expiredcodes == "") {
-				codemessage := codemessage "Expired:`n" expiredcodes "`n"
+				codemessage := codemessage "Expired (" expiredcodescount "):`n" expiredcodes "`n"
 			}
 			if !(invalidcodes == "") {
-				codemessage := codemessage "Invalid:`n" invalidcodes "`n"
+				codemessage := codemessage "Invalid (" invalidcodescount "):`n" invalidcodes "`n"
 			}
 			if !(usedcodes == "") {
-				codemessage := codemessage "You Already Used:`n" usedcodes "`n"
+				codemessage := codemessage "You Already Used (" usedcodescount "):`n" usedcodes "`n"
 			}
 			if (codemessage == "") {
 				codemessage := "Unknown or No Results"
