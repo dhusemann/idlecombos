@@ -12,6 +12,8 @@ To all the Idle Dragoneers who inspired and assisted me!
 * Add server detection in redeem codes
 * Add bounty contract warning
 * Add more bounty contract logging
+* Updates to inventory tab layout
+* New settings to disable blacksmith contracts results
 
 ## 3.61
 
