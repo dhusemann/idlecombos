@@ -422,11 +422,11 @@ class MyGui {
         Gui, MyWindow:Add, Text, vGoldPity x+10 w190, % GoldPity
         Gui, MyWindow:Add, Text, x15 y+p w110, Silver Chests:
         Gui, MyWindow:Add, Text, vCurrentSilvers x+2 w50 right, % CurrentSilvers
-        Gui, MyWindow:Add, Text, x+105 y+1 w185, Next TGP:
+        Gui, MyWindow:Add, Text, x+145 y+1 w185, Next TGP:
         Gui, MyWindow:Add, Text, x15 y+0 w110, Time Gate Pieces:
-        Gui, MyWindow:Add, Text, vCurrentTGPs x+2 w35 right, % CurrentTGPs
+        Gui, MyWindow:Add, Text, vCurrentTGPs x+17 w35 right, % CurrentTGPs
         Gui, MyWindow:Add, Text, vAvailableTGs x+10 w85, % AvailableTGs
-        Gui, MyWindow:Add, Text, vNextTGPDrop x+10 w220, % NextTGPDrop
+        Gui, MyWindow:Add, Text, vNextTGPDrop x+40 w220, % NextTGPDrop
 
         Gui, MyWindow:Add, Text, x15 y+5+p w110, Tiny Bounties:
         Gui, MyWindow:Add, Text, vCurrentTinyBounties x+2 w50 right, % CurrentTinyBounties
@@ -2933,8 +2933,8 @@ ParseInventoryData() {
 	tokencount := (CurrentTinyBounties*12)+(CurrentSmBounties*72)+(CurrentMdBounties*576)+(CurrentLgBounties*1152)
 	if (UserDetails.details.event_details[1].user_data.event_tokens) {
 		tokentotal := UserDetails.details.event_details[1].user_data.event_tokens
-		AvailableTokens := "= " tokencount " Tokens`t(" Round(tokencount/2500, 2) " FPs)"
-		CurrentTokens := "+ " tokentotal " Current`t(" Round(tokentotal/2500, 2) " FPs)"
+		AvailableTokens := "= " tokencount " Tokens   (" Round(tokencount/2500, 2) " Free Plays)"
+		CurrentTokens := "+ " tokentotal " Current      (" Round(tokentotal/2500, 2) " Free Plays)"
 		AvailableFPs := "(Total: " (tokentotal+tokencount) " = " Round((tokentotal + tokencount)/2500, 2) " Free Plays)"
 	} else {
 		AvailableTokens := "= " tokencount " Tokens"
