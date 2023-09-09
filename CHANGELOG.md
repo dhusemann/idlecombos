@@ -10,6 +10,8 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 * Add counts in redeem codes
 * Add server detection in redeem codes
+* Add bounty contract warning
+* Add more bounty contract logging
 
 ## 3.61
 
