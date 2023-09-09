@@ -14,6 +14,8 @@ To all the Idle Dragoneers who inspired and assisted me!
 * Add more bounty contract logging
 * Updates to inventory tab layout
 * New settings to disable blacksmith contracts results
+* Add server detection in buy chests
+* Updates to buy chests message box width
 
 ## 3.61
 
