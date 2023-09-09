@@ -59,9 +59,10 @@ global TabActive := "Summary"
 global TabList := "Summary|Adventures|Inventory|Patrons|Champions|Event|Settings|Log|"
 global ServerDetection := 1
 global ShowResultsBlacksmithContracts := 1
+global DisableUserDetailsReload := 0
 ;global StyleSelection := "Default"
-global SettingsCheckValue := 19 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","serverdetection":1,"wrlpath":"","blacksmithcontractresults":1})
+global SettingsCheckValue := 20 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","serverdetection":1,"wrlpath":"","blacksmithcontractresults":1,"disableuserdetailsreload":0})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -512,6 +513,7 @@ class MyGui {
 		Gui, MyWindow:Add, Checkbox, vNoSaveSetting, Never save results to file?
 		Gui, MyWindow:Add, Button, gSave_Settings, Save Settings
 		Gui, MyWindow:Add, Checkbox, vShowResultsBlacksmithContracts x250 y59, Show Blacksmith Contracts Results?
+		Gui, MyWindow:Add, Checkbox, vDisableUserDetailsReload, Disable User Detail Reload? (Risky)
 		
 		Gui, Tab, Log
 		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w425, %OutputText%
@@ -578,6 +580,7 @@ class MyGui {
 		LoadGameClient := CurrentSettings.loadgameclient
 		WRLFile := CurrentSettings.wrlpath
 		ShowResultsBlacksmithContracts := CurrentSettings.blacksmithcontractresults
+		DisableUserDetailsReload := CurrentSettings.disableuserdetailsreload
 		;StyleSelection := CurrentSettings.style
 		;SetStyle(StyleSelection)
 		TabActive := CurrentSettings.tabactive
@@ -728,6 +731,7 @@ class MyGui {
 		GuiControl, MyWindow:, NoSaveSetting, % NoSaveSetting, w250 h210
 		GuiControl, MyWindow:, LogEnabled, % LogEnabled, w250 h210
 		GuiControl, MyWindow:, ShowResultsBlacksmithContracts, % ShowResultsBlacksmithContracts, w250 h210
+		GuiControl, MyWindow:, DisableUserDetailsReload, % DisableUserDetailsReload, w250 h210
 		;if (StyleSelection) {
 		;	GuiControl, Choose, StyleChoice, %StyleSelection%
 		;}
@@ -884,6 +888,7 @@ SaveSettings()
 	CurrentSettings.tabactive := TabActive
 	CurrentSettings.wrlpath := WRLFile
 	CurrentSettings.blacksmithcontractresults := ShowResultsBlacksmithContracts
+	CurrentSettings.disableuserdetailsreload := DisableUserDetailsReload
 	;CurrentSettings.style := StyleChoice
 	;StyleSelection = StyleChoice
 	newsettings := JSON.stringify(CurrentSettings)
@@ -1397,7 +1402,9 @@ Open_Codes:
 				codemessage := "Unknown or No Results"
 			}
 			GuiControl, , CodesOutputStatus, % CodesPending, w350 h210
-			GetUserDetails()
+			if( DisableUserDetailsReload == 0) {
+				GetUserDetails()
+			}
 			oMyGUI.Update()
 			Gui, CodeWindow: Default
 			CodesPending := "✅ Codes: " CodeTotal "/" CodeTotal " - Completed! 😎"
@@ -1479,7 +1486,7 @@ Buy_Extra_Chests(chestid,extracount) {
 	chestparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&chest_type_id=" chestid "&count="
 	gemsspent := 0
 	while (extracount > 0) {
-		SB_SetText("⌛ Chests remaining to purchase: " extracount)
+		SB_SetText("⌛ " ChestFromID(chestid) " remaining to purchase: " extracount)
 		if (extracount < 101) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams extracount)
 			extracount -= extracount
@@ -1492,14 +1499,14 @@ Buy_Extra_Chests(chestid,extracount) {
 			MsgBox % "Error: " rawresults
 			LogFile("Gems Spent: " gemsspent)
 			GetUserDetails()
-			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
+			SB_SetText("⌛ " ChestFromID(chestid) " remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
 		}
 		gemsspent += chestresults.currency_spent
 		Sleep 1000
 	}
 	LogFile("Gems Spent: " gemsspent)
-	SB_SetText("✅ Chest purchase completed")
+	SB_SetText("✅ " ChestFromID(chestid) " purchase completed")
 	return gemsspent
 }
 
@@ -1621,7 +1628,9 @@ Buy_Chests(chestid) {
 	if(tokenspent > 0){
 		LogFile(EventTokenName " spent: " tokenspent)
 	}
-	GetUserDetails()
+	if( DisableUserDetailsReload == 0) {
+		GetUserDetails()
+	}
 	SB_SetText("✅ " chestsbought " " ChestFromID(chestid) " purchase completed.")
 	return
 }
@@ -1750,7 +1759,9 @@ Open_Chests(chestid) {
 			}
 			MsgBox % "Error: " rawresults
 			LogFile("Chests Opened: " Floor(chestsopened))
-			GetUserDetails()
+			if( DisableUserDetailsReload == 0) {
+				GetUserDetails()
+			}
 			SB_SetText("⌛ Chests remaining: " count " (Error)")
 			return
 		}
@@ -1812,7 +1823,9 @@ Open_Chests(chestid) {
 			LogFile("Gold Chests Opened: " Floor(chestsopened))
 		}
 	}
-	GetUserDetails()
+	if( DisableUserDetailsReload == 0) {
+		GetUserDetails()
+	}
 	SB_SetText("✅ Chest opening completed")
 	return
 }
@@ -1962,7 +1975,9 @@ UseBlacksmith(buffid) {
 				case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 			}
 			LogFile(contractname "Blacksmith Contracts Used: " Floor(contractsused))
-			GetUserDetails()
+			if( DisableUserDetailsReload == 0) {
+				GetUserDetails()
+			}
 			SB_SetText("⌛ " contractname " Blacksmith Contracts remaining: " count " (Error)")
 			return
 		}
@@ -1991,7 +2006,9 @@ UseBlacksmith(buffid) {
 		case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 	}
 	LogFile(contractname " Blacksmith Contracts used on " ChampFromID(heroid) ": " Floor(contractsused))
-	GetUserDetails()
+	if( DisableUserDetailsReload == 0) {
+		GetUserDetails()
+	}
 	SB_SetText("✅ " contractname " Blacksmith Contracts use completed")
 	return
 }
@@ -2292,7 +2309,9 @@ UseBounty2(buffid) {
 				case 20: contractsused := (CurrentLgBounties - bountyresults.buffs_remaining)
 			}
 			LogFile(contractname "Bounty Contracts Used: " Floor(contractsused))
-			GetUserDetails()
+			if( DisableUserDetailsReload == 0) {
+				GetUserDetails()
+			}
 			SB_SetText("⌛ " contractname " Bounty Contracts remaining: " count " (Error)")
 			return
 		}
@@ -2318,7 +2337,9 @@ UseBounty2(buffid) {
 		case 20: contractsused := (CurrentLgBounties - bountyresults.buffs_remaining)
 	}
 	LogFile(contractname " Bounty Contracts used: " Floor(contractsused))
-	GetUserDetails()
+	if( DisableUserDetailsReload == 0) {
+		GetUserDetails()
+	}
 	SB_SetText("✅ " contractname " Bounty Contracts use completed")
 	return
 }
