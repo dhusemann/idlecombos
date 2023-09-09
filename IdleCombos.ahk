@@ -4249,9 +4249,9 @@ ShowPityTimers() {
 	chestsforepic := 1
 	while (chestsforepic < 11) {
 		if (chestsforepic == 1) {
-			pitylist := pitylist "Epic in Next Chest for:`n "
+			pitylist := pitylist "Epic in Next Chest for:`n"
 		} else {
-			pitylist := pitylist "`nEpic in next " chestsforepic " Chests for:`n "
+			pitylist := pitylist "`nEpic in next " chestsforepic " Chests for:`n"
 		}
 		currentchamp := 14
 		currentcount := 0
@@ -4287,7 +4287,8 @@ ShowPityTimers() {
 		}
 		chestsforepic += 1
 	}
-	MsgBox % pitylist
+	ScrollBox(pitylist, "p b1 h450 w700 f{s10, Consolas}", "Pity Timers")
+	; MsgBox % pitylist
 	return
 }
 
