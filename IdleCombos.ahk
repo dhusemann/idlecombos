@@ -1718,14 +1718,14 @@ Open_Chests(chestid) {
 
 	while (count > 0) {
 		SB_SetText("⌛ Chests remaining to open: " count)
-		if (count < 100) {
+		if (count < 1000) {
 			rawresults := ServerCall("opengenericchest", chestparams count)
 			Sleep, 500
 			count -= count
 		} else {
-			rawresults := ServerCall("opengenericchest", chestparams 99)
+			rawresults := ServerCall("opengenericchest", chestparams 1000)
 			Sleep, 500
-			count -= 99
+			count -= 1000
 		}
 		if (CurrentSettings.alwayssavechests || tempsavesetting) {
 			FileAppend, %rawresults%`n, %ChestOpenLogFile%
