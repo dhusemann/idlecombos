@@ -1518,7 +1518,7 @@ Buy_Chests(chestid) {
 	switch true {
 		case (chestid = 1): {
 			maxbuy := Floor(CurrentGems/50)
-			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
+			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 250, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count > maxbuy) {
@@ -1531,7 +1531,7 @@ Buy_Chests(chestid) {
 		}
 		case (chestid = 2): {
 			maxbuy := Floor(CurrentGems/500)
-			InputBox, count, Buying Chests, % "How many Gold Chests?`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
+			InputBox, count, Buying Chests, % "How many Gold Chests?`n(Max: " maxbuy ")", , 250, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count = "alpha5") {
@@ -1552,7 +1552,7 @@ Buy_Chests(chestid) {
 		}
 		case (chestid > 3 and chestid < 510): {
 			maxbuy := Floor(EventTokens/10000)
-			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
+			InputBox, count, Buying Chests, % "How many " ChestFromID(chestid) "?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 250, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count = "alpha5") {
@@ -1576,25 +1576,36 @@ Buy_Chests(chestid) {
 			return
 		}
 	}
+	if (ServerDetection == 1) {
+		GetUserDetails()
+		sleep, 2000
+	}
 	chestparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&chest_type_id=" chestid "&count="
 	gemsspent := 0
 	tokenspent := 0
+	chestsbought := 0
 	while (count > 0) {
-		SB_SetText("⌛ Chests remaining to purchase: " count)
+		SB_SetText("⌛ " ChestFromID(chestid) " remaining to purchase: " count)
 		if (count < 101) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams count)
+			chestsbought += count
 			count -= count
 		} else {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams "100")
+			chestsbought += 100
 			count -= 100
 		}
 		chestresults := JSON.parse(rawresults)
 		if (chestresults.success == "0") {
 			MsgBox % "Error: " rawresults
-			LogFile("Gems spent: " gemsspent)
-			LogFile(EventTokenName " spent: " tokenspent)
+			if(gemsspent > 0){
+				LogFile("Gems spent: " gemsspent)
+			}
+			if(tokenspent > 0){
+				LogFile(EventTokenName " spent: " tokenspent)
+			}
 			GetUserDetails()
-			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
+			SB_SetText("⌛ " ChestFromID(chestid) " remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
 		}
 		if(chestid = 1 OR chestid = 2) {
@@ -1602,12 +1613,16 @@ Buy_Chests(chestid) {
 		} else {
 			tokenspent += chestresults.currency_spent
 		}
-		Sleep 1000
+		Sleep 500
 	}
-	LogFile("Gems spent: " gemsspent)
-	LogFile(EventTokenName " spent: " tokenspent)
+	if(gemsspent > 0){
+		LogFile("Gems spent: " gemsspent)
+	}
+	if(tokenspent > 0){
+		LogFile(EventTokenName " spent: " tokenspent)
+	}
 	GetUserDetails()
-	SB_SetText("✅ Chest purchase completed.")
+	SB_SetText("✅ " chestsbought " " ChestFromID(chestid) " purchase completed.")
 	return
 }
 
