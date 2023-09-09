@@ -58,9 +58,10 @@ global LoadGameClient := 0 ;0 none; 1 epic, 2 steam, 3 standalone
 global TabActive := "Summary"
 global TabList := "Summary|Adventures|Inventory|Patrons|Champions|Event|Settings|Log|"
 global ServerDetection := 1
+global ShowResultsBlacksmithContracts := 1
 ;global StyleSelection := "Default"
-global SettingsCheckValue := 18 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","serverdetection":1,"wrlpath":""})
+global SettingsCheckValue := 19 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","serverdetection":1,"wrlpath":"","blacksmithcontractresults":1})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -410,46 +411,46 @@ class MyGui {
 		Gui, MyWindow:Add, Text, vBG3Core x200 y198 w150, % BG3Core
 
 		Gui, Tab, Inventory
-		Gui, MyWindow:Add, Text, x15 y33 w70, Current Gems:
-		Gui, MyWindow:Add, Text, vCurrentGems x+2 w75 right, % CurrentGems
-		Gui, MyWindow:Add, Text, vAvailableChests x+10 w190, % AvailableChests
-		Gui, MyWindow:Add, Text, x15 y+p w70, (Spent Gems):
-		Gui, MyWindow:Add, Text, vSpentGems x+2 w75 right, % SpentGems
+		Gui, MyWindow:Add, Text, x15 y33 w80, Current Gems:
+        Gui, MyWindow:Add, Text, vCurrentGems x+2 w80 right, % CurrentGems
+        Gui, MyWindow:Add, Text, vAvailableChests x+10 w250, % AvailableChests
+        Gui, MyWindow:Add, Text, x15 y+p w80, (Spent Gems):
+        Gui, MyWindow:Add, Text, vSpentGems x+2 w80 right, % SpentGems
 
-		Gui, MyWindow:Add, Text, x15 y+5+p w110, Gold Chests:
-		Gui, MyWindow:Add, Text, vCurrentGolds x+2 w35 right, % CurrentGolds
-		Gui, MyWindow:Add, Text, vGoldPity x+10 w190, % GoldPity
-		Gui, MyWindow:Add, Text, x15 y+p w110, Silver Chests:
-		Gui, MyWindow:Add, Text, vCurrentSilvers x+2 w35 right, % CurrentSilvers
-		Gui, MyWindow:Add, Text, x+105 y+1 w185, Next TGP:
-		Gui, MyWindow:Add, Text, x15 y+0 w110, Time Gate Pieces:
-		Gui, MyWindow:Add, Text, vCurrentTGPs x+2 w35 right, % CurrentTGPs
-		Gui, MyWindow:Add, Text, vAvailableTGs x+10 w85, % AvailableTGs
-		Gui, MyWindow:Add, Text, vNextTGPDrop x+10 w220, % NextTGPDrop
+        Gui, MyWindow:Add, Text, x15 y+5+p w110, Gold Chests:
+        Gui, MyWindow:Add, Text, vCurrentGolds x+2 w50 right, % CurrentGolds
+        Gui, MyWindow:Add, Text, vGoldPity x+10 w190, % GoldPity
+        Gui, MyWindow:Add, Text, x15 y+p w110, Silver Chests:
+        Gui, MyWindow:Add, Text, vCurrentSilvers x+2 w50 right, % CurrentSilvers
+        Gui, MyWindow:Add, Text, x+105 y+1 w185, Next TGP:
+        Gui, MyWindow:Add, Text, x15 y+0 w110, Time Gate Pieces:
+        Gui, MyWindow:Add, Text, vCurrentTGPs x+2 w35 right, % CurrentTGPs
+        Gui, MyWindow:Add, Text, vAvailableTGs x+10 w85, % AvailableTGs
+        Gui, MyWindow:Add, Text, vNextTGPDrop x+10 w220, % NextTGPDrop
 
-		Gui, MyWindow:Add, Text, x15 y+5+p w110, Tiny Bounties:
-		Gui, MyWindow:Add, Text, vCurrentTinyBounties x+2 w35 right, % CurrentTinyBounties
-		Gui, MyWindow:Add, Text, x15 y+p w110, Small Bounties:
-		Gui, MyWindow:Add, Text, vCurrentSmBounties x+2 w35 right, % CurrentSmBounties
-		Gui, MyWindow:Add, Text, vAvailableTokens x+10 w220, % AvailableTokens
-		Gui, MyWindow:Add, Text, x15 y+p w110, Medium Bounties:
-		Gui, MyWindow:Add, Text, vCurrentMdBounties x+2 w35 right, % CurrentMdBounties
-		Gui, MyWindow:Add, Text, vCurrentTokens x+10 w185, % CurrentTokens
-		Gui, MyWindow:Add, Text, x15 y+p w110, Large Bounties:
-		Gui, MyWindow:Add, Text, vCurrentLgBounties x+2 w35 right, % CurrentLgBounties
-		Gui, MyWindow:Add, Text, vAvailableFPs x+10 w220, % AvailableFPs
+        Gui, MyWindow:Add, Text, x15 y+5+p w110, Tiny Bounties:
+        Gui, MyWindow:Add, Text, vCurrentTinyBounties x+2 w50 right, % CurrentTinyBounties
+        Gui, MyWindow:Add, Text, x15 y+p w110, Small Bounties:
+        Gui, MyWindow:Add, Text, vCurrentSmBounties x+2 w50 right, % CurrentSmBounties
+        Gui, MyWindow:Add, Text, vAvailableTokens x+10 w220, % AvailableTokens
+        Gui, MyWindow:Add, Text, x15 y+p w110, Medium Bounties:
+        Gui, MyWindow:Add, Text, vCurrentMdBounties x+2 w50 right, % CurrentMdBounties
+        Gui, MyWindow:Add, Text, vCurrentTokens x+10 w200, % CurrentTokens
+        Gui, MyWindow:Add, Text, x15 y+p w110, Large Bounties:
+        Gui, MyWindow:Add, Text, vCurrentLgBounties x+2 w50 right, % CurrentLgBounties
+        Gui, MyWindow:Add, Text, vAvailableFPs x+10 w220, % AvailableFPs
 
-		Gui, MyWindow:Add, Text, x15 y+5+p w110, Tiny Blacksmiths:
-		Gui, MyWindow:Add, Text, vCurrentTinyBS x+2 w35 right, % CurrentTinyBS
-		Gui, MyWindow:Add, Text, vAvailableBSLvs x+10 w175, % AvailableBSLvs
-		Gui, MyWindow:Add, Text, x15 y+p w110, Small Blacksmiths:
-		Gui, MyWindow:Add, Text, vCurrentSmBS x+2 w35 right, % CurrentSmBS
-		Gui, MyWindow:Add, Text, x15 y+p w110, Medium Blacksmiths:
-		Gui, MyWindow:Add, Text, vCurrentMdBS x+2 w35 right, % CurrentMdBS
-		Gui, MyWindow:Add, Text, x15 y+p w110, Large Blacksmiths:
-		Gui, MyWindow:Add, Text, vCurrentLgBS x+2 w35 right, % CurrentLgBS
-		Gui, MyWindow:Add, Text, x15 y+p w110, Huge Blacksmiths:
-		Gui, MyWindow:Add, Text, vCurrentHgBS x+2 w35 right, % CurrentHgBS
+        Gui, MyWindow:Add, Text, x15 y+5+p w110, Tiny Blacksmiths:
+        Gui, MyWindow:Add, Text, vCurrentTinyBS x+2 w50 right, % CurrentTinyBS
+        Gui, MyWindow:Add, Text, vAvailableBSLvs x+10 w175, % AvailableBSLvs
+        Gui, MyWindow:Add, Text, x15 y+p w110, Small Blacksmiths:
+        Gui, MyWindow:Add, Text, vCurrentSmBS x+2 w50 right, % CurrentSmBS
+        Gui, MyWindow:Add, Text, x15 y+p w110, Medium Blacksmiths:
+        Gui, MyWindow:Add, Text, vCurrentMdBS x+2 w50 right, % CurrentMdBS
+        Gui, MyWindow:Add, Text, x15 y+p w110, Large Blacksmiths:
+        Gui, MyWindow:Add, Text, vCurrentLgBS x+2 w50 right, % CurrentLgBS
+        Gui, MyWindow:Add, Text, x15 y+p w110, Huge Blacksmiths:
+        Gui, MyWindow:Add, Text, vCurrentHgBS x+2 w50 right, % CurrentHgBS
 
 		Gui, Tab, Patrons
 		Gui, MyWindow:Add, Text, x15 y33 w75, Mirt Variants:
@@ -510,7 +511,8 @@ class MyGui {
 		Gui, MyWindow:Add, CheckBox, vAlwaysSaveCodes, Always save Code Redeem Results to file?
 		Gui, MyWindow:Add, Checkbox, vNoSaveSetting, Never save results to file?
 		Gui, MyWindow:Add, Button, gSave_Settings, Save Settings
-
+		Gui, MyWindow:Add, Checkbox, vShowResultsBlacksmithContracts x250 y59, Show Blacksmith Contracts Results?
+		
 		Gui, Tab, Log
 		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w425, %OutputText%
 
@@ -575,6 +577,7 @@ class MyGui {
 		LogEnabled := CurrentSettings.logenabled
 		LoadGameClient := CurrentSettings.loadgameclient
 		WRLFile := CurrentSettings.wrlpath
+		ShowResultsBlacksmithContracts := CurrentSettings.blacksmithcontractresults
 		;StyleSelection := CurrentSettings.style
 		;SetStyle(StyleSelection)
 		TabActive := CurrentSettings.tabactive
@@ -724,6 +727,7 @@ class MyGui {
 		GuiControl, MyWindow:, AlwaysSaveCodes, % AlwaysSaveCodes, w250 h210
 		GuiControl, MyWindow:, NoSaveSetting, % NoSaveSetting, w250 h210
 		GuiControl, MyWindow:, LogEnabled, % LogEnabled, w250 h210
+		GuiControl, MyWindow:, ShowResultsBlacksmithContracts, % ShowResultsBlacksmithContracts, w250 h210
 		;if (StyleSelection) {
 		;	GuiControl, Choose, StyleChoice, %StyleSelection%
 		;}
@@ -879,6 +883,7 @@ SaveSettings()
 	CurrentSettings.servername := ServerName
 	CurrentSettings.tabactive := TabActive
 	CurrentSettings.wrlpath := WRLFile
+	CurrentSettings.blacksmithcontractresults := ShowResultsBlacksmithContracts
 	;CurrentSettings.style := StyleChoice
 	;StyleSelection = StyleChoice
 	newsettings := JSON.stringify(CurrentSettings)
@@ -1930,7 +1935,9 @@ UseBlacksmith(buffid) {
 		}
 		blacksmithresults := JSON.parse(rawresults)
 		if ((blacksmithresults.success == "0") || (blacksmithresults.okay == "0")) {
-			MsgBox % ChampFromID(heroid) " levels gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
+			if(ShowResultsBlacksmithContracts == 1) {
+				MsgBox % ChampFromID(heroid) " levels gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
+			}
 			MsgBox % "Error: " rawresults
 			switch buffid {
 				case 31: contractsused := (CurrentTinyBS - blacksmithresults.buffs_remaining)
@@ -1957,7 +1964,9 @@ UseBlacksmith(buffid) {
 			}
 		}
 	}
-	MsgBox % ChampFromID(heroid) " levels gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
+	if(ShowResultsBlacksmithContracts == 1) {
+		MsgBox % ChampFromID(heroid) " levels gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
+	}
 	tempsavesetting := 0
 	switch buffid {
 		case 31: contractsused := (CurrentTinyBS - blacksmithresults.buffs_remaining)
