@@ -297,7 +297,7 @@ class MyGui {
 		Menu, BountySubmenu, Add, Use &Small Contracts, Sm_Bounty
 		Menu, BountySubmenu, Add, Use &Medium Contracts, Med_Bounty
 		Menu, BountySubmenu, Add, Use &Large Contracts, Lg_Bounty
-		Menu, ToolsSubmenu, Add, B&ounty, :BountySubmenu
+		Menu, ToolsSubmenu, Add, B&ounty (Alpha Feature), :BountySubmenu
 
 		Menu, ToolsSubmenu, Add, &Redeem Codes, Open_Codes
 
@@ -1996,6 +1996,20 @@ Lg_Bounty:
 		return
 	}
 
+UseBountyClick(name, imagename, offset_x, offset_y, delay) {
+	FileAppend, %name%`n, %BountyLogFile%
+	WinGet, PID, PID, Idle Champions
+	WinActivate, ahk_pid %PID%
+	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/%imagename%.png
+	FileAppend, %name% - Errorlevel: %errorlevel% ix: %ix% iy: %iy%`n, %BountyLogFile%
+	if (errorlevel == 0) {
+		MouseClick, left, ix+offset_x, iy+offset_y
+		sleep %delay%
+		return 1
+	}
+	return 0
+}
+
 UseBounty(buffid) {
 	if !UserID {
 		MsgBox % "Need User ID & Hash"
@@ -2042,58 +2056,35 @@ UseBounty(buffid) {
 			return
 		}
 	}
-	MsgBox, 4, , % "Use " count " " contractname " Bounty Contracts?`n`nWARNING: This is an alpha feature and is prone to bugs and must be run at resolution 1280x720 and not in fullscreen`n`nNOTE: Do not touch the mouse or keyboard until process completed`n`nAUTO PROGRESS will be temporarily turned off for this process"
+	MsgBox, 4, , % "Use " count " " contractname " Bounty Contracts?`n`nWARNING: This is an alpha feature and is prone to bugs (or just not work at all) and must be run at resolution 1280x720 and not in fullscreen`n`nNOTE: Do not touch the mouse or keyboard until process completed`n`nAUTO PROGRESS will be temporarily turned off for this process"
 	IfMsgBox, No
 	{
 		return
 	}
+	FileAppend, [PROCESS START] %contractname% Bounty Contracts to use: %count%`n, %BountyLogFile%
 	;bounty cancel
-	WinGet, PID, PID, Idle Champions
-	WinActivate, ahk_pid %PID%
-	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_cancel.png
-	;msgbox % "CANCEL - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-	if (errorlevel == 0) {
-		MouseClick, left, ix+5, iy+5
-		sleep 500
-	}
+	UseBountyClick("BOUNTY CANCEL", "bounty_cancel", 5, 5, 500)
 	;inventory close
-	WinGet, PID, PID, Idle Champions
-	WinActivate, ahk_pid %PID%
-	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory_close.png
-	;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-	if (errorlevel == 0) {
-		MouseClick, left, ix+5, iy+5
-		sleep 500
-	}
+	UseBountyClick("INVENTORY CLOSE", "inventory_close", 5, 5, 500)
 	;turn auto progress off
 	autoprogress := 0
-	WinGet, PID, PID, Idle Champions
-	WinActivate, ahk_pid %PID%
-	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/auto_progress_on.png
-	;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-	if (errorlevel == 0) {
+	if (UseBountyClick("AUTO PROGRESS OFF", "auto_progress_on", 5, 5, 50) == 1) {
 		autoprogress := 1
-		MouseClick, left, ix+5, iy+5
-		sleep 50
 	}
 	;inventory open
-	WinGet, PID, PID, Idle Champions
-	WinActivate, ahk_pid %PID%
-	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory.png
-	;msgbox % "INVENTORY - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-	if (errorlevel == 0) {
-		MouseClick, left, ix+15, iy+15
-		sleep 500
+	if (UseBountyClick("INVENTORY OPEN", "inventory", 15, 15, 500) == 1) {
 		contractsused := 0
 		page := 1
 		while (count > 0) {
 			found := 0
 			while (found == 0) { ;search pages for bounties
 				if (page == 5) {
+					FileAppend, [PROCESS COMPLETED] No %contractname% Bounty Contracts found`n, %BountyLogFile%
 					msgbox % "[PROCESS COMPLETED]`n`nNo "contractname " Bounty Contracts found"
 					return
 				}
 				;search inventory page
+				FileAppend, FIND BOUNTY CONTRACT`n, %BountyLogFile%
 				WinGet, PID, PID, Idle Champions
 				WinActivate, ahk_pid %PID%
 				;bounty icon
@@ -2107,7 +2098,7 @@ UseBounty(buffid) {
 					case 20:
 						ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_lg.png
 				}
-				;msgbox % "BOUNTY - PAGE " . page . " - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+				FileAppend, FIND BOUNTY CONTRACT - PAGE %page% - Errorlevel: %errorlevel% ix: %ix% iy: %iy%`n, %BountyLogFile%
 				if (errorlevel == 0) {
 					WinGet, PID, PID, Idle Champions
 					WinActivate, ahk_pid %PID%
@@ -2116,11 +2107,12 @@ UseBounty(buffid) {
 					found := 1
 				} else if (errorlevel == 1) {
 					page += 1
+					FileAppend, INVENTORY NEXT PAGE`n, %BountyLogFile%
 					WinGet, PID, PID, Idle Champions
 					WinActivate, ahk_pid %PID%
 					;inventory next page
 					ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory_next.png
-					;msgbox % "INVENTORY NEXT - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+					FileAppend, INVENTORY NEXT PAGE - Errorlevel: %errorlevel% ix: %ix% iy: %iy%`n, %BountyLogFile%
 					if (errorlevel == 0) {
 						WinGet, PID, PID, Idle Champions
 						WinActivate, ahk_pid %PID%
@@ -2143,12 +2135,12 @@ UseBounty(buffid) {
 					count -= 50
 				}
 				repeatcount -= 1
-				;click next
+				;bounty next/increase count
+				FileAppend, INVENTORY COUNT INCREASE`n, %BountyLogFile%
 				WinGet, PID, PID, Idle Champions
 				WinActivate, ahk_pid %PID%
-				;bounty next/increase count
 				ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_next.png
-				;msgbox % "NEXT - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+				FileAppend, INVENTORY COUNT INCREASE - Errorlevel: %errorlevel% ix: %ix% iy: %iy%`n, %BountyLogFile%
 				if (errorlevel == 0) {
 					loop %repeatcount% {
 						WinGet, PID, PID, Idle Champions
@@ -2157,55 +2149,21 @@ UseBounty(buffid) {
 						sleep 20
 					}
 				}
-				;click go
-				WinGet, PID, PID, Idle Champions
-				WinActivate, ahk_pid %PID%
 				;bounty go
-				ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_go.png
-				;msgbox % "GO - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-				;bounty cancel
-				;ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_cancel.png
-				;msgbox % "CANCEL - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-				if (errorlevel == 0) {
-					WinGet, PID, PID, Idle Champions
-					WinActivate, ahk_pid %PID%
-					MouseClick, left, ix+15, iy+15
-					sleep 750
-				}
+				UseBountyClick("CLICK GO", "bounty_go", 15, 15, 750)
 				if (repeatcount = 49) {
 					;additional cancel
-					WinGet, PID, PID, Idle Champions
-					WinActivate, ahk_pid %PID%
-					ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/additional_cancel.png
-					;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-					if (errorlevel == 0) {
-						MouseClick, left, ix+5, iy+5
-						sleep 500
-					}
+					UseBountyClick("ADDITIONAL CANCEL", "additional_cancel", 5, 5, 500)
 				}
 			}
 		}
 		;inventory close
-		WinGet, PID, PID, Idle Champions
-		WinActivate, ahk_pid %PID%
-		ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory_close.png
-		;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-		if (errorlevel == 0) {
-			MouseClick, left, ix+5, iy+5
-			;sleep 500
-		}
+		UseBountyClick("INVENTORY CLOSE", "inventory_close", 5, 5, 500)
 		if (autoprogress == 1) {
-			sleep 500
 			;turn auto progress on
-			WinGet, PID, PID, Idle Champions
-			WinActivate, ahk_pid %PID%
-			ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/auto_progress_off.png
-			;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-			if (errorlevel == 0) {
-				MouseClick, left, ix+5, iy+5
-				;sleep 500
-			}
+			UseBountyClick("AUTO PROGRESS ON", "auto_progress_off", 5, 5, 1)
 		}
+		FileAppend, [PROCESS COMPLETED] %contractname% Bounty Contracts used: %contractsused%`n, %BountyLogFile%
 		msgbox % "[PROCESS COMPLETED]`n`n"contractname " Bounty Contracts used: " Floor(contractsused)
 		LogFile(contractname " Bounty Contracts used: " Floor(contractsused))
 		GetUserDetails()
