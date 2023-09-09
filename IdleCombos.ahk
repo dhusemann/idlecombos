@@ -2042,7 +2042,7 @@ UseBounty(buffid) {
 			return
 		}
 	}
-	MsgBox, 4, , % "Use " count " " contractname " Bounty Contracts?`n`nNOTE: Do not touch the mouse or keyboard until process completed`n`nAUTO PROGRESS will be temporarily turned off for this process"
+	MsgBox, 4, , % "Use " count " " contractname " Bounty Contracts?`n`nWARNING: This is an alpha feature and is prone to bugs and must be run at resolution 1280x720 and not in fullscreen`n`nNOTE: Do not touch the mouse or keyboard until process completed`n`nAUTO PROGRESS will be temporarily turned off for this process"
 	IfMsgBox, No
 	{
 		return
