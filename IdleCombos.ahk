@@ -1308,10 +1308,10 @@ Open_Codes:
 							otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
 							otherchestscount += vv.count
 							othercheststype:= ChestFromID(vv.chest_type_id)
-							if !IsObject(otherchestsarray[othercheststype]) {
-								otherchestsarray[othercheststype] := 1
-							} else {
+							if ( otherchestsarray.HasKey(othercheststype) ) {
 								otherchestsarray[othercheststype] += vv.count
+							} else {
+								otherchestsarray[othercheststype] := 1
 							}
 						} else if (vv.add_time_gate_key_piece) {
 							codetgps += vv.count
@@ -1365,13 +1365,14 @@ Open_Codes:
 			}
 			if !(otherchests == "") {
 				;StringTrimRight, otherchests, otherchests, 2
-				codemessage := codemessage "Other Chests (" otherchestselement "):`n" otherchests "`n"
+				codemessage := codemessage "Other Chests (" otherchestscount "):`n" otherchests "`n"
 			}
 			if (otherchestscount > 0) {
-				codemessage := codemessage "Other Chests [Sorted] (" otherchestselement "):`n"
+				codemessage := codemessage "Other Chests [Sorted] (" otherchestscount "):`n"
 				for otherchestsindex, otherchestselement in otherchestsarray {
-					codemessage := codemessage otherchestsindex " (" otherchestselement ")" "`n"
+					codemessage := codemessage otherchestsindex " (" otherchestselement ")`n"
 				}
+				codemessage := codemessage "`n"
 			}
 			if (codepolish > 0) {
 				codemessage := codemessage "Potions of Polish:`n" codepolish "`n"
