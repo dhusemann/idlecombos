@@ -1232,7 +1232,7 @@ Open_Codes:
 			codesupplys := 0
 			otherchestscount := 0
 			otherchestsarray := []
-			otherchests := ""
+			;otherchests := ""
 			codeepicscount := 0
 			codeepics := ""
 			codetgps := 0
@@ -1305,7 +1305,7 @@ Open_Codes:
 						} else if (vv.chest_type_id == "1") {
 							codesilvers += vv.count
 						} else if (vv.chest_type_id) {
-							otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
+							;otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
 							otherchestscount += vv.count
 							othercheststype:= ChestFromID(vv.chest_type_id)
 							if ( otherchestsarray.HasKey(othercheststype) ) {
