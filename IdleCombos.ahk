@@ -1363,12 +1363,12 @@ Open_Codes:
 			if (codesupplys > 0) {
 				codemessage := codemessage "Supply Chests:`n" codesupplys "`n"
 			}
-			if !(otherchests == "") {
-				;StringTrimRight, otherchests, otherchests, 2
-				codemessage := codemessage "Other Chests (" otherchestscount "):`n" otherchests "`n"
-			}
+			; if !(otherchests == "") {
+			; 	;StringTrimRight, otherchests, otherchests, 2
+			; 	codemessage := codemessage "Other Chests (" otherchestscount "):`n" otherchests "`n"
+			; }
 			if (otherchestscount > 0) {
-				codemessage := codemessage "Other Chests [Sorted] (" otherchestscount "):`n"
+				codemessage := codemessage "Other Chests (" otherchestscount "):`n"
 				for otherchestsindex, otherchestselement in otherchestsarray {
 					codemessage := codemessage otherchestsindex " (" otherchestselement ")`n"
 				}
