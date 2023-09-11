@@ -6,7 +6,7 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.61"
+global VersionNumber := "3.62"
 global CurrentDictionary := "2.32"
 
 ;Local File globals
@@ -58,9 +58,11 @@ global LoadGameClient := 0 ;0 none; 1 epic, 2 steam, 3 standalone
 global TabActive := "Summary"
 global TabList := "Summary|Adventures|Inventory|Patrons|Champions|Event|Settings|Log|"
 global ServerDetection := 1
+global ShowResultsBlacksmithContracts := 1
+global DisableUserDetailsReload := 0
 ;global StyleSelection := "Default"
-global SettingsCheckValue := 18 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","serverdetection":1,"wrlpath":""})
+global SettingsCheckValue := 20 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","serverdetection":1,"wrlpath":"","blacksmithcontractresults":1,"disableuserdetailsreload":0})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -297,7 +299,7 @@ class MyGui {
 		Menu, BountySubmenu, Add, Use &Small Contracts, Sm_Bounty
 		Menu, BountySubmenu, Add, Use &Medium Contracts, Med_Bounty
 		Menu, BountySubmenu, Add, Use &Large Contracts, Lg_Bounty
-		Menu, ToolsSubmenu, Add, B&ounty, :BountySubmenu
+		Menu, ToolsSubmenu, Add, B&ounty (Alpha Feature), :BountySubmenu
 
 		Menu, ToolsSubmenu, Add, &Redeem Codes, Open_Codes
 
@@ -410,46 +412,46 @@ class MyGui {
 		Gui, MyWindow:Add, Text, vBG3Core x200 y198 w150, % BG3Core
 
 		Gui, Tab, Inventory
-		Gui, MyWindow:Add, Text, x15 y33 w70, Current Gems:
-		Gui, MyWindow:Add, Text, vCurrentGems x+2 w75 right, % CurrentGems
-		Gui, MyWindow:Add, Text, vAvailableChests x+10 w190, % AvailableChests
-		Gui, MyWindow:Add, Text, x15 y+p w70, (Spent Gems):
-		Gui, MyWindow:Add, Text, vSpentGems x+2 w75 right, % SpentGems
+		Gui, MyWindow:Add, Text, x15 y33 w80, Current Gems:
+        Gui, MyWindow:Add, Text, vCurrentGems x+2 w80 right, % CurrentGems
+        Gui, MyWindow:Add, Text, vAvailableChests x+10 w250, % AvailableChests
+        Gui, MyWindow:Add, Text, x15 y+p w80, (Spent Gems):
+        Gui, MyWindow:Add, Text, vSpentGems x+2 w80 right, % SpentGems
 
-		Gui, MyWindow:Add, Text, x15 y+5+p w110, Gold Chests:
-		Gui, MyWindow:Add, Text, vCurrentGolds x+2 w35 right, % CurrentGolds
-		Gui, MyWindow:Add, Text, vGoldPity x+10 w190, % GoldPity
-		Gui, MyWindow:Add, Text, x15 y+p w110, Silver Chests:
-		Gui, MyWindow:Add, Text, vCurrentSilvers x+2 w35 right, % CurrentSilvers
-		Gui, MyWindow:Add, Text, x+105 y+1 w185, Next TGP:
-		Gui, MyWindow:Add, Text, x15 y+0 w110, Time Gate Pieces:
-		Gui, MyWindow:Add, Text, vCurrentTGPs x+2 w35 right, % CurrentTGPs
-		Gui, MyWindow:Add, Text, vAvailableTGs x+10 w85, % AvailableTGs
-		Gui, MyWindow:Add, Text, vNextTGPDrop x+10 w220, % NextTGPDrop
+        Gui, MyWindow:Add, Text, x15 y+5+p w110, Gold Chests:
+        Gui, MyWindow:Add, Text, vCurrentGolds x+2 w50 right, % CurrentGolds
+        Gui, MyWindow:Add, Text, vGoldPity x+10 w190, % GoldPity
+        Gui, MyWindow:Add, Text, x15 y+p w110, Silver Chests:
+        Gui, MyWindow:Add, Text, vCurrentSilvers x+2 w50 right, % CurrentSilvers
+        Gui, MyWindow:Add, Text, x+145 y+1 w185, Next TGP:
+        Gui, MyWindow:Add, Text, x15 y+0 w110, Time Gate Pieces:
+        Gui, MyWindow:Add, Text, vCurrentTGPs x+17 w35 right, % CurrentTGPs
+        Gui, MyWindow:Add, Text, vAvailableTGs x+10 w85, % AvailableTGs
+        Gui, MyWindow:Add, Text, vNextTGPDrop x+40 w220, % NextTGPDrop
 
-		Gui, MyWindow:Add, Text, x15 y+5+p w110, Tiny Bounties:
-		Gui, MyWindow:Add, Text, vCurrentTinyBounties x+2 w35 right, % CurrentTinyBounties
-		Gui, MyWindow:Add, Text, x15 y+p w110, Small Bounties:
-		Gui, MyWindow:Add, Text, vCurrentSmBounties x+2 w35 right, % CurrentSmBounties
-		Gui, MyWindow:Add, Text, vAvailableTokens x+10 w220, % AvailableTokens
-		Gui, MyWindow:Add, Text, x15 y+p w110, Medium Bounties:
-		Gui, MyWindow:Add, Text, vCurrentMdBounties x+2 w35 right, % CurrentMdBounties
-		Gui, MyWindow:Add, Text, vCurrentTokens x+10 w185, % CurrentTokens
-		Gui, MyWindow:Add, Text, x15 y+p w110, Large Bounties:
-		Gui, MyWindow:Add, Text, vCurrentLgBounties x+2 w35 right, % CurrentLgBounties
-		Gui, MyWindow:Add, Text, vAvailableFPs x+10 w220, % AvailableFPs
+        Gui, MyWindow:Add, Text, x15 y+5+p w110, Tiny Bounties:
+        Gui, MyWindow:Add, Text, vCurrentTinyBounties x+2 w50 right, % CurrentTinyBounties
+        Gui, MyWindow:Add, Text, x15 y+p w110, Small Bounties:
+        Gui, MyWindow:Add, Text, vCurrentSmBounties x+2 w50 right, % CurrentSmBounties
+        Gui, MyWindow:Add, Text, vAvailableTokens x+10 w220, % AvailableTokens
+        Gui, MyWindow:Add, Text, x15 y+p w110, Medium Bounties:
+        Gui, MyWindow:Add, Text, vCurrentMdBounties x+2 w50 right, % CurrentMdBounties
+        Gui, MyWindow:Add, Text, vCurrentTokens x+10 w200, % CurrentTokens
+        Gui, MyWindow:Add, Text, x15 y+p w110, Large Bounties:
+        Gui, MyWindow:Add, Text, vCurrentLgBounties x+2 w50 right, % CurrentLgBounties
+        Gui, MyWindow:Add, Text, vAvailableFPs x+10 w220, % AvailableFPs
 
-		Gui, MyWindow:Add, Text, x15 y+5+p w110, Tiny Blacksmiths:
-		Gui, MyWindow:Add, Text, vCurrentTinyBS x+2 w35 right, % CurrentTinyBS
-		Gui, MyWindow:Add, Text, vAvailableBSLvs x+10 w175, % AvailableBSLvs
-		Gui, MyWindow:Add, Text, x15 y+p w110, Small Blacksmiths:
-		Gui, MyWindow:Add, Text, vCurrentSmBS x+2 w35 right, % CurrentSmBS
-		Gui, MyWindow:Add, Text, x15 y+p w110, Medium Blacksmiths:
-		Gui, MyWindow:Add, Text, vCurrentMdBS x+2 w35 right, % CurrentMdBS
-		Gui, MyWindow:Add, Text, x15 y+p w110, Large Blacksmiths:
-		Gui, MyWindow:Add, Text, vCurrentLgBS x+2 w35 right, % CurrentLgBS
-		Gui, MyWindow:Add, Text, x15 y+p w110, Huge Blacksmiths:
-		Gui, MyWindow:Add, Text, vCurrentHgBS x+2 w35 right, % CurrentHgBS
+        Gui, MyWindow:Add, Text, x15 y+5+p w110, Tiny Blacksmiths:
+        Gui, MyWindow:Add, Text, vCurrentTinyBS x+2 w50 right, % CurrentTinyBS
+        Gui, MyWindow:Add, Text, vAvailableBSLvs x+10 w175, % AvailableBSLvs
+        Gui, MyWindow:Add, Text, x15 y+p w110, Small Blacksmiths:
+        Gui, MyWindow:Add, Text, vCurrentSmBS x+2 w50 right, % CurrentSmBS
+        Gui, MyWindow:Add, Text, x15 y+p w110, Medium Blacksmiths:
+        Gui, MyWindow:Add, Text, vCurrentMdBS x+2 w50 right, % CurrentMdBS
+        Gui, MyWindow:Add, Text, x15 y+p w110, Large Blacksmiths:
+        Gui, MyWindow:Add, Text, vCurrentLgBS x+2 w50 right, % CurrentLgBS
+        Gui, MyWindow:Add, Text, x15 y+p w110, Huge Blacksmiths:
+        Gui, MyWindow:Add, Text, vCurrentHgBS x+2 w50 right, % CurrentHgBS
 
 		Gui, Tab, Patrons
 		Gui, MyWindow:Add, Text, x15 y33 w75, Mirt Variants:
@@ -502,7 +504,7 @@ class MyGui {
 		;Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vStyleChoice, % StyleList
 		Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vTabActive, % TabList
 		Gui, MyWindow:Add, Checkbox, vLogEnabled x15 y+5+p, Logging Enabled?
-		Gui, MyWindow:Add, CheckBox, vServerDetection, Get Server Name on start?
+		Gui, MyWindow:Add, CheckBox, vServerDetection, Get Play Server Name automatically?
 		Gui, MyWindow:Add, CheckBox, vGetDetailsonStart, Get User Details on start?
 		Gui, MyWindow:Add, CheckBox, vLaunchGameonStart, Launch game client on start?
 		Gui, MyWindow:Add, CheckBox, vAlwaysSaveChests, Always save Chest Open Results to file?
@@ -510,7 +512,9 @@ class MyGui {
 		Gui, MyWindow:Add, CheckBox, vAlwaysSaveCodes, Always save Code Redeem Results to file?
 		Gui, MyWindow:Add, Checkbox, vNoSaveSetting, Never save results to file?
 		Gui, MyWindow:Add, Button, gSave_Settings, Save Settings
-
+		Gui, MyWindow:Add, Checkbox, vShowResultsBlacksmithContracts x250 y59, Show Blacksmith Contracts Results?
+		Gui, MyWindow:Add, Checkbox, vDisableUserDetailsReload, Disable User Detail Reload? (Risky)
+		
 		Gui, Tab, Log
 		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w425, %OutputText%
 
@@ -575,6 +579,8 @@ class MyGui {
 		LogEnabled := CurrentSettings.logenabled
 		LoadGameClient := CurrentSettings.loadgameclient
 		WRLFile := CurrentSettings.wrlpath
+		ShowResultsBlacksmithContracts := CurrentSettings.blacksmithcontractresults
+		DisableUserDetailsReload := CurrentSettings.disableuserdetailsreload
 		;StyleSelection := CurrentSettings.style
 		;SetStyle(StyleSelection)
 		TabActive := CurrentSettings.tabactive
@@ -724,6 +730,8 @@ class MyGui {
 		GuiControl, MyWindow:, AlwaysSaveCodes, % AlwaysSaveCodes, w250 h210
 		GuiControl, MyWindow:, NoSaveSetting, % NoSaveSetting, w250 h210
 		GuiControl, MyWindow:, LogEnabled, % LogEnabled, w250 h210
+		GuiControl, MyWindow:, ShowResultsBlacksmithContracts, % ShowResultsBlacksmithContracts, w250 h210
+		GuiControl, MyWindow:, DisableUserDetailsReload, % DisableUserDetailsReload, w250 h210
 		;if (StyleSelection) {
 		;	GuiControl, Choose, StyleChoice, %StyleSelection%
 		;}
@@ -879,6 +887,8 @@ SaveSettings()
 	CurrentSettings.servername := ServerName
 	CurrentSettings.tabactive := TabActive
 	CurrentSettings.wrlpath := WRLFile
+	CurrentSettings.blacksmithcontractresults := ShowResultsBlacksmithContracts
+	CurrentSettings.disableuserdetailsreload := DisableUserDetailsReload
 	;CurrentSettings.style := StyleChoice
 	;StyleSelection = StyleChoice
 	newsettings := JSON.stringify(CurrentSettings)
@@ -1207,21 +1217,36 @@ Open_Codes:
 			GuiControl, Disable, Button_Delete
 			CodeNum := 1
 			CodeTotal := CodeCount
-			CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Starting..."
-			GuiControl, , CodesOutputStatus, % CodesPending
+			usedcodescount := 0
 			usedcodes := ""
+			someonescodescount := 0
 			someonescodes := ""
+			expiredcodescount := 0
 			expiredcodes := ""
+			earlycodescount := 0
 			earlycodes := ""
+			invalidcodescount := 0
 			invalidcodes := ""
 			codegolds := 0
 			codesilvers := 0
 			codesupplys := 0
-			otherchests := ""
+			otherchestscount := 0
+			otherchestsarray := []
+			;otherchests := ""
+			codeepicscount := 0
 			codeepics := ""
 			codetgps := 0
 			codepolish := 0
 			tempsavesetting := 0
+			if (ServerDetection == 1) {
+				CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Getting User Details..."
+				GuiControl, , CodesOutputStatus, % CodesPending
+				GetUserDetails()
+				sleep, 2000
+			}
+			Gui, CodeWindow: Default
+			CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Starting..."
+			GuiControl, , CodesOutputStatus, % CodesPending
 			for k, v in CodeList {
 				v := StrReplace(v, "`r")
 				v := StrReplace(v, "`n")
@@ -1257,14 +1282,19 @@ Open_Codes:
 					}
 				}
 				if (coderesults.failure_reason == "You have already redeemed this combination.") {
+					usedcodescount += 1
 					usedcodes := usedcodes sCode "`n"
 				} else if (coderesults.failure_reason == "Someone has already redeemed this combination.") {
+					someonescodescount += 1
 					someonescodes := someonescodes sCode "`n"
 				} else if (coderesults.failure_reason == "This offer has expired") {
+					expiredcodescount += 1
 					expiredcodes := expiredcodes sCode "`n"
 				} else if (coderesults.failure_reason == "You can not yet redeem this combination.") {
+					earlycodescount += 1
 					earlycodes := earlycodes sCode "`n"
 				} else if (coderesults.failure_reason == "This is not a valid combination.") {
+					invalidcodescount += 1
 					invalidcodes := invalidcodes sCode "`n"
 				} else {
 					for kk, vv in codeloot {
@@ -1275,10 +1305,18 @@ Open_Codes:
 						} else if (vv.chest_type_id == "1") {
 							codesilvers += vv.count
 						} else if (vv.chest_type_id) {
-							otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
+							;otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
+							otherchestscount += vv.count
+							othercheststype:= ChestFromID(vv.chest_type_id)
+							if ( otherchestsarray.HasKey(othercheststype) ) {
+								otherchestsarray[othercheststype] += vv.count
+							} else {
+								otherchestsarray[othercheststype] := 1
+							}
 						} else if (vv.add_time_gate_key_piece) {
 							codetgps += vv.count
 						} else if (vv.add_inventory_buff_id) {
+							codeepicscount += vv.count
 							switch vv.add_inventory_buff_id {
 								case 4: codeepics := codeepics "STR (" vv.count "), "
 								case 8: codeepics := codeepics "GF (" vv.count "), "
@@ -1289,6 +1327,7 @@ Open_Codes:
 								case 40: codeepics := codeepics "FB (" vv.count "), "
 								case 77: codeepics := codeepics "Spd (" vv.count "), "
 								case 36: codepolish += vv.count
+										 codeepicscount -= vv.count
 								default: codeepics := codeepics vv.add_inventory_buff_id " (" vv.count "), "
 							}
 						}
@@ -1308,7 +1347,8 @@ Open_Codes:
 						FileAppend, %rawresults%`n, %RedeemCodeLogFile%
 					}
 				}
-				sleep, 1000
+				sleep, 500
+				Gui, CodeWindow: Default
 				CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Submitting..."
 				GuiControl, , CodesOutputStatus, % CodesPending
 			}
@@ -1323,9 +1363,16 @@ Open_Codes:
 			if (codesupplys > 0) {
 				codemessage := codemessage "Supply Chests:`n" codesupplys "`n"
 			}
-			if !(otherchests == "") {
-				;StringTrimRight, otherchests, otherchests, 2
-				codemessage := codemessage "Other Chests:`n" otherchests "`n"
+			; if !(otherchests == "") {
+			; 	;StringTrimRight, otherchests, otherchests, 2
+			; 	codemessage := codemessage "Other Chests (" otherchestscount "):`n" otherchests "`n"
+			; }
+			if (otherchestscount > 0) {
+				codemessage := codemessage "Other Chests (" otherchestscount "):`n"
+				for otherchestsindex, otherchestselement in otherchestsarray {
+					codemessage := codemessage otherchestsindex " (" otherchestselement ")`n"
+				}
+				codemessage := codemessage "`n"
 			}
 			if (codepolish > 0) {
 				codemessage := codemessage "Potions of Polish:`n" codepolish "`n"
@@ -1335,28 +1382,30 @@ Open_Codes:
 			}
 			if !(codeepics == "") {
 				StringTrimRight, codeepics, codeepics, 2
-				codemessage := codemessage "Epic Consumables:`n" codeepics "`n"
+				codemessage := codemessage "Epic Consumables (" codeepicscount "):`n" codeepics "`n`n"
 			}
 			if !(earlycodes == "") {
-				codemessage := codemessage "Cannot Redeem Yet:`n" earlycodes "`n"
+				codemessage := codemessage "Cannot Redeem Yet (" earlycodescount "):`n" earlycodes "`n"
 			}
 			if !(someonescodes == "") {
-				codemessage := codemessage "Someone Else Has Used:`n" someonescodes "`n"
+				codemessage := codemessage "Someone Else Has Used (" someonescodescount "):`n" someonescodes "`n"
 			}
 			if !(expiredcodes == "") {
-				codemessage := codemessage "Expired:`n" expiredcodes "`n"
+				codemessage := codemessage "Expired (" expiredcodescount "):`n" expiredcodes "`n"
 			}
 			if !(invalidcodes == "") {
-				codemessage := codemessage "Invalid:`n" invalidcodes "`n"
+				codemessage := codemessage "Invalid (" invalidcodescount "):`n" invalidcodes "`n"
 			}
 			if !(usedcodes == "") {
-				codemessage := codemessage "You Already Used:`n" usedcodes "`n"
+				codemessage := codemessage "You Already Used (" usedcodescount "):`n" usedcodes "`n"
 			}
 			if (codemessage == "") {
 				codemessage := "Unknown or No Results"
 			}
 			GuiControl, , CodesOutputStatus, % CodesPending, w350 h210
-			GetUserDetails()
+			if( DisableUserDetailsReload == 0) {
+				GetUserDetails()
+			}
 			oMyGUI.Update()
 			Gui, CodeWindow: Default
 			CodesPending := "✅ Codes: " CodeTotal "/" CodeTotal " - Completed! 😎"
@@ -1438,7 +1487,7 @@ Buy_Extra_Chests(chestid,extracount) {
 	chestparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&chest_type_id=" chestid "&count="
 	gemsspent := 0
 	while (extracount > 0) {
-		SB_SetText("⌛ Chests remaining to purchase: " extracount)
+		SB_SetText("⌛ " ChestFromID(chestid) " remaining to purchase: " extracount)
 		if (extracount < 101) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams extracount)
 			extracount -= extracount
@@ -1451,14 +1500,14 @@ Buy_Extra_Chests(chestid,extracount) {
 			MsgBox % "Error: " rawresults
 			LogFile("Gems Spent: " gemsspent)
 			GetUserDetails()
-			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
+			SB_SetText("⌛ " ChestFromID(chestid) " remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
 		}
 		gemsspent += chestresults.currency_spent
 		Sleep 1000
 	}
 	LogFile("Gems Spent: " gemsspent)
-	SB_SetText("✅ Chest purchase completed")
+	SB_SetText("✅ " ChestFromID(chestid) " purchase completed")
 	return gemsspent
 }
 
@@ -1477,7 +1526,7 @@ Buy_Chests(chestid) {
 	switch true {
 		case (chestid = 1): {
 			maxbuy := Floor(CurrentGems/50)
-			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
+			InputBox, count, Buying Chests, % "How many Silver Chests?`n(Max: " maxbuy ")", , 250, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count > maxbuy) {
@@ -1490,7 +1539,7 @@ Buy_Chests(chestid) {
 		}
 		case (chestid = 2): {
 			maxbuy := Floor(CurrentGems/500)
-			InputBox, count, Buying Chests, % "How many Gold Chests?`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
+			InputBox, count, Buying Chests, % "How many Gold Chests?`n(Max: " maxbuy ")", , 250, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count = "alpha5") {
@@ -1511,7 +1560,7 @@ Buy_Chests(chestid) {
 		}
 		case (chestid > 3 and chestid < 510): {
 			maxbuy := Floor(EventTokens/10000)
-			InputBox, count, Buying Chests, % "How many '" ChestFromID(chestid) "' Chests?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 200, 180, , , , , %maxbuy%
+			InputBox, count, Buying Chests, % "How many " ChestFromID(chestid) "?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 250, 180, , , , , %maxbuy%
 			if ErrorLevel
 				return
 			if (count = "alpha5") {
@@ -1535,25 +1584,36 @@ Buy_Chests(chestid) {
 			return
 		}
 	}
+	if (ServerDetection == 1) {
+		GetUserDetails()
+		sleep, 2000
+	}
 	chestparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&chest_type_id=" chestid "&count="
 	gemsspent := 0
 	tokenspent := 0
+	chestsbought := 0
 	while (count > 0) {
-		SB_SetText("⌛ Chests remaining to purchase: " count)
+		SB_SetText("⌛ " ChestFromID(chestid) " remaining to purchase: " count)
 		if (count < 101) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams count)
+			chestsbought += count
 			count -= count
 		} else {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams "100")
+			chestsbought += 100
 			count -= 100
 		}
 		chestresults := JSON.parse(rawresults)
 		if (chestresults.success == "0") {
 			MsgBox % "Error: " rawresults
-			LogFile("Gems spent: " gemsspent)
-			LogFile(EventTokenName " spent: " tokenspent)
+			if(gemsspent > 0){
+				LogFile("Gems spent: " gemsspent)
+			}
+			if(tokenspent > 0){
+				LogFile(EventTokenName " spent: " tokenspent)
+			}
 			GetUserDetails()
-			SB_SetText("⌛ Chests remaining: " count " (Error: " chestresults.failure_reason ")")
+			SB_SetText("⌛ " ChestFromID(chestid) " remaining: " count " (Error: " chestresults.failure_reason ")")
 			return
 		}
 		if(chestid = 1 OR chestid = 2) {
@@ -1561,12 +1621,18 @@ Buy_Chests(chestid) {
 		} else {
 			tokenspent += chestresults.currency_spent
 		}
-		Sleep 1000
+		Sleep 500
 	}
-	LogFile("Gems spent: " gemsspent)
-	LogFile(EventTokenName " spent: " tokenspent)
-	GetUserDetails()
-	SB_SetText("✅ Chest purchase completed.")
+	if(gemsspent > 0){
+		LogFile("Gems spent: " gemsspent)
+	}
+	if(tokenspent > 0){
+		LogFile(EventTokenName " spent: " tokenspent)
+	}
+	if( DisableUserDetailsReload == 0) {
+		GetUserDetails()
+	}
+	SB_SetText("✅ " chestsbought " " ChestFromID(chestid) " purchase completed.")
 	return
 }
 
@@ -1653,14 +1719,14 @@ Open_Chests(chestid) {
 
 	while (count > 0) {
 		SB_SetText("⌛ Chests remaining to open: " count)
-		if (count < 100) {
+		if (count < 1000) {
 			rawresults := ServerCall("opengenericchest", chestparams count)
 			Sleep, 500
 			count -= count
 		} else {
-			rawresults := ServerCall("opengenericchest", chestparams 99)
+			rawresults := ServerCall("opengenericchest", chestparams 1000)
 			Sleep, 500
-			count -= 99
+			count -= 1000
 		}
 		if (CurrentSettings.alwayssavechests || tempsavesetting) {
 			FileAppend, %rawresults%`n, %ChestOpenLogFile%
@@ -1694,7 +1760,9 @@ Open_Chests(chestid) {
 			}
 			MsgBox % "Error: " rawresults
 			LogFile("Chests Opened: " Floor(chestsopened))
-			GetUserDetails()
+			if( DisableUserDetailsReload == 0) {
+				GetUserDetails()
+			}
 			SB_SetText("⌛ Chests remaining: " count " (Error)")
 			return
 		}
@@ -1756,7 +1824,9 @@ Open_Chests(chestid) {
 			LogFile("Gold Chests Opened: " Floor(chestsopened))
 		}
 	}
-	GetUserDetails()
+	if( DisableUserDetailsReload == 0) {
+		GetUserDetails()
+	}
 	SB_SetText("✅ Chest opening completed")
 	return
 }
@@ -1894,7 +1964,9 @@ UseBlacksmith(buffid) {
 		}
 		blacksmithresults := JSON.parse(rawresults)
 		if ((blacksmithresults.success == "0") || (blacksmithresults.okay == "0")) {
-			MsgBox % ChampFromID(heroid) " levels gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
+			if(ShowResultsBlacksmithContracts == 1) {
+				MsgBox % ChampFromID(heroid) " levels gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
+			}
 			MsgBox % "Error: " rawresults
 			switch buffid {
 				case 31: contractsused := (CurrentTinyBS - blacksmithresults.buffs_remaining)
@@ -1904,7 +1976,9 @@ UseBlacksmith(buffid) {
 				case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 			}
 			LogFile(contractname "Blacksmith Contracts Used: " Floor(contractsused))
-			GetUserDetails()
+			if( DisableUserDetailsReload == 0) {
+				GetUserDetails()
+			}
 			SB_SetText("⌛ " contractname " Blacksmith Contracts remaining: " count " (Error)")
 			return
 		}
@@ -1921,7 +1995,9 @@ UseBlacksmith(buffid) {
 			}
 		}
 	}
-	MsgBox % ChampFromID(heroid) " levels gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
+	if(ShowResultsBlacksmithContracts == 1) {
+		MsgBox % ChampFromID(heroid) " levels gained:`nSlot 1: " slot1lvs "`nSlot 2: " slot2lvs "`nSlot 3: " slot3lvs "`nSlot 4: " slot4lvs "`nSlot 5: " slot5lvs "`nSlot 6: " slot6lvs
+	}
 	tempsavesetting := 0
 	switch buffid {
 		case 31: contractsused := (CurrentTinyBS - blacksmithresults.buffs_remaining)
@@ -1931,7 +2007,9 @@ UseBlacksmith(buffid) {
 		case 1797: contractsused := (CurrentHgBS - blacksmithresults.buffs_remaining)
 	}
 	LogFile(contractname " Blacksmith Contracts used on " ChampFromID(heroid) ": " Floor(contractsused))
-	GetUserDetails()
+	if( DisableUserDetailsReload == 0) {
+		GetUserDetails()
+	}
 	SB_SetText("✅ " contractname " Blacksmith Contracts use completed")
 	return
 }
@@ -1959,6 +2037,20 @@ Lg_Bounty:
 		UseBounty(20)
 		return
 	}
+
+UseBountyClick(name, imagename, offset_x, offset_y, delay) {
+	FileAppend, %name%`n, %BountyLogFile%
+	WinGet, PID, PID, Idle Champions
+	WinActivate, ahk_pid %PID%
+	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/%imagename%.png
+	FileAppend, %name% - Errorlevel: %errorlevel% ix: %ix% iy: %iy%`n, %BountyLogFile%
+	if (errorlevel == 0) {
+		MouseClick, left, ix+offset_x, iy+offset_y
+		sleep %delay%
+		return 1
+	}
+	return 0
+}
 
 UseBounty(buffid) {
 	if !UserID {
@@ -2006,58 +2098,35 @@ UseBounty(buffid) {
 			return
 		}
 	}
-	MsgBox, 4, , % "Use " count " " contractname " Bounty Contracts?`n`nNOTE: Do not touch the mouse or keyboard until process completed`n`nAUTO PROGRESS will be temporarily turned off for this process"
+	MsgBox, 4, , % "Use " count " " contractname " Bounty Contracts?`n`nWARNING: This is an alpha feature and is prone to bugs (or just not work at all) and must be run at resolution 1280x720 and not in fullscreen`n`nNOTE: Do not touch the mouse or keyboard until process completed`n`nAUTO PROGRESS will be temporarily turned off for this process"
 	IfMsgBox, No
 	{
 		return
 	}
+	FileAppend, [PROCESS START] %contractname% Bounty Contracts to use: %count%`n, %BountyLogFile%
 	;bounty cancel
-	WinGet, PID, PID, Idle Champions
-	WinActivate, ahk_pid %PID%
-	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_cancel.png
-	;msgbox % "CANCEL - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-	if (errorlevel == 0) {
-		MouseClick, left, ix+5, iy+5
-		sleep 500
-	}
+	UseBountyClick("BOUNTY CANCEL", "bounty_cancel", 5, 5, 500)
 	;inventory close
-	WinGet, PID, PID, Idle Champions
-	WinActivate, ahk_pid %PID%
-	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory_close.png
-	;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-	if (errorlevel == 0) {
-		MouseClick, left, ix+5, iy+5
-		sleep 500
-	}
+	UseBountyClick("INVENTORY CLOSE", "inventory_close", 5, 5, 500)
 	;turn auto progress off
 	autoprogress := 0
-	WinGet, PID, PID, Idle Champions
-	WinActivate, ahk_pid %PID%
-	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/auto_progress_on.png
-	;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-	if (errorlevel == 0) {
+	if (UseBountyClick("AUTO PROGRESS OFF", "auto_progress_on", 5, 5, 50) == 1) {
 		autoprogress := 1
-		MouseClick, left, ix+5, iy+5
-		sleep 50
 	}
 	;inventory open
-	WinGet, PID, PID, Idle Champions
-	WinActivate, ahk_pid %PID%
-	ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory.png
-	;msgbox % "INVENTORY - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-	if (errorlevel == 0) {
-		MouseClick, left, ix+15, iy+15
-		sleep 500
+	if (UseBountyClick("INVENTORY OPEN", "inventory", 15, 15, 500) == 1) {
 		contractsused := 0
 		page := 1
 		while (count > 0) {
 			found := 0
 			while (found == 0) { ;search pages for bounties
 				if (page == 5) {
+					FileAppend, [PROCESS COMPLETED] No %contractname% Bounty Contracts found`n, %BountyLogFile%
 					msgbox % "[PROCESS COMPLETED]`n`nNo "contractname " Bounty Contracts found"
 					return
 				}
 				;search inventory page
+				FileAppend, FIND BOUNTY CONTRACT`n, %BountyLogFile%
 				WinGet, PID, PID, Idle Champions
 				WinActivate, ahk_pid %PID%
 				;bounty icon
@@ -2071,7 +2140,7 @@ UseBounty(buffid) {
 					case 20:
 						ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_lg.png
 				}
-				;msgbox % "BOUNTY - PAGE " . page . " - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+				FileAppend, FIND BOUNTY CONTRACT - PAGE %page% - Errorlevel: %errorlevel% ix: %ix% iy: %iy%`n, %BountyLogFile%
 				if (errorlevel == 0) {
 					WinGet, PID, PID, Idle Champions
 					WinActivate, ahk_pid %PID%
@@ -2080,11 +2149,12 @@ UseBounty(buffid) {
 					found := 1
 				} else if (errorlevel == 1) {
 					page += 1
+					FileAppend, INVENTORY NEXT PAGE`n, %BountyLogFile%
 					WinGet, PID, PID, Idle Champions
 					WinActivate, ahk_pid %PID%
 					;inventory next page
 					ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory_next.png
-					;msgbox % "INVENTORY NEXT - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+					FileAppend, INVENTORY NEXT PAGE - Errorlevel: %errorlevel% ix: %ix% iy: %iy%`n, %BountyLogFile%
 					if (errorlevel == 0) {
 						WinGet, PID, PID, Idle Champions
 						WinActivate, ahk_pid %PID%
@@ -2107,12 +2177,12 @@ UseBounty(buffid) {
 					count -= 50
 				}
 				repeatcount -= 1
-				;click next
+				;bounty next/increase count
+				FileAppend, INVENTORY COUNT INCREASE`n, %BountyLogFile%
 				WinGet, PID, PID, Idle Champions
 				WinActivate, ahk_pid %PID%
-				;bounty next/increase count
 				ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_next.png
-				;msgbox % "NEXT - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
+				FileAppend, INVENTORY COUNT INCREASE - Errorlevel: %errorlevel% ix: %ix% iy: %iy%`n, %BountyLogFile%
 				if (errorlevel == 0) {
 					loop %repeatcount% {
 						WinGet, PID, PID, Idle Champions
@@ -2121,55 +2191,21 @@ UseBounty(buffid) {
 						sleep 20
 					}
 				}
-				;click go
-				WinGet, PID, PID, Idle Champions
-				WinActivate, ahk_pid %PID%
 				;bounty go
-				ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_go.png
-				;msgbox % "GO - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-				;bounty cancel
-				;ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/bounty_cancel.png
-				;msgbox % "CANCEL - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-				if (errorlevel == 0) {
-					WinGet, PID, PID, Idle Champions
-					WinActivate, ahk_pid %PID%
-					MouseClick, left, ix+15, iy+15
-					sleep 750
-				}
+				UseBountyClick("CLICK GO", "bounty_go", 15, 15, 750)
 				if (repeatcount = 49) {
 					;additional cancel
-					WinGet, PID, PID, Idle Champions
-					WinActivate, ahk_pid %PID%
-					ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/additional_cancel.png
-					;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-					if (errorlevel == 0) {
-						MouseClick, left, ix+5, iy+5
-						sleep 500
-					}
+					UseBountyClick("ADDITIONAL CANCEL", "additional_cancel", 5, 5, 500)
 				}
 			}
 		}
 		;inventory close
-		WinGet, PID, PID, Idle Champions
-		WinActivate, ahk_pid %PID%
-		ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/inventory_close.png
-		;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-		if (errorlevel == 0) {
-			MouseClick, left, ix+5, iy+5
-			;sleep 500
-		}
+		UseBountyClick("INVENTORY CLOSE", "inventory_close", 5, 5, 500)
 		if (autoprogress == 1) {
-			sleep 500
 			;turn auto progress on
-			WinGet, PID, PID, Idle Champions
-			WinActivate, ahk_pid %PID%
-			ImageSearch, ix, iy, 0, 0, a_screenHeight, a_screenWidth, %A_ScriptDir%/images/auto_progress_off.png
-			;msgbox % "CLOSE - Errorlevel: " . errorlevel . "`nix: " . ix . "`niy: " . iy
-			if (errorlevel == 0) {
-				MouseClick, left, ix+5, iy+5
-				;sleep 500
-			}
+			UseBountyClick("AUTO PROGRESS ON", "auto_progress_off", 5, 5, 1)
 		}
+		FileAppend, [PROCESS COMPLETED] %contractname% Bounty Contracts used: %contractsused%`n, %BountyLogFile%
 		msgbox % "[PROCESS COMPLETED]`n`n"contractname " Bounty Contracts used: " Floor(contractsused)
 		LogFile(contractname " Bounty Contracts used: " Floor(contractsused))
 		GetUserDetails()
@@ -2274,7 +2310,9 @@ UseBounty2(buffid) {
 				case 20: contractsused := (CurrentLgBounties - bountyresults.buffs_remaining)
 			}
 			LogFile(contractname "Bounty Contracts Used: " Floor(contractsused))
-			GetUserDetails()
+			if( DisableUserDetailsReload == 0) {
+				GetUserDetails()
+			}
 			SB_SetText("⌛ " contractname " Bounty Contracts remaining: " count " (Error)")
 			return
 		}
@@ -2300,7 +2338,9 @@ UseBounty2(buffid) {
 		case 20: contractsused := (CurrentLgBounties - bountyresults.buffs_remaining)
 	}
 	LogFile(contractname " Bounty Contracts used: " Floor(contractsused))
-	GetUserDetails()
+	if( DisableUserDetailsReload == 0) {
+		GetUserDetails()
+	}
 	SB_SetText("✅ " contractname " Bounty Contracts use completed")
 	return
 }
@@ -2930,8 +2970,8 @@ ParseInventoryData() {
 	tokencount := (CurrentTinyBounties*12)+(CurrentSmBounties*72)+(CurrentMdBounties*576)+(CurrentLgBounties*1152)
 	if (UserDetails.details.event_details[1].user_data.event_tokens) {
 		tokentotal := UserDetails.details.event_details[1].user_data.event_tokens
-		AvailableTokens := "= " tokencount " Tokens`t(" Round(tokencount/2500, 2) " FPs)"
-		CurrentTokens := "+ " tokentotal " Current`t(" Round(tokentotal/2500, 2) " FPs)"
+		AvailableTokens := "= " tokencount " Tokens   (" Round(tokencount/2500, 2) " Free Plays)"
+		CurrentTokens := "+ " tokentotal " Current      (" Round(tokentotal/2500, 2) " Free Plays)"
 		AvailableFPs := "(Total: " (tokentotal+tokencount) " = " Round((tokentotal + tokencount)/2500, 2) " Free Plays)"
 	} else {
 		AvailableTokens := "= " tokencount " Tokens"
@@ -4246,9 +4286,9 @@ ShowPityTimers() {
 	chestsforepic := 1
 	while (chestsforepic < 11) {
 		if (chestsforepic == 1) {
-			pitylist := pitylist "Epic in Next Chest for:`n "
+			pitylist := pitylist "Epic in Next Chest for:`n"
 		} else {
-			pitylist := pitylist "`nEpic in next " chestsforepic " Chests for:`n "
+			pitylist := pitylist "`nEpic in next " chestsforepic " Chests for:`n"
 		}
 		currentchamp := 14
 		currentcount := 0
@@ -4284,7 +4324,8 @@ ShowPityTimers() {
 		}
 		chestsforepic += 1
 	}
-	MsgBox % pitylist
+	ScrollBox(pitylist, "p b1 h450 w700 f{s10, Consolas}", "Pity Timers")
+	; MsgBox % pitylist
 	return
 }
 

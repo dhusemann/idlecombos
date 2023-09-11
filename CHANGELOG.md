@@ -2,9 +2,22 @@
 
 ## Special Thanks
 
-To all the idle dragoneers who inspired and assisted me!
+To all the Idle Dragoneers who inspired and assisted me!
 
 ------
+
+## 3.62
+
+* Add counts in redeem codes
+* Add server detection in redeem codes
+* Add bounty contract warning
+* Add more bounty contract logging
+* Updates to inventory tab layout
+* New settings to disable blacksmith contracts results
+* New settings to disable loading user data
+* Add server detection in buy chests
+* Updates to buy chests message box width
+* Increase chest open max to 1000
 
 ## 3.61
 
