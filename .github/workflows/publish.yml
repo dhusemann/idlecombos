@@ -21,7 +21,7 @@ jobs:
         with:
           severity: info
           description: "${{steps.latest_release.outputs.name}} has been released."
-          details: "**DOWNLOAD:** ${{steps.latest_release.outputs.html_url}}"
+          details: "**DOWNLOAD:** [${{steps.latest_release.outputs.name}}](${{steps.latest_release.outputs.html_url}})"
           footer: "PUBLISHED: ${{steps.latest_release.outputs.published_at}} ID: ${{steps.latest_release.outputs.id}}"
-          text: ""
+          text: "${{steps.latest_release.outputs.html_url}}"
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
