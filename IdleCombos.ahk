@@ -271,7 +271,7 @@ class MyGui {
 		Menu, FileSubmenu, Add, Detect Game - Epic Games, detectGameInstallEpic
 		Menu, FileSubmenu, Add, Detect Game - Steam, detectGameInstallSteam
 		Menu, FileSubmenu, Add, Detect Game - Standalone, detectGameInstallStandalone
-		; Menu, FileSubmenu, Add, Detect Game - Standalone Launcher, detectGameInstallStandaloneLauncher
+		Menu, FileSubmenu, Add, Detect Game - Console (PS4/Xbox/Switch/iOS), detectGameInstallConsole
 		Menu, FileSubmenu, Add
 		Menu, FileSubmenu, Add, &Reload IdleCombos, Reload_Clicked
 		Menu, FileSubmenu, Add, E&xit IdleCombos, Exit_Clicked
@@ -545,12 +545,14 @@ class MyGui {
 			MsgBox, Your settings file has been deleted due to an update to IdleCombos. Please verify that your settings are set as preferred.
 		}
 
-		if FileExist(A_ScriptDir "\webRequestLog.txt") {
-			MsgBox, 4, , % "WRL File detected. Use file?"
-			IfMsgBox, Yes
-			{
-				WRLFile := A_ScriptDir "\webRequestLog.txt"
-				FirstRun()
+		if !(LoadGameClient == 4) {
+			if FileExist(A_ScriptDir "\webRequestLog.txt") {
+				MsgBox, 4, , % "WRL File detected. Use file?"
+				IfMsgBox, Yes
+				{
+					WRLFile := A_ScriptDir "\webRequestLog.txt"
+					FirstRun()
+				}
 			}
 		}
 		if !(CurrentSettings.firstrun) {
@@ -606,7 +608,9 @@ class MyGui {
 		LogFile("IdleCombos v" VersionNumber " started.")
 		LogFile("Settings File: '" SettingsFile "' - Loaded")
 
-		GetPlayServerFromWRL()
+		if !(LoadGameClient == 4) {
+			GetPlayServerFromWRL()
+		}
 		if (GetDetailsonStart == "1") {
 			GetUserDetails()
 		}
@@ -722,8 +726,20 @@ class MyGui {
 
 		;Settings
 		GuiControl, MyWindow:, ServerName, % ServerName, w50 h210
+		if (LoadGameClient == 4) {
+			ServerDetection := 0
+			GuiControl, Disable, ServerDetection
+		} else {
+			GuiControl, Enable, ServerDetection
+		}
 		GuiControl, MyWindow:, ServerDetection, % ServerDetection, w250 h210
 		GuiControl, MyWindow:, GetDetailsonStart, % GetDetailsonStart, w250 h210
+		if (LoadGameClient == 4) {
+			LaunchGameonStart := 0
+			GuiControl, Disable, LaunchGameonStart
+		} else {
+			GuiControl, Enable, LaunchGameonStart
+		}
 		GuiControl, MyWindow:, LaunchGameonStart, % LaunchGameonStart, w250 h210
 		GuiControl, MyWindow:, AlwaysSaveChests, % AlwaysSaveChests, w250 h210
 		GuiControl, MyWindow:, AlwaysSaveContracts, % AlwaysSaveContracts, w250 h210
@@ -2587,32 +2603,70 @@ setGameInstallStandaloneLauncher( manual = false) {
 	return false
 }
 
+detectGameInstallConsole() {
+	setGameInstallConsole(true)
+}
+
+setGameInstallConsole( manual = false) {
+	; Detect Console install
+	if FileExist(GameInstallDirStandalone) {
+		; GameInstallDir := GameInstallDirStandaloneLauncher
+		; GameClient := GameInstallDirStandaloneLauncher GameClientExeStandaloneLauncher
+		; WRLFile := GameInstallDirStandalone WRLFilePath
+		; IconFilename := GameClientExeStandaloneLauncher
+		; IconFile := GameInstallDir IconFilename
+		GamePlatform := "Console"
+		LoadGameClient := 4
+		ServerDetection := 0
+		SetIcon()
+		if manual {
+			; msgbox Console install found
+			FirstRun()
+			GetUserDetails()
+		}
+		return true
+	}
+	if manual
+		msgbox Console install NOT found
+	return false
+}
+
 FirstRun() {
-	MsgBox, 4, , Get User ID and Hash from webrequestlog.txt?
-	IfMsgBox, Yes
-	{
-		GetIdFromWRL()
-		LogFile("Platform: " GamePlatform)
-		LogFile("User ID: " UserID " & Hash: " UserHash " detected in WRL")
-		GetPlayServerFromWRL()
+	if(LoadGameClient == 4) {
+		InputBox, UserID, user_id, Please enter your "user_id" value., , 250, 125
+		if ErrorLevel
+			return
+		InputBox, UserHash, hash, Please enter your "hash" value., , 250, 125
+		if ErrorLevel
+			return
+		LogFile("User ID: " UserID " & Hash: " UserHash " manually entered")
 	} else {
-		MsgBox, 4, , Choose install directory manually?
+		MsgBox, 4, , Get User ID and Hash from webrequestlog.txt?
 		IfMsgBox, Yes
 		{
-			FileSelectFile, WRLFile, 1, webRequestLog.txt, Select webRequestLog file, webRequestLog.txt
-			if ErrorLevel
-				return
 			GetIdFromWRL()
-			GameInstallDir := SubStr(WRLFile, 1, -67)
-			GameClient := GameInstallDir "IdleDragons.exe"
+			LogFile("Platform: " GamePlatform)
+			LogFile("User ID: " UserID " & Hash: " UserHash " detected in WRL")
+			GetPlayServerFromWRL()
 		} else {
-			InputBox, UserID, user_id, Please enter your "user_id" value., , 250, 125
-			if ErrorLevel
-				return
-			InputBox, UserHash, hash, Please enter your "hash" value., , 250, 125
-			if ErrorLevel
-				return
-			LogFile("User ID: " UserID " & Hash: " UserHash " manually entered")
+			MsgBox, 4, , Choose install directory manually?
+			IfMsgBox, Yes
+			{
+				FileSelectFile, WRLFile, 1, webRequestLog.txt, Select webRequestLog file, webRequestLog.txt
+				if ErrorLevel
+					return
+				GetIdFromWRL()
+				GameInstallDir := SubStr(WRLFile, 1, -67)
+				GameClient := GameInstallDir "IdleDragons.exe"
+			} else {
+				InputBox, UserID, user_id, Please enter your "user_id" value., , 250, 125
+				if ErrorLevel
+					return
+				InputBox, UserHash, hash, Please enter your "hash" value., , 250, 125
+				if ErrorLevel
+					return
+				LogFile("User ID: " UserID " & Hash: " UserHash " manually entered")
+			}
 		}
 	}
 	CurrentSettings.user_id := UserID
@@ -2718,7 +2772,7 @@ GetPlayServerFromWRL() {
 		oData1 := ; Free the memory.
 		return
 	}
-	if ( ServerDetection = 1 ) {
+	if (ServerDetection == 1) {
 		GetPlayServer(oData)
 	}
 	return
