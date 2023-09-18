@@ -2838,7 +2838,13 @@ GetUserDetails(newservername = "") {
 		} else {
 			FileDelete, %UserDetailsFile%
 			FileAppend, %rawdetails%, %UserDetailsFile%
-			UserDetails := JSON.parse(rawdetails)
+			Try {
+				UserDetails := JSON.parse(rawdetails)
+			} catch e {
+				SB_SetText("❌ API Error: Try to close and reopen Idle Champions - Server might be in Maintenance? 😟")
+				msgbox, % "API ERROR: " e.message
+				return
+			}
 			InstanceID := UserDetails.details.instance_id
 			CurrentSettings.instance_id := InstanceID
 			CurrentSettings.loadgameclient := LoadGameClient
