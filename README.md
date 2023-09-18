@@ -15,7 +15,7 @@ Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).
 * Simple account statistics display
 * Easy buying/opening many chests (Gold/Silver/Event)
 * Easy apply bulk blacksmith contracts
-* Enter multiple redeem codes at once
+* Enter multiple redeem codes at once  
   ![Redeem Codes](https://i.imgur.com/vwqDR4U.png)
 * Briv Stack Calculator [github.com/Deatho0ne]
 * Manual starting/stopping adventures (Sometimes can fix stuck accounts)
@@ -40,7 +40,7 @@ Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).
 * Install [AutoHotKey v1.1](https://www.autohotkey.com/download/ahk-install.exe)
 * Checkout this REPO or download a [release](https://github.com/djravine/idlecombos/releases)
 * If you downloaded a release, unzip into a folder
-* Right click the file `IdleCombos.ahk` and open with AutoHotKey
+* Right click the file `IdleCombos.ahk` and open with AutoHotKey  
   ![How To Run](https://i.imgur.com/UFWxScW.png)
 * The application will ask you to detect your App ID from your currently installed Idle Champions install folder
 * Profit!
