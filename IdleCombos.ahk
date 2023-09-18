@@ -2832,7 +2832,7 @@ GetUserDetails(newservername = "") {
 	} else {
 		swtichPlayServer := InStr(rawdetails, "switch_play_server")
 		; MsgBox, % "swtichPlayServer - " swtichPlayServer
-		if(swtichPlayServer > 0) {
+		if (swtichPlayServer > 0) {
 			playservername := GetPlayServer(rawdetails)
 			GetUserDetails(playservername)
 		} else {
