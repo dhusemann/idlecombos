@@ -6,6 +6,11 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.63
+
+* Add support for consoles
+* Catch JSON parse errors on loading user details
+
 ## 3.62
 
 * Add counts in redeem codes
