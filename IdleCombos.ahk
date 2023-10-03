@@ -3576,6 +3576,12 @@ ServerCall(callname, parameters, newservername = "") {
 		WR.Close()
 	}
 	LogFile("API Call (" playservername "): " callname)
+	swtichPlayServer := InStr(rawdetails, "switch_play_server")
+	; MsgBox, % "swtichPlayServer - " swtichPlayServer
+	if (swtichPlayServer > 0) {
+		playservername := GetPlayServer(rawdetails)
+		ServerCall(callname, parameters, playservername)
+	}
 	if( !CheckServerCallError(data) ) {
 		return
 	}
