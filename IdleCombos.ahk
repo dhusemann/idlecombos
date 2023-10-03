@@ -6,7 +6,7 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.63"
+global VersionNumber := "3.64"
 global CurrentDictionary := "2.32"
 
 ;Local File globals
@@ -1504,12 +1504,12 @@ Buy_Extra_Chests(chestid,extracount) {
 	gemsspent := 0
 	while (extracount > 0) {
 		SB_SetText("⌛ " ChestFromID(chestid) " remaining to purchase: " extracount)
-		if (extracount < 101) {
+		if (extracount < 251) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams extracount)
 			extracount -= extracount
 		} else {
-			rawresults := ServerCall("buysoftcurrencychest", chestparams "100")
-			extracount -= 100
+			rawresults := ServerCall("buysoftcurrencychest", chestparams "250")
+			extracount -= 250
 		}
 		chestresults := JSON.parse(rawresults)
 		if (chestresults.success == "0") {
@@ -1574,7 +1574,7 @@ Buy_Chests(chestid) {
 				}
 			}
 		}
-		case (chestid > 3 and chestid < 510): {
+		case (chestid > 3 and chestid < 586): {
 			maxbuy := Floor(EventTokens/10000)
 			InputBox, count, Buying Chests, % "How many " ChestFromID(chestid) "?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 250, 180, , , , , %maxbuy%
 			if ErrorLevel
@@ -1610,14 +1610,14 @@ Buy_Chests(chestid) {
 	chestsbought := 0
 	while (count > 0) {
 		SB_SetText("⌛ " ChestFromID(chestid) " remaining to purchase: " count)
-		if (count < 101) {
+		if (count < 251) {
 			rawresults := ServerCall("buysoftcurrencychest", chestparams count)
 			chestsbought += count
 			count -= count
 		} else {
-			rawresults := ServerCall("buysoftcurrencychest", chestparams "100")
-			chestsbought += 100
-			count -= 100
+			rawresults := ServerCall("buysoftcurrencychest", chestparams "250")
+			chestsbought += 250
+			count -= 250
 		}
 		chestresults := JSON.parse(rawresults)
 		if (chestresults.success == "0") {
@@ -1695,7 +1695,7 @@ Open_Chests(chestid) {
 				}
 			}
 		}
-		case (chestid > 3 and chestid < 510): {
+		case (chestid > 3 and chestid < 586): {
 			CurrentChests := 0
 			CurrentChestsLookup := ""
 			for k, v in UserDetails.details.chests {
