@@ -6,7 +6,7 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.64"
+global VersionNumber := "3.65"
 global CurrentDictionary := "2.32"
 
 ;Local File globals
@@ -3576,6 +3576,12 @@ ServerCall(callname, parameters, newservername = "") {
 		WR.Close()
 	}
 	LogFile("API Call (" playservername "): " callname)
+	swtichPlayServer := InStr(rawdetails, "switch_play_server")
+	; MsgBox, % "swtichPlayServer - " swtichPlayServer
+	if (swtichPlayServer > 0) {
+		playservername := GetPlayServer(rawdetails)
+		ServerCall(callname, parameters, playservername)
+	}
 	if( !CheckServerCallError(data) ) {
 		return
 	}
