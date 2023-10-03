@@ -6,6 +6,10 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.65
+
+* Detect 'switch_play_server' in server calls
+
 ## 3.64
 
 * Fix chest ID's for buy/redeem
