@@ -6,6 +6,11 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.64
+
+* Fix chest ID's for buy/redeem
+* Increase chest buy limits from 100 to 250
+
 ## 3.63
 
 * Add support for consoles
