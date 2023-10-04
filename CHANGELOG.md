@@ -6,6 +6,10 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.66
+
+* Fix incorrect variable in 'switch_play_server' in server calls
+
 ## 3.65
 
 * Detect 'switch_play_server' in server calls
