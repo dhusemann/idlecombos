@@ -6,6 +6,13 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.67
+
+* Add Shadowheart to dictionary
+* Update dictionary with Shadowheart chests
+* Add Wyll to dictionary
+* Update dictionary with Wyll chests
+
 ## 3.66
 
 * Fix incorrect variable in 'switch_play_server' in server calls
