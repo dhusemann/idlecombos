@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.33"
+global DictionaryVersion := "2.34"
 
 PatronFromID(patronid) {
 	switch patronid {
@@ -219,7 +219,7 @@ ChampFromID(id) {
 			case "140": namefromid := "Jang Sao"
 			case "141": namefromid := "Shadowheart"
 			case "142": namefromid := "Wyll"
-			case "143": namefromid := "UNKNOWN (" id ")"
+			case "143": namefromid := "Karlach"
 			case "144": namefromid := "UNKNOWN (" id ")"
 			case "145": namefromid := "UNKNOWN (" id ")"
 			case "146": namefromid := "UNKNOWN (" id ")"
@@ -1157,8 +1157,8 @@ ChestFromID(id) {
 			case "553": namefromid := "Gold Shadowheart Chest"
 			case "554": namefromid := "Silver Wyll Chest"
 			case "555": namefromid := "Gold Wyll Chest"
-			case "556": namefromid := "Silver Y7E6 Chest"
-			case "557": namefromid := "Gold Y7E6 Chest"
+			case "556": namefromid := "Silver Karlach Chest"
+			case "557": namefromid := "Gold Karlach Chest"
 			case "558": namefromid := "Silver Y7E7 Chest"
 			case "559": namefromid := "Gold Y7E7 Chest"
 			case "560": namefromid := "Silver Y7E8 Chest"

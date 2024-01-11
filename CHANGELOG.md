@@ -6,6 +6,11 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.68
+
+* Add Karlach to dictionary
+* Update dictionary with Karlach chests
+
 ## 3.67
 
 * Add Shadowheart to dictionary
