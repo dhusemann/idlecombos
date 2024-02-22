@@ -6,7 +6,7 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.70"
+global VersionNumber := "3.71"
 global CurrentDictionary := "2.36"
 
 ;Local File globals
@@ -3296,7 +3296,7 @@ CheckPatronProgress() {
 			Gui, Font, cRed
 			GuiControl, Font, MirtFPCurrency
 		}
-		if (MirtChallenges = "10") {
+		if (MirtChallenges = "8") {
 			Gui, Font, cGreen
 			GuiControl, Font, MirtChallenges
 		} else {
@@ -3319,7 +3319,7 @@ CheckPatronProgress() {
 			Gui, Font, cRed
 			GuiControl, Font, VajraFPCurrency
 		}
-		if (VajraChallenges = "10") {
+		if (VajraChallenges = "8") {
 			Gui, Font, cGreen
 			GuiControl, Font, VajraChallenges
 		} else {
@@ -3335,7 +3335,7 @@ CheckPatronProgress() {
 		}
 	}
 	if !(StrahdVariants == "Locked") {
-		if (StrahdChallenges = "10") {
+		if (StrahdChallenges = "8") {
 			Gui, Font, cGreen
 			GuiControl, Font, StrahdChallenges
 		} else {
@@ -3358,7 +3358,7 @@ CheckPatronProgress() {
 		}
 	}
 	if !(ZarielVariants == "Locked") {
-		if (ZarielChallenges = "10") {
+		if (ZarielChallenges = "8") {
 			Gui, Font, cGreen
 			GuiControl, Font, ZarielChallenges
 		} else {
