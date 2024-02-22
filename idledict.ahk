@@ -1,4 +1,6 @@
-global DictionaryVersion := "2.35"
+global DictionaryVersion := "2.36"
+global MaxChampID := "154"
+global MaxChestID := "585"
 
 PatronFromID(patronid) {
 	switch patronid {
