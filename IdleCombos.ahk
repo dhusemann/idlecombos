@@ -6,8 +6,8 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.69"
-global CurrentDictionary := "2.35"
+global VersionNumber := "3.70"
+global CurrentDictionary := "2.36"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -1574,7 +1574,7 @@ Buy_Chests(chestid) {
 				}
 			}
 		}
-		case (chestid > 3 and chestid < 586): {
+		case (chestid > 3 and chestid <= MaxChestID): {
 			maxbuy := Floor(EventTokens/10000)
 			InputBox, count, Buying Chests, % "How many " ChestFromID(chestid) "?`n(" EventTokenName ": " EventTokens ")`n(Max: " maxbuy ")", , 250, 180, , , , , %maxbuy%
 			if ErrorLevel
@@ -1695,7 +1695,7 @@ Open_Chests(chestid) {
 				}
 			}
 		}
-		case (chestid > 3 and chestid < 586): {
+		case (chestid > 3 and chestid <= MaxChestID): {
 			CurrentChests := 0
 			CurrentChestsLookup := ""
 			for k, v in UserDetails.details.chests {
@@ -3742,7 +3742,7 @@ List_ChampIDs:
 		champname := ""
 		id := 1
 		champidlist := ""
-		while (id < 155) {
+		while (id <= MaxChampID) {
 			champname := ChampFromID(id)
 			StringLen, champnamelen, champname
 			while (champnamelen < 25) {
@@ -3769,7 +3769,7 @@ List_ChestIDs:
 		chestname := ""
 		id := 1
 		chestidlist := ""
-		while (id < 586) {
+		while (id <= MaxChestID) {
 			chestname := ChestFromID(id)
 			StringLen, chestnamelen, chestname
 			while (chestnamelen < 40) {

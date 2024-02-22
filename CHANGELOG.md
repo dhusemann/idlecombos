@@ -6,6 +6,10 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.70
+
+* Add Max Champion ID and Max Chest id to the dictionary file as globals
+
 ## 3.69
 
 * Add Presto to dictionary
