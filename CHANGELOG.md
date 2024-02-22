@@ -6,6 +6,13 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.69
+
+* Add Presto to dictionary
+* Update dictionary with Presto chests
+* Add Dynaheir to dictionary
+* Update dictionary with Dynaheir chests
+
 ## 3.68
 
 * Add Karlach to dictionary
