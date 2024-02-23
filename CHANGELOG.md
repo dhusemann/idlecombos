@@ -6,6 +6,10 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.73
+
+* Redraw the GUI to enable dynamic resizing
+
 ## 3.72
 
 * Add mouse over tooltips
