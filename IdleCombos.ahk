@@ -561,7 +561,7 @@ class MyGui {
 
 		Gui, Tab, Settings
 		Gui, MyWindow:Add, Text, x%col1_x% y+10+p w95, Server Name:
-		Gui, MyWindow:Add, Edit, hwndhedit1 vServerName x85 y33 w40
+		Gui, MyWindow:Add, Edit, hwndhedit1 vServerName x77 y33 w40
 		Gui, MyWindow:Add, Text, x170 y37 w75, Tab:
 		Gui, MyWindow:Add, DropDownList, x195 y33 w70 h60 r10 hwndhddl1 vTabActive, % TabList
 		Gui, MyWindow:Add, Text, x320 y37 w95, Style:
@@ -828,18 +828,37 @@ class MyGui {
 MyWindowGuiSize(GuiHwnd, EventInfo, Width, Height) {
 	; SB_SetText( GuiHwnd " | " EventInfo " | " Width " | " Height )
 
-	GuiControl, Move, Tabs, % "w" . (Width - 155) . " h" . (Height - 28)
-	GuiControl, Move, EventDetails, % "w" . (Width - 175) . " h" . (Height - 28)
-	GuiControl, Move, OutputText, % "x5" . " w" . (Width - 170) . " h" . (Height - 65)
+	GuiControl, MoveDraw, Tabs, % "w" . (Width - 155) . " h" . (Height - 28)
 
-	GuiControl, Move, Group1, % "x" . (Width - 155) . " h" . (Height - 25)
-	GuiControl, Move, BtnReload, % "x" . (Width - 145)
-	GuiControl, Move, BtnExit, % "x" . (Width - 75)
-	GuiControl, Move, CrashProtectStatus, % "x" . (Width - 145)
-	GuiControl, Move, BtnToggle, % "x" . (Width - 145)
-	GuiControl, Move, LastUpdatedTitle, % "x" . (Width - 145)
-	GuiControl, Move, LastUpdated, % "x" . (Width - 145)
-	GuiControl, Move, BtnUpdate, % "x" . (Width - 145)
+	GuiControl, MoveDraw, AchievementInfo, % " w" . floor((Width - 180)/2) . " h" . (Height - 28)
+	GuiControl, MoveDraw, BlessingInfo, % "x" . floor((Width - 180)/2) . " w" . floor((Width - 175)/2) . " h" . (Height - 28)
+	
+	GuiControl, MoveDraw, FGCore, % "x" . floor((Width - 100)/2)
+	GuiControl, MoveDraw, BGCore, % "x" . floor((Width - 100)/2)
+	GuiControl, MoveDraw, BG2Core, % "x" . floor((Width - 100)/2)
+	GuiControl, MoveDraw, BG3Core, % "x" . floor((Width - 100)/2)
+	
+	GuiControl, MoveDraw, MirtRequires, % "x" . floor((Width - 280)/2)
+	GuiControl, MoveDraw, MirtCosts, % "x" . floor((Width - 280)/2)
+	GuiControl, MoveDraw, VajraRequires, % "x" . floor((Width - 280)/2)
+	GuiControl, MoveDraw, VajraCosts, % "x" . floor((Width - 280)/2)
+	GuiControl, MoveDraw, StrahdRequires, % "x" . floor((Width - 280)/2)
+	GuiControl, MoveDraw, StrahdCosts, % "x" . floor((Width - 280)/2)
+	GuiControl, MoveDraw, ZarielRequires, % "x" . floor((Width - 280)/2)
+	GuiControl, MoveDraw, ZarielCosts, % "x" . floor((Width - 280)/2)
+
+	GuiControl, MoveDraw, EventDetails, % "w" . (Width - 175) . " h" . (Height - 28)
+
+	GuiControl, MoveDraw, OutputText, % "x5" . " w" . (Width - 170) . " h" . (Height - 65)
+
+	GuiControl, MoveDraw, Group1, % "x" . (Width - 155) . " h" . (Height - 25)
+	GuiControl, MoveDraw, BtnReload, % "x" . (Width - 145)
+	GuiControl, MoveDraw, BtnExit, % "x" . (Width - 75)
+	GuiControl, MoveDraw, CrashProtectStatus, % "x" . (Width - 145)
+	GuiControl, MoveDraw, BtnToggle, % "x" . (Width - 145)
+	GuiControl, MoveDraw, LastUpdatedTitle, % "x" . (Width - 145)
+	GuiControl, MoveDraw, LastUpdated, % "x" . (Width - 145)
+	GuiControl, MoveDraw, BtnUpdate, % "x" . (Width - 145)
 	
 	SB_SetParts(Width - 155)
 	GuiControl, MoveDraw, StatusBar
