@@ -6,7 +6,7 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.70"
+global VersionNumber := "3.71"
 global CurrentDictionary := "2.36"
 
 ;Local File globals
@@ -60,9 +60,9 @@ global TabList := "Summary|Adventures|Inventory|Patrons|Champions|Event|Settings
 global ServerDetection := 1
 global ShowResultsBlacksmithContracts := 1
 global DisableUserDetailsReload := 0
-;global StyleSelection := "Default"
-global SettingsCheckValue := 20 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","serverdetection":1,"wrlpath":"","blacksmithcontractresults":1,"disableuserdetailsreload":0})
+global StyleSelection := "Default"
+global SettingsCheckValue := 21 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","style":"Default","serverdetection":1,"wrlpath":"","blacksmithcontractresults":1,"disableuserdetailsreload":0})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -217,17 +217,24 @@ global foundCodeString := ""
 global BgColour := "FFFFFF"
 
 ;Style support
-;global StyleDLLPath := A_ScriptDir "\USkin.dll" ;Location to the USkin.dll file
-;global StylePath := A_ScriptDir "\styles\" ;Location where you saved the .msstyles files
-;global CurrentStyle := "IdleCombos.msstyles"
-;global StyleList := "Default||"
-;Loop, % StylePath "*.msstyles" {
-;	if (A_LoopFilename != "Default.msstyles") {
-;		StyleList .= A_LoopFilename . "|"
-;	}
-;}
-;StyleList := RegExReplace(StyleList, ".msstyles")
-;RunWith(32) ;Force to start in 32 bit mode
+global StyleDLLPath := A_ScriptDir "\styles\USkin.dll" ;Location to the USkin.dll file
+global StylePath := A_ScriptDir "\styles\" ;Location where you saved the .msstyles files
+global CurrentStyle := "Concave.msstyles"
+global StyleChoice := "Default"
+global StyleList := "Default||"
+global StyleSystem := false
+if ( FileExist(StylePath) ) {
+	StyleSystem := true
+	Loop, % StylePath "*.msstyles" {
+		if (A_LoopFilename != "Concave.msstyles") {
+			StyleList .= A_LoopFilename . "|"
+		}
+	}
+} else {
+
+}
+StyleList := RegExReplace(StyleList, ".msstyles")
+RunWith(32) ;Force to start in 32 bit mode
 
 ;detect and set game installation paths
 if ( setGameInstallEpic() == false ) {
@@ -240,7 +247,7 @@ SetIcon()
 
 oMyGUI := new MyGui()
 
-;OnExit("ExitFunc")
+OnExit("ExitFunc")
 
 ;end startup
 return
@@ -498,11 +505,11 @@ class MyGui {
 
 		Gui, Tab, Settings
 		Gui, MyWindow:Add, Text, x15 y+10+p w95, Server Name:
-		;Gui, MyWindow:Add, Text, x170 y37 w95, Style:
-		Gui, MyWindow:Add, Text, x170 y37 w95, Tab:
-		Gui, MyWindow:Add, Edit, vServerName x85 y33 w50
-		;Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vStyleChoice, % StyleList
-		Gui, MyWindow:Add, DropDownList, x200 y33 w130 h60 r10 hwndscbx vTabActive, % TabList
+		Gui, MyWindow:Add, Edit, vServerName x85 y33 w40
+		Gui, MyWindow:Add, Text, x170 y37 w75, Tab:
+		Gui, MyWindow:Add, DropDownList, x195 y33 w70 h60 r10 hwndhcbx1 vTabActive, % TabList
+		Gui, MyWindow:Add, Text, x320 y37 w95, Style:
+		Gui, MyWindow:Add, DropDownList, x350 y33 w90 h60 r10 hwndhcbx2 vStyleChoice gRunStyleChoice, % StyleList
 		Gui, MyWindow:Add, Checkbox, vLogEnabled x15 y+5+p, Logging Enabled?
 		Gui, MyWindow:Add, CheckBox, vServerDetection, Get Play Server Name automatically?
 		Gui, MyWindow:Add, CheckBox, vGetDetailsonStart, Get User Details on start?
@@ -583,10 +590,10 @@ class MyGui {
 		WRLFile := CurrentSettings.wrlpath
 		ShowResultsBlacksmithContracts := CurrentSettings.blacksmithcontractresults
 		DisableUserDetailsReload := CurrentSettings.disableuserdetailsreload
-		;StyleSelection := CurrentSettings.style
-		;SetStyle(StyleSelection)
+		StyleSelection := CurrentSettings.style
+		StyleChoice := StyleSelection
+		SetStyle(StyleSelection)
 		TabActive := CurrentSettings.tabactive
-
 		if (TabActive) {
 			GuiControl, Choose, Tabs, % TabActive
 		}
@@ -748,10 +755,9 @@ class MyGui {
 		GuiControl, MyWindow:, LogEnabled, % LogEnabled, w250 h210
 		GuiControl, MyWindow:, ShowResultsBlacksmithContracts, % ShowResultsBlacksmithContracts, w250 h210
 		GuiControl, MyWindow:, DisableUserDetailsReload, % DisableUserDetailsReload, w250 h210
-		;if (StyleSelection) {
-		;	GuiControl, Choose, StyleChoice, %StyleSelection%
-		;}
-
+		if (StyleSelection) {
+			GuiControl, Choose, StyleChoice, % StyleSelection
+		}
 		if (TabActive) {
 			GuiControl, Choose, TabActive, % TabActive
 		}
@@ -781,6 +787,13 @@ Control & 7::UseBounty(17) ;Tiny Bounty
 Control & 8::UseBounty(18) ;Small Bounty
 Control & 9::UseBounty(19) ;Medium Bounty
 Control & 0::UseBounty(20) ;Large Bounty
+
+RunStyleChoice:
+	{
+		GuiControlGet, StyleChoice,, % hcbx2
+		SetStyle(StyleChoice)
+		return
+	}
 
 Update_Clicked:
 	{
@@ -838,54 +851,59 @@ CrashProtect() {
 	return
 }
 
-;ExitFunc() {
-;	SkinForm(0)
-;	return
-;}
+ExitFunc() {
+	SkinForm(0)
+	return
+}
 
-;runWith(version){	
-;	if (A_PtrSize=(version=32?4:8)) ;For 32 set to 4 otherwise 8 for 64 bit
-;		Return
-;	SplitPath, A_AhkPath, , ahkDir ;Get directory of AutoHotkey executable
-;	if (!FileExist(correct := ahkDir "\AutoHotkeyU" version ".exe")) {
-;		MsgBox, 0x10, "Error", % "Couldn't find the " version " bit Unicode version of Autohotkey in:`n" correct
-;		ExitApp
-;	}
-;	Run,"%correct%" "%A_ScriptName%", %A_ScriptDir%
-;	ExitApp
-;}
+RunWith(version){	
+	if (A_PtrSize=(version=32?4:8)) ;For 32 set to 4 otherwise 8 for 64 bit
+		Return
+	SplitPath, A_AhkPath, , ahkDir ;Get directory of AutoHotkey executable
+	if (!FileExist(correct := ahkDir "\AutoHotkeyU" version ".exe")) {
+		MsgBox, 0x10, "Error", % "Couldn't find the " version " bit Unicode version of Autohotkey in:`n" correct
+		ExitApp
+	}
+	Run,"%correct%" "%A_ScriptName%", %A_ScriptDir%
+	ExitApp
+}
 
-;SkinForm(DLLPath, Param1 = "Apply", SkinName = ""){
-;	if(Param1 = Apply) {
-;		DllCall("LoadLibrary", str, DLLPath)
-;		DllCall(DLLPath . "\USkinInit", Int, 0, Int, 0, AStr, SkinName)
-;	} else if(Param1 = Remove) {
-;		DllCall(DLLPath . "\USkinRemoveSkin")
-;	} else if(Param1 = Restore) {
-;		DllCall(DLLPath . "\USkinRestoreSkin")
-;	} else if(Param1 = 0) {
-;		DllCall(DLLPath . "\USkinExit")
-;	}
-;}
+SkinForm(DLLPath, Param1 = "Apply", SkinName = ""){
+	if (StyleSystem) {
+		if(Param1 = Apply) {
+			DllCall("LoadLibrary", str, DLLPath)
+			DllCall(DLLPath . "\USkinInit", Int, 0, Int, 0, AStr, SkinName)
+		} else if(Param1 = Remove) {
+			DllCall(DLLPath . "\USkinRemoveSkin")
+		} else if(Param1 = Restore) {
+			DllCall(DLLPath . "\USkinRestoreSkin")
+		} else if(Param1 = 0) {
+			DllCall(DLLPath . "\USkinExit")
+		}
+	}
+}
 
-;SetStyle(SelectedStyle) {
-;	if (SelectedStyle) {
-;		SkinForm(StyleDLLPath, 0)
-;		if (SelectedStyle == "Default") {
-;			SkinForm(StyleDLLPath, Apply, StylePath . "Concave.msstyles")
-;		} else {
-;			SkinForm(StyleDLLPath, Apply, StylePath . SelectedStyle . ".msstyles")
-;		}
-;		switch (SelectedStyle) {
-;			case "Lakrits": BgColour := "222222"
-;			case "Luminous": BgColour := "F4F4F3"
-;			case "Mac": BgColour := "E3E3E3"
-;			case "Paper": BgColour := "F6F7F9"
-;			default: BgColour := "FFFFFF"
-;		}
-;	}
-;	return
-;}
+SetStyle(SelectedStyle) {
+	if (StyleSystem) {
+		; MsgBox, % "SelectedStyle: " SelectedStyle
+		if (SelectedStyle) {
+			SkinForm(StyleDLLPath, 0)
+			if (SelectedStyle == "Default") {
+				SkinForm(StyleDLLPath, Apply, StylePath . "Concave.msstyles")
+			} else {
+				SkinForm(StyleDLLPath, Apply, StylePath . SelectedStyle . ".msstyles")
+			}
+			switch (SelectedStyle) {
+				case "Lakrits": BgColour := "222222"
+				case "Luminous": BgColour := "F4F4F3"
+				case "Mac": BgColour := "E3E3E3"
+				case "Paper": BgColour := "F6F7F9"
+				default: BgColour := "FFFFFF"
+			}
+		}
+	}
+	return
+}
 
 SaveSettings()
 {
@@ -905,17 +923,21 @@ SaveSettings()
 	CurrentSettings.wrlpath := WRLFile
 	CurrentSettings.blacksmithcontractresults := ShowResultsBlacksmithContracts
 	CurrentSettings.disableuserdetailsreload := DisableUserDetailsReload
-	;CurrentSettings.style := StyleChoice
-	;StyleSelection = StyleChoice
+	if(StyleChoice == "") {
+		CurrentSettings.style := StyleSelection
+	} else {
+		CurrentSettings.style := StyleChoice
+		StyleSelection = StyleChoice
+		if (StyleSelection != StyleChoice) {
+			StyleSelection = StyleChoice
+			SetStyle(%StyleSelection%)
+		}
+	}
 	newsettings := JSON.stringify(CurrentSettings)
 	FileDelete, %SettingsFile%
 	FileAppend, %newsettings%, %SettingsFile%
 	LogFile("Settings have been saved")
 	SB_SetText("✅ Settings have been saved")
-	;if (StyleSelection != StyleChoice) {
-	;	StyleSelection = StyleChoice
-	;	SetStyle(%StyleSelection%)
-	;}
 	return
 }
 
@@ -3296,7 +3318,7 @@ CheckPatronProgress() {
 			Gui, Font, cRed
 			GuiControl, Font, MirtFPCurrency
 		}
-		if (MirtChallenges = "10") {
+		if (MirtChallenges = "8") {
 			Gui, Font, cGreen
 			GuiControl, Font, MirtChallenges
 		} else {
@@ -3319,7 +3341,7 @@ CheckPatronProgress() {
 			Gui, Font, cRed
 			GuiControl, Font, VajraFPCurrency
 		}
-		if (VajraChallenges = "10") {
+		if (VajraChallenges = "8") {
 			Gui, Font, cGreen
 			GuiControl, Font, VajraChallenges
 		} else {
@@ -3335,7 +3357,7 @@ CheckPatronProgress() {
 		}
 	}
 	if !(StrahdVariants == "Locked") {
-		if (StrahdChallenges = "10") {
+		if (StrahdChallenges = "8") {
 			Gui, Font, cGreen
 			GuiControl, Font, StrahdChallenges
 		} else {
@@ -3358,7 +3380,7 @@ CheckPatronProgress() {
 		}
 	}
 	if !(ZarielVariants == "Locked") {
-		if (ZarielChallenges = "10") {
+		if (ZarielChallenges = "8") {
 			Gui, Font, cGreen
 			GuiControl, Font, ZarielChallenges
 		} else {
