@@ -6,6 +6,10 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.72
+
+* Add mouse over tooltips
+
 ## 3.71
 
 * Change patron challenges from 10 to 8

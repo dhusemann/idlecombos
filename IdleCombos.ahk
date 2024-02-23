@@ -6,7 +6,7 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.71"
+global VersionNumber := "3.72"
 global CurrentDictionary := "2.36"
 
 ;Local File globals
@@ -60,9 +60,10 @@ global TabList := "Summary|Adventures|Inventory|Patrons|Champions|Event|Settings
 global ServerDetection := 1
 global ShowResultsBlacksmithContracts := 1
 global DisableUserDetailsReload := 0
+global DisableTooltips := 0
 global StyleSelection := "Default"
-global SettingsCheckValue := 21 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","style":"Default","serverdetection":1,"wrlpath":"","blacksmithcontractresults":1,"disableuserdetailsreload":0})
+global SettingsCheckValue := 22 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"disabletooltips":0,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","style":"Default","serverdetection":1,"wrlpath":"","blacksmithcontractresults":1,"disableuserdetailsreload":0})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -245,6 +246,56 @@ if ( setGameInstallEpic() == false ) {
 
 SetIcon()
 
+OnMessage(0x0200, "WM_MOUSEMOVE")
+
+WM_MOUSEMOVE(wParam, lParam, msg, hwnd) {
+	if (DisableTooltips == 0) {
+		; MouseGetPos, , , , ctrlHWND, 2
+		; ToolTip, % Format("{:d}",ctrlHWND) " - " hwnd
+		global hbreload, hbexit, hbtoggle, hbrefresh, hedit1, hddl1, hddl2, hcb01, hcb02, hcb03, hcb04, hcb05, hcb06, hcb07, hcb08, hcb09, hcb10, hcb11
+		switch (hwnd) {
+			case hbreload: ; Reload
+				ToolTip, % "Reload IdleCombos."
+			case hbexit: ; Exit
+				ToolTip, % "Exit IdleCombos."
+			case hbtoggle: ; Toggle Crash Protection
+				ToolTip, % "Turn Idle Chmapions crash protection on/off."
+			case hbrefresh: ; Refresh
+				ToolTip, % "Refresh the User Details from the API server."
+			case hedit1: ; Server Name
+				ToolTip, % "The Play Server Name where the data will be processed via the API server."
+			case hddl1: ; Tab
+				ToolTip, % "Select a tab to auto open when starting IdleCombos."
+			case hddl2: ; Theme
+				ToolTip, % "Select a theme to display IdleCombos with."
+			case hcb01: ; Logging Enabled?
+				ToolTip, % "Creates a log file 'idlecombolog.txt' and stores every action. Great for debugging."
+			case hcb02: ; Get Play Server Name automatically?
+				ToolTip, % "Automatically detect the play server from the API and set it accordingly."
+			case hcb03: ; Get User Details on start?
+				ToolTip, % "Automatically load the user details when starting IdleCombos."
+			case hcb04: ; Launch game client on start?
+				ToolTip, % "Automatically load Idle Champions game when starting IdleCombos."
+			case hcb05: ; Always save Chest Open Results to file?
+				ToolTip, % "Creates a log file 'chestopenlog.json' and stores every 'Chest Open' action."
+			case hcb06: ; Always save Blacksmith Results to file?
+				ToolTip, % "Creates a log file 'blacksmithlog.json' and stores every 'BlackSmith' action."
+			case hcb07: ; Always save Code Redeem Results to file?
+				ToolTip, % "Creates a log file 'redeemcodelog.json' and stores every 'Code Redeem' action."
+			case hcb08: ; Never save results to file?
+				ToolTip, % "Do not save any results to the respective log file."
+			case hcb09: ; Show Blacksmith Contracts Results?
+				ToolTip, % "Show the dialog window with the results from BlackSmith Contracts."
+			case hcb10: ; Disable User Detail Reload? (Risky)
+				ToolTip, % "Do not reload the user details after certain actions.`nThis is risky as the user details may be out of sync with the server and cause problems.`nPlease use the UPDATE button to refresh the user details manually."
+			case hcb11: ; Disable Tooltips?
+				ToolTip, % "Show tooltips on window controls"
+			default:
+				ToolTip, % ""
+		}
+	}
+}
+
 oMyGUI := new MyGui()
 
 OnExit("ExitFunc")
@@ -358,8 +409,8 @@ class MyGui {
 		SB_SetParts(500, 100)
 		SB_SetText("`tAHK v" A_AhkVersion, 2)
 
-		Gui, MyWindow:Add, Button, x%col2_x% y%row_y% w60 gReload_Clicked, Reload
-		Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 gExit_Clicked, Exit
+		Gui, MyWindow:Add, Button, x%col2_x% y%row_y% w60 hwndhbreload gReload_Clicked, Reload
+		Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 hwndhbexit gExit_Clicked, Exit
 
 		Gui, MyWindow:Add, Tab3, vTabs x%col1_x% y%row_y% w450 h250 TabActive, % TabList
 		Gui, Tab
@@ -369,11 +420,11 @@ class MyGui {
 		row_y := row_y + 25
 
 		Gui, MyWindow:Add, Text, x460 y53 vCrashProtectStatus, % CrashProtectStatus
-		Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 gCrash_Toggle, Toggle
+		Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 hwndhbtoggle gCrash_Toggle, Toggle
 
 		Gui, MyWindow:Add, Text, x460 y100, Data Timestamp:
 		Gui, MyWindow:Add, Text, x460 y120 vLastUpdated w220, % LastUpdated
-		Gui, MyWindow:Add, Button, x460 y140 w60 gUpdate_Clicked, Update
+		Gui, MyWindow:Add, Button, x460 y140 w60 hwndhbrefresh gUpdate_Clicked, Update
 
 		Gui, Tab, Summary
 		Gui, MyWindow:Add, Text, vAchievementInfo x15 y33 w350, % AchievementInfo
@@ -505,22 +556,23 @@ class MyGui {
 
 		Gui, Tab, Settings
 		Gui, MyWindow:Add, Text, x15 y+10+p w95, Server Name:
-		Gui, MyWindow:Add, Edit, vServerName x85 y33 w40
+		Gui, MyWindow:Add, Edit, hwndhedit1 vServerName x85 y33 w40
 		Gui, MyWindow:Add, Text, x170 y37 w75, Tab:
-		Gui, MyWindow:Add, DropDownList, x195 y33 w70 h60 r10 hwndhcbx1 vTabActive, % TabList
+		Gui, MyWindow:Add, DropDownList, x195 y33 w70 h60 r10 hwndhddl1 vTabActive, % TabList
 		Gui, MyWindow:Add, Text, x320 y37 w95, Style:
-		Gui, MyWindow:Add, DropDownList, x350 y33 w90 h60 r10 hwndhcbx2 vStyleChoice gRunStyleChoice, % StyleList
-		Gui, MyWindow:Add, Checkbox, vLogEnabled x15 y+5+p, Logging Enabled?
-		Gui, MyWindow:Add, CheckBox, vServerDetection, Get Play Server Name automatically?
-		Gui, MyWindow:Add, CheckBox, vGetDetailsonStart, Get User Details on start?
-		Gui, MyWindow:Add, CheckBox, vLaunchGameonStart, Launch game client on start?
-		Gui, MyWindow:Add, CheckBox, vAlwaysSaveChests, Always save Chest Open Results to file?
-		Gui, MyWindow:Add, CheckBox, vAlwaysSaveContracts, Always save Blacksmith Results to file?
-		Gui, MyWindow:Add, CheckBox, vAlwaysSaveCodes, Always save Code Redeem Results to file?
-		Gui, MyWindow:Add, Checkbox, vNoSaveSetting, Never save results to file?
+		Gui, MyWindow:Add, DropDownList, x350 y33 w90 h60 r10 hwndhddl2 vStyleChoice gRunStyleChoice, % StyleList
+		Gui, MyWindow:Add, Checkbox, hwndhcb01 vLogEnabled x15 y+5+p, Logging Enabled?
+		Gui, MyWindow:Add, CheckBox, hwndhcb02 vServerDetection, Get Play Server Name automatically?
+		Gui, MyWindow:Add, CheckBox, hwndhcb03 vGetDetailsonStart, Get User Details on start?
+		Gui, MyWindow:Add, CheckBox, hwndhcb04 vLaunchGameonStart, Launch game client on start?
+		Gui, MyWindow:Add, CheckBox, hwndhcb05 vAlwaysSaveChests, Always save Chest Open Results to file?
+		Gui, MyWindow:Add, CheckBox, hwndhcb06 vAlwaysSaveContracts, Always save Blacksmith Results to file?
+		Gui, MyWindow:Add, CheckBox, hwndhcb07 vAlwaysSaveCodes, Always save Code Redeem Results to file?
+		Gui, MyWindow:Add, Checkbox, hwndhcb08 vNoSaveSetting, Never save results to file?
 		Gui, MyWindow:Add, Button, gSave_Settings, Save Settings
-		Gui, MyWindow:Add, Checkbox, vShowResultsBlacksmithContracts x250 y59, Show Blacksmith Contracts Results?
-		Gui, MyWindow:Add, Checkbox, vDisableUserDetailsReload, Disable User Detail Reload? (Risky)
+		Gui, MyWindow:Add, Checkbox, hwndhcb09 vShowResultsBlacksmithContracts x250 y59, Show Blacksmith Contracts Results?
+		Gui, MyWindow:Add, Checkbox, hwndhcb10 vDisableUserDetailsReload, Disable User Detail Reload? (Risky)
+		Gui, MyWindow:Add, Checkbox, hwndhcb11 vDisableTooltips gRunDisableTooltips, Disable Tooltips?
 		
 		Gui, Tab, Log
 		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w425, %OutputText%
@@ -590,6 +642,7 @@ class MyGui {
 		WRLFile := CurrentSettings.wrlpath
 		ShowResultsBlacksmithContracts := CurrentSettings.blacksmithcontractresults
 		DisableUserDetailsReload := CurrentSettings.disableuserdetailsreload
+		DisableTooltips := CurrentSettings.disabletooltips
 		StyleSelection := CurrentSettings.style
 		StyleChoice := StyleSelection
 		SetStyle(StyleSelection)
@@ -755,6 +808,7 @@ class MyGui {
 		GuiControl, MyWindow:, LogEnabled, % LogEnabled, w250 h210
 		GuiControl, MyWindow:, ShowResultsBlacksmithContracts, % ShowResultsBlacksmithContracts, w250 h210
 		GuiControl, MyWindow:, DisableUserDetailsReload, % DisableUserDetailsReload, w250 h210
+		GuiControl, MyWindow:, DisableTooltips, % DisableTooltips, w250 h210
 		if (StyleSelection) {
 			GuiControl, Choose, StyleChoice, % StyleSelection
 		}
@@ -790,8 +844,17 @@ Control & 0::UseBounty(20) ;Large Bounty
 
 RunStyleChoice:
 	{
-		GuiControlGet, StyleChoice,, % hcbx2
+		GuiControlGet, StyleChoice,, % hddl2
 		SetStyle(StyleChoice)
+		return
+	}
+
+RunDisableTooltips:
+	{
+		GuiControlGet, DisableTooltips,, % hcbx11
+		if (DisableTooltips == 1) {
+			ToolTip, % ""
+		}
 		return
 	}
 
@@ -923,6 +986,7 @@ SaveSettings()
 	CurrentSettings.wrlpath := WRLFile
 	CurrentSettings.blacksmithcontractresults := ShowResultsBlacksmithContracts
 	CurrentSettings.disableuserdetailsreload := DisableUserDetailsReload
+	CurrentSettings.disabletooltips := DisableTooltips
 	if(StyleChoice == "") {
 		CurrentSettings.style := StyleSelection
 	} else {
