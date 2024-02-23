@@ -9,6 +9,7 @@ To all the Idle Dragoneers who inspired and assisted me!
 ## 3.71
 
 * Change patron challenges from 10 to 8
+* Add theme system
 
 ## 3.70
 
