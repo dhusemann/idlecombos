@@ -6,7 +6,7 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.72"
+global VersionNumber := "3.73"
 global CurrentDictionary := "2.36"
 
 ;Local File globals
@@ -200,7 +200,7 @@ global oMyGUI := ""
 global OutputText := ""
 global OutputStatus := "Welcome to IdleCombos v" VersionNumber
 global CurrentTime := ""
-global CrashProtectStatus := "Crash Protect`nDisabled"
+global CrashProtectStatus := "Crash Protect: Disabled"
 global CrashCount := 0
 global LastUpdated := "No data loaded"
 global TrayIcon := IconFile
@@ -252,7 +252,7 @@ WM_MOUSEMOVE(wParam, lParam, msg, hwnd) {
 	if (DisableTooltips == 0) {
 		; MouseGetPos, , , , ctrlHWND, 2
 		; ToolTip, % Format("{:d}",ctrlHWND) " - " hwnd
-		global hbreload, hbexit, hbtoggle, hbrefresh, hedit1, hddl1, hddl2, hcb01, hcb02, hcb03, hcb04, hcb05, hcb06, hcb07, hcb08, hcb09, hcb10, hcb11
+		global hbreload, hbexit, hbtoggle, hbrefresh, hbsave, hedit1, hddl1, hddl2, hcb01, hcb02, hcb03, hcb04, hcb05, hcb06, hcb07, hcb08, hcb09, hcb10, hcb11
 		switch (hwnd) {
 			case hbreload: ; Reload
 				ToolTip, % "Reload IdleCombos."
@@ -262,6 +262,8 @@ WM_MOUSEMOVE(wParam, lParam, msg, hwnd) {
 				ToolTip, % "Turn Idle Chmapions crash protection on/off."
 			case hbrefresh: ; Refresh
 				ToolTip, % "Refresh the User Details from the API server."
+			case hbsave: ; Save Settings
+				ToolTip, % "Save all the settings to file."
 			case hedit1: ; Server Name
 				ToolTip, % "The Play Server Name where the data will be processed via the API server."
 			case hddl1: ; Tab
@@ -400,68 +402,71 @@ class MyGui {
 		Menu, IdleMenu, Add, &Help, :HelpSubmenu
 		Gui, Menu, IdleMenu
 
-		col1_x := 5
+		col1_x := 10
 		col2_x := 470
 		col3_x := 530
 		row_y := 5
+		row1_y := 15
 
-		Gui, Add, StatusBar, , %OutputStatus%
-		SB_SetParts(500, 100)
+		Gui, Add, StatusBar, vStatusBar, %OutputStatus%
+		SB_SetParts(450)
 		SB_SetText("`tAHK v" A_AhkVersion, 2)
 
-		Gui, MyWindow:Add, Button, x%col2_x% y%row_y% w60 hwndhbreload gReload_Clicked, Reload
-		Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 hwndhbexit gExit_Clicked, Exit
+		Gui, Add, GroupBox, x455 y0 w155 h250 vGroup1,
 
-		Gui, MyWindow:Add, Tab3, vTabs x%col1_x% y%row_y% w450 h250 TabActive, % TabList
+		Gui, MyWindow:Add, Button, x%col2_x% y%row1_y% w65 hwndhbreload vBtnReload gReload_Clicked, Reload
+		Gui, MyWindow:Add, Button, x%col3_x% y%row1_y% w65 hwndhbexit vBtnExit gExit_Clicked, Exit
+
+		Gui, MyWindow:Add, Tab3, x0 y%row_y% w455 h250 hwndhtabs vTabs TabActive, % TabList
 		Gui, Tab
 
 		row_y := row_y + 25
 		;Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 gUpdate_Clicked, Update
 		row_y := row_y + 25
 
-		Gui, MyWindow:Add, Text, x460 y53 vCrashProtectStatus, % CrashProtectStatus
-		Gui, MyWindow:Add, Button, x%col3_x% y%row_y% w60 hwndhbtoggle gCrash_Toggle, Toggle
+		Gui, MyWindow:Add, Text, x460 y78 vCrashProtectStatus, % CrashProtectStatus
+		Gui, MyWindow:Add, Button, x460 y95 w135 hwndhbtoggle vBtnToggle gCrash_Toggle, Toggle
 
-		Gui, MyWindow:Add, Text, x460 y100, Data Timestamp:
-		Gui, MyWindow:Add, Text, x460 y120 vLastUpdated w220, % LastUpdated
-		Gui, MyWindow:Add, Button, x460 y140 w60 hwndhbrefresh gUpdate_Clicked, Update
+		Gui, MyWindow:Add, Text, x460 y160 w135 vLastUpdatedTitle, Data Timestamp:
+		Gui, MyWindow:Add, Text, x460 y180 w135 vLastUpdated, % LastUpdated
+		Gui, MyWindow:Add, Button, x460 y200 w135 hwndhbrefresh vBtnUpdate gUpdate_Clicked, Update
 
 		Gui, Tab, Summary
-		Gui, MyWindow:Add, Text, vAchievementInfo x15 y33 w350, % AchievementInfo
+		Gui, MyWindow:Add, Text, vAchievementInfo x%col1_x% y33 w350, % AchievementInfo
 		Gui, MyWindow:Add, Text, vBlessingInfo x200 y33 w350 h210, % BlessingInfo
 
 		Gui, Tab, Adventures
-		Gui, MyWindow:Add, Text, x15 y33 w130, Current Adventure:
+		Gui, MyWindow:Add, Text, x%col1_x% y33 w130, Current Adventure:
 		Gui, MyWindow:Add, Text, vCurrentAdventure x+2 w50, % CurrentAdventure
-		Gui, MyWindow:Add, Text, x15 y+p w130, Current Patron:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Current Patron:
 		Gui, MyWindow:Add, Text, vCurrentPatron x+2 w50, % CurrentPatron
-		Gui, MyWindow:Add, Text, x15 y+p w130, Current Champions:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Current Champions:
 		Gui, MyWindow:Add, Text, vCurrentChampions x+2 w50, % CurrentChampions
-		Gui, MyWindow:Add, Text, x15 y+p w130, Current Area:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Current Area:
 		Gui, MyWindow:Add, Text, vCurrentArea x+2 w50, % CurrentArea
-		Gui, MyWindow:Add, Text, x15 y88 w130, Background1 Adventure:
+		Gui, MyWindow:Add, Text, x%col1_x% y88 w130, Background1 Adventure:
 		Gui, MyWindow:Add, Text, vBackgroundAdventure x+2 w50, % BackgroundAdventure
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background1 Patron:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Background1 Patron:
 		Gui, MyWindow:Add, Text, vBackgroundPatron x+2 w50, % BackgroundPatron
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background1 Champions:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Background1 Champions:
 		Gui, MyWindow:Add, Text, vBackgroundChampions x+2 w50, % BackgroundChampions
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background1 Area:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Background1 Area:
 		Gui, MyWindow:Add, Text, vBackgroundArea x+2 w50, % BackgroundArea
-		Gui, MyWindow:Add, Text, x15 y143 w130, Background2 Adventure:
+		Gui, MyWindow:Add, Text, x%col1_x% y143 w130, Background2 Adventure:
 		Gui, MyWindow:Add, Text, vBackground2Adventure x+2 w50, % Background2Adventure
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background2 Patron:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Background2 Patron:
 		Gui, MyWindow:Add, Text, vBackground2Patron x+2 w50, % Background2Patron
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background2 Champions:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Background2 Champions:
 		Gui, MyWindow:Add, Text, vBackground2Champions x+2 w50, % Background2Champions
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background2 Area:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Background2 Area:
 		Gui, MyWindow:Add, Text, vBackground2Area x+2 w50, % Background2Area
-		Gui, MyWindow:Add, Text, x15 y198 w130, Background3 Adventure:
+		Gui, MyWindow:Add, Text, x%col1_x% y198 w130, Background3 Adventure:
 		Gui, MyWindow:Add, Text, vBackground3Adventure x+2 w50, % Background3Adventure
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background3 Patron:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Background3 Patron:
 		Gui, MyWindow:Add, Text, vBackground3Patron x+2 w50, % Background3Patron
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background3 Champions:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Background3 Champions:
 		Gui, MyWindow:Add, Text, vBackground3Champions x+2 w50, % Background3Champions
-		Gui, MyWindow:Add, Text, x15 y+p w130, Background3 Area:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w130, Background3 Area:
 		Gui, MyWindow:Add, Text, vBackground3Area x+2 w50, % Background3Area
 
 		Gui, MyWindow:Add, Text, vFGCore x200 y33 w150, % FGCore
@@ -470,98 +475,98 @@ class MyGui {
 		Gui, MyWindow:Add, Text, vBG3Core x200 y198 w150, % BG3Core
 
 		Gui, Tab, Inventory
-		Gui, MyWindow:Add, Text, x15 y33 w80, Current Gems:
+		Gui, MyWindow:Add, Text, x%col1_x% y33 w80, Current Gems:
         Gui, MyWindow:Add, Text, vCurrentGems x+2 w80 right, % CurrentGems
         Gui, MyWindow:Add, Text, vAvailableChests x+10 w250, % AvailableChests
-        Gui, MyWindow:Add, Text, x15 y+p w80, (Spent Gems):
+        Gui, MyWindow:Add, Text, x%col1_x% y+p w80, (Spent Gems):
         Gui, MyWindow:Add, Text, vSpentGems x+2 w80 right, % SpentGems
 
-        Gui, MyWindow:Add, Text, x15 y+5+p w110, Gold Chests:
+        Gui, MyWindow:Add, Text, x%col1_x% y+5+p w110, Gold Chests:
         Gui, MyWindow:Add, Text, vCurrentGolds x+2 w50 right, % CurrentGolds
         Gui, MyWindow:Add, Text, vGoldPity x+10 w190, % GoldPity
-        Gui, MyWindow:Add, Text, x15 y+p w110, Silver Chests:
+        Gui, MyWindow:Add, Text, x%col1_x% y+p w110, Silver Chests:
         Gui, MyWindow:Add, Text, vCurrentSilvers x+2 w50 right, % CurrentSilvers
         Gui, MyWindow:Add, Text, x+145 y+1 w185, Next TGP:
-        Gui, MyWindow:Add, Text, x15 y+0 w110, Time Gate Pieces:
+        Gui, MyWindow:Add, Text, x%col1_x% y+0 w110, Time Gate Pieces:
         Gui, MyWindow:Add, Text, vCurrentTGPs x+17 w35 right, % CurrentTGPs
         Gui, MyWindow:Add, Text, vAvailableTGs x+10 w85, % AvailableTGs
         Gui, MyWindow:Add, Text, vNextTGPDrop x+40 w220, % NextTGPDrop
 
-        Gui, MyWindow:Add, Text, x15 y+5+p w110, Tiny Bounties:
+        Gui, MyWindow:Add, Text, x%col1_x% y+5+p w110, Tiny Bounties:
         Gui, MyWindow:Add, Text, vCurrentTinyBounties x+2 w50 right, % CurrentTinyBounties
-        Gui, MyWindow:Add, Text, x15 y+p w110, Small Bounties:
+        Gui, MyWindow:Add, Text, x%col1_x% y+p w110, Small Bounties:
         Gui, MyWindow:Add, Text, vCurrentSmBounties x+2 w50 right, % CurrentSmBounties
         Gui, MyWindow:Add, Text, vAvailableTokens x+10 w220, % AvailableTokens
-        Gui, MyWindow:Add, Text, x15 y+p w110, Medium Bounties:
+        Gui, MyWindow:Add, Text, x%col1_x% y+p w110, Medium Bounties:
         Gui, MyWindow:Add, Text, vCurrentMdBounties x+2 w50 right, % CurrentMdBounties
         Gui, MyWindow:Add, Text, vCurrentTokens x+10 w200, % CurrentTokens
-        Gui, MyWindow:Add, Text, x15 y+p w110, Large Bounties:
+        Gui, MyWindow:Add, Text, x%col1_x% y+p w110, Large Bounties:
         Gui, MyWindow:Add, Text, vCurrentLgBounties x+2 w50 right, % CurrentLgBounties
         Gui, MyWindow:Add, Text, vAvailableFPs x+10 w220, % AvailableFPs
 
-        Gui, MyWindow:Add, Text, x15 y+5+p w110, Tiny Blacksmiths:
+        Gui, MyWindow:Add, Text, x%col1_x% y+5+p w110, Tiny Blacksmiths:
         Gui, MyWindow:Add, Text, vCurrentTinyBS x+2 w50 right, % CurrentTinyBS
         Gui, MyWindow:Add, Text, vAvailableBSLvs x+10 w175, % AvailableBSLvs
-        Gui, MyWindow:Add, Text, x15 y+p w110, Small Blacksmiths:
+        Gui, MyWindow:Add, Text, x%col1_x% y+p w110, Small Blacksmiths:
         Gui, MyWindow:Add, Text, vCurrentSmBS x+2 w50 right, % CurrentSmBS
-        Gui, MyWindow:Add, Text, x15 y+p w110, Medium Blacksmiths:
+        Gui, MyWindow:Add, Text, x%col1_x% y+p w110, Medium Blacksmiths:
         Gui, MyWindow:Add, Text, vCurrentMdBS x+2 w50 right, % CurrentMdBS
-        Gui, MyWindow:Add, Text, x15 y+p w110, Large Blacksmiths:
+        Gui, MyWindow:Add, Text, x%col1_x% y+p w110, Large Blacksmiths:
         Gui, MyWindow:Add, Text, vCurrentLgBS x+2 w50 right, % CurrentLgBS
-        Gui, MyWindow:Add, Text, x15 y+p w110, Huge Blacksmiths:
+        Gui, MyWindow:Add, Text, x%col1_x% y+p w110, Huge Blacksmiths:
         Gui, MyWindow:Add, Text, vCurrentHgBS x+2 w50 right, % CurrentHgBS
 
 		Gui, Tab, Patrons
-		Gui, MyWindow:Add, Text, x15 y33 w75, Mirt Variants:
+		Gui, MyWindow:Add, Text, x%col1_x% y33 w75, Mirt Variants:
 		Gui, MyWindow:Add, Text, vMirtVariants x+p w75 right cRed, % MirtVariants
-		Gui, MyWindow:Add, Text, x15 y+p w95, Mirt FP Currency:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w95, Mirt FP Currency:
 		Gui, MyWindow:Add, Text, vMirtFPCurrency x+p w55 right cRed, % MirtFPCurrency
 		Gui, MyWindow:Add, Text, vMirtRequires x+2 w200 right, % MirtRequires
-		Gui, MyWindow:Add, Text, x15 y+p w95, Mirt Challenges:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w95, Mirt Challenges:
 		Gui, MyWindow:Add, Text, vMirtChallenges x+p w55 right cRed, % MirtChallenges
 		Gui, MyWindow:Add, Text, vMirtCosts x+2 w200 right, % MirtCosts
 
-		Gui, MyWindow:Add, Text, x15 y+5+p w75, Vajra Variants:
+		Gui, MyWindow:Add, Text, x%col1_x% y+5+p w75, Vajra Variants:
 		Gui, MyWindow:Add, Text, vVajraVariants x+p w75 right cRed, % VajraVariants
-		Gui, MyWindow:Add, Text, x15 y+p w95, Vajra FP Currency:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w95, Vajra FP Currency:
 		Gui, MyWindow:Add, Text, vVajraFPCurrency x+p w55 right cRed, % VajraFPCurrency
 		Gui, MyWindow:Add, Text, vVajraRequires x+2 w200 right, % VajraRequires
-		Gui, MyWindow:Add, Text, x15 y+p w95, Vajra Challenges:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w95, Vajra Challenges:
 		Gui, MyWindow:Add, Text, vVajraChallenges x+p w55 right cRed, % VajraChallenges
 		Gui, MyWindow:Add, Text, vVajraCosts x+2 w200 right, % VajraCosts
 
-		Gui, MyWindow:Add, Text, x15 y+5+p w75, Strahd Variants:
+		Gui, MyWindow:Add, Text, x%col1_x% y+5+p w75, Strahd Variants:
 		Gui, MyWindow:Add, Text, vStrahdVariants x+p w75 right cRed, % StrahdVariants
-		Gui, MyWindow:Add, Text, x15 y+p w95, Strahd FP Currency:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w95, Strahd FP Currency:
 		Gui, MyWindow:Add, Text, vStrahdFPCurrency x+p w55 right cRed, % StrahdFPCurrency
 		Gui, MyWindow:Add, Text, vStrahdRequires x+2 w200 right, % StrahdRequires
-		Gui, MyWindow:Add, Text, x15 y+p w95, Strahd Challenges:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w95, Strahd Challenges:
 		Gui, MyWindow:Add, Text, vStrahdChallenges x+p w55 right cRed, % StrahdChallenges
 		Gui, MyWindow:Add, Text, vStrahdCosts x+2 w200 right, % StrahdCosts
 
-		Gui, MyWindow:Add, Text, x15 y+5+p w75, Zariel Variants:
+		Gui, MyWindow:Add, Text, x%col1_x% y+5+p w75, Zariel Variants:
 		Gui, MyWindow:Add, Text, vZarielVariants x+p w75 right cRed, % ZarielVariants
-		Gui, MyWindow:Add, Text, x15 y+p w95, Zariel FP Currency:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w95, Zariel FP Currency:
 		Gui, MyWindow:Add, Text, vZarielFPCurrency x+p w55 right cRed, % ZarielFPCurrency
 		Gui, MyWindow:Add, Text, vZarielRequires x+2 w200 right, % ZarielRequires
-		Gui, MyWindow:Add, Text, x15 y+p w95, Zariel Challenges:
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w95, Zariel Challenges:
 		Gui, MyWindow:Add, Text, vZarielChallenges x+p w55 right cRed, % ZarielChallenges
 		Gui, MyWindow:Add, Text, vZarielCosts x+2 w200 right, % ZarielCosts
 
 		Gui, Tab, Champions
-		Gui, MyWindow:Add, Text, vChampDetails x15 y33 w430 h230, % ChampDetails
+		Gui, MyWindow:Add, Text, vChampDetails x%col1_x% y33 w430 h230, % ChampDetails
 
 		Gui, Tab, Event
-		Gui, MyWindow:Add, Text, vEventDetails x15 y33 w430 h230, % EventDetails
+		Gui, MyWindow:Add, Text, vEventDetails x%col1_x% y33 w430 h230, % EventDetails
 
 		Gui, Tab, Settings
-		Gui, MyWindow:Add, Text, x15 y+10+p w95, Server Name:
+		Gui, MyWindow:Add, Text, x%col1_x% y+10+p w95, Server Name:
 		Gui, MyWindow:Add, Edit, hwndhedit1 vServerName x85 y33 w40
 		Gui, MyWindow:Add, Text, x170 y37 w75, Tab:
 		Gui, MyWindow:Add, DropDownList, x195 y33 w70 h60 r10 hwndhddl1 vTabActive, % TabList
 		Gui, MyWindow:Add, Text, x320 y37 w95, Style:
 		Gui, MyWindow:Add, DropDownList, x350 y33 w90 h60 r10 hwndhddl2 vStyleChoice gRunStyleChoice, % StyleList
-		Gui, MyWindow:Add, Checkbox, hwndhcb01 vLogEnabled x15 y+5+p, Logging Enabled?
+		Gui, MyWindow:Add, Checkbox, hwndhcb01 vLogEnabled x%col1_x% y+5+p, Logging Enabled?
 		Gui, MyWindow:Add, CheckBox, hwndhcb02 vServerDetection, Get Play Server Name automatically?
 		Gui, MyWindow:Add, CheckBox, hwndhcb03 vGetDetailsonStart, Get User Details on start?
 		Gui, MyWindow:Add, CheckBox, hwndhcb04 vLaunchGameonStart, Launch game client on start?
@@ -569,13 +574,13 @@ class MyGui {
 		Gui, MyWindow:Add, CheckBox, hwndhcb06 vAlwaysSaveContracts, Always save Blacksmith Results to file?
 		Gui, MyWindow:Add, CheckBox, hwndhcb07 vAlwaysSaveCodes, Always save Code Redeem Results to file?
 		Gui, MyWindow:Add, Checkbox, hwndhcb08 vNoSaveSetting, Never save results to file?
-		Gui, MyWindow:Add, Button, gSave_Settings, Save Settings
+		Gui, MyWindow:Add, Button, y+10+p hwndhbsave gSave_Settings, Save Settings
 		Gui, MyWindow:Add, Checkbox, hwndhcb09 vShowResultsBlacksmithContracts x250 y59, Show Blacksmith Contracts Results?
 		Gui, MyWindow:Add, Checkbox, hwndhcb10 vDisableUserDetailsReload, Disable User Detail Reload? (Risky)
 		Gui, MyWindow:Add, Checkbox, hwndhcb11 vDisableTooltips gRunDisableTooltips, Disable Tooltips?
 		
 		Gui, Tab, Log
-		Gui, MyWindow:Add, Edit, r16 vOutputText ReadOnly w425, %OutputText%
+		Gui, MyWindow:Add, Edit, w430 r16 vOutputText ReadOnly +Limit -Border, %OutputText%
 
 		GuiControl, Focus, SysTabControl321
 
@@ -820,6 +825,26 @@ class MyGui {
 	}
 }
 
+MyWindowGuiSize(GuiHwnd, EventInfo, Width, Height) {
+	; SB_SetText( GuiHwnd " | " EventInfo " | " Width " | " Height )
+
+	GuiControl, Move, Tabs, % "w" . (Width - 155) . " h" . (Height - 28)
+	GuiControl, Move, EventDetails, % "w" . (Width - 175) . " h" . (Height - 28)
+	GuiControl, Move, OutputText, % "x5" . " w" . (Width - 170) . " h" . (Height - 65)
+
+	GuiControl, Move, Group1, % "x" . (Width - 155) . " h" . (Height - 25)
+	GuiControl, Move, BtnReload, % "x" . (Width - 145)
+	GuiControl, Move, BtnExit, % "x" . (Width - 75)
+	GuiControl, Move, CrashProtectStatus, % "x" . (Width - 145)
+	GuiControl, Move, BtnToggle, % "x" . (Width - 145)
+	GuiControl, Move, LastUpdatedTitle, % "x" . (Width - 145)
+	GuiControl, Move, LastUpdated, % "x" . (Width - 145)
+	GuiControl, Move, BtnUpdate, % "x" . (Width - 145)
+	
+	SB_SetParts(Width - 155)
+	GuiControl, MoveDraw, StatusBar
+}
+
 ;Hotkeys
 ;$F9::Reload
 ;$F10::ExitApp
@@ -878,16 +903,16 @@ Exit_Clicked:
 
 Crash_Toggle:
 	{
-		;msgbox, % CrashProtectStatus
+		msgbox, % CrashProtectStatus
 		switch CrashProtectStatus {
-			case "Crash Protect`nDisabled": {
-				CrashProtectStatus := "Crash Protect`nEnabled"
+			case "Crash Protect: Disabled": {
+				CrashProtectStatus := "Crash Protect: Enabled"
 				oMyGUI.Update()
 				SB_SetText("✅ Crash Protect has been enabled!")
 				CrashProtect()
 			}
-			case "Crash Protect`nEnabled": {
-				CrashProtectStatus := "Crash Protect`nDisabled"
+			case "Crash Protect: Enabled": {
+				CrashProtectStatus := "Crash Protect: Disabled"
 				CrashCount := 0
 				oMyGUI.Update()
 				SB_SetText("✅ Crash Protect has been disabled")
@@ -3617,13 +3642,13 @@ CheckEvents() {
 		}
 	}
 	if (EventID != 0) {
-		InfoEventName := EventName " (ID:" EventID ")`n" EventDesc "`n`n"
+		InfoEventName := EventName " (ID:" EventID ") - " EventDesc "`n`n"
 	} else {
 		InfoEventName := EventDesc "`n`n"
 	}
 	InfoEventTokens := EventTokenName ": " EventTokens "`n`n"
-	InfoEventHeroes := "Heroes: " EventHeroes "`n`n"
-	InfoEventChests := "Chests: " EventChests "`n`n"
+	InfoEventHeroes := "HEROES: " EventHeroes "`n`n"
+	InfoEventChests := "CHESTS: " EventChests "`n`n"
 	EventDetails := InfoEventName InfoEventTokens InfoEventHeroes InfoEventChests
 }
 
