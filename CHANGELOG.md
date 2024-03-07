@@ -6,6 +6,12 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.74
+
+* Add The Dark Urge to dictionary
+* Update The Dark Urge with Presto chests
+* Update the icon to a greyscale version
+
 ## 3.73
 
 * Redraw the GUI to enable dynamic resizing
