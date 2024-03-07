@@ -6,8 +6,8 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.73"
-global CurrentDictionary := "2.36"
+global VersionNumber := "3.74"
+global CurrentDictionary := "2.37"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -20,7 +20,8 @@ global BountyLogFile := "bountylog.json"
 global RedeemCodeLogFile := "redeemcodelog.json"
 global JournalFile := "journal.json"
 global CurrentSettings := []
-global IconFilename := "IdleDragons.exe"
+global IconFolder := ""
+global IconFilename := "IdleCombos.ico"
 global IconFile := ""
 global GameInstallDir := ""
 global GamePlatform := ""
@@ -2637,7 +2638,7 @@ setGameInstallEpic( manual = false) {
 				GameInstallDir := GameInstallDirEpic
 				GameClient := GameClientEpicLauncher
 				WRLFile := GameInstallDir WRLFilePath
-				IconFile := GameInstallDir IconFilename
+				IconFile := IconFolder IconFilename
 				GamePlatform := "Epic Game Store"
 				LoadGameClient := 1
 				SetIcon()
@@ -2665,7 +2666,7 @@ setGameInstallSteam( manual = false) {
 		GameInstallDir := GameInstallDirSteam
 		GameClient := GameInstallDir GameClientExe
 		WRLFile := GameInstallDir WRLFilePath
-		IconFile := GameInstallDir IconFilename
+		IconFile := IconFolder IconFilename
 		GamePlatform := "Steam"
 		LoadGameClient := 2
 		SetIcon()
@@ -2691,8 +2692,7 @@ setGameInstallStandalone( manual = false) {
 		GameInstallDir := GameInstallDirStandaloneLauncher
 		GameClient := GameInstallDirStandaloneLauncher GameClientExeStandaloneLauncher
 		WRLFile := GameInstallDirStandalone WRLFilePath
-		IconFilename := GameClientExeStandaloneLauncher
-		IconFile := GameInstallDir IconFilename
+		IconFile := IconFolder IconFilename
 		GamePlatform := "Standalone"
 		LoadGameClient := 3
 		SetIcon()
@@ -2718,8 +2718,7 @@ setGameInstallStandaloneLauncher( manual = false) {
 		GameInstallDir := GameInstallDirStandaloneLauncher
 		GameClient := GameInstallDirStandaloneLauncher GameClientExeStandaloneLauncher
 		WRLFile := ""
-		IconFilename := GameClientExeStandaloneLauncher
-		IconFile := GameInstallDir IconFilename
+		IconFile := IconFolder IconFilename
 		LoadGameClient := 3
 		SetIcon()
 		GamePlatform := "Standalone Launcher"
@@ -2743,8 +2742,7 @@ setGameInstallConsole( manual = false) {
 		; GameInstallDir := GameInstallDirStandaloneLauncher
 		; GameClient := GameInstallDirStandaloneLauncher GameClientExeStandaloneLauncher
 		; WRLFile := GameInstallDirStandalone WRLFilePath
-		; IconFilename := GameClientExeStandaloneLauncher
-		; IconFile := GameInstallDir IconFilename
+		; IconFile := IconFolder IconFilename
 		GamePlatform := "Console"
 		LoadGameClient := 4
 		ServerDetection := 0
