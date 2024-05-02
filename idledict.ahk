@@ -1,4 +1,4 @@
-global DictionaryVersion := "2.37"
+global DictionaryVersion := "2.38"
 global MaxChampID := "154"
 global MaxChestID := "585"
 
@@ -9,6 +9,7 @@ PatronFromID(patronid) {
 		case "2": namefromid := "Vajra"
 		case "3": namefromid := "Strahd"
 		case "4": namefromid := "Zariel"
+		case "5": namefromid := "Elminster"
 	}
 	return namefromid
 }
@@ -17,11 +18,6 @@ campaignFromID(campaignid) {
 	switch campaignid {
 		case "1": namefromid := "Grand Tour of the Sword Coast"
 		case "2": namefromid := "Tomb of Annihilation"
-		case "15": namefromid := "Waterdeep: Dragon Heist"
-		case "22": namefromid := "Baldur's Gate: Descent into Avernus"
-		case "24": namefromid := "Icewind Dale: Rime of the Frostmaiden"
-		case "23": namefromid := "Special"
-		case "17": namefromid := "Time Gates"
 		case "3": namefromid := "Highharvestide"
 		case "4": namefromid := "Liars' Night"
 		case "5": namefromid := "Feast of the Moon"
@@ -34,11 +30,21 @@ campaignFromID(campaignid) {
 		case "12": namefromid := "Greengrass"
 		case "13": namefromid := "The Running"
 		case "14": namefromid := "The Great Modron March"
+		case "15": namefromid := "Waterdeep: Dragon Heist"
 		case "16": namefromid := "Dragondown"
+		case "17": namefromid := "Time Gates"
 		case "18": namefromid := "Founders' Day"
 		case "19": namefromid := "Midsummer"
 		case "20": namefromid := "Ahghairon's Day"
 		case "21": namefromid := "Brightswords"
+		case "22": namefromid := "Baldur's Gate: Descent into Avernus"
+		case "23": namefromid := "Special"
+		case "24": namefromid := "Icewind Dale: Rime of the Frostmaiden"
+		case "25": namefromid := "unknown, but after Icewind Dale: Rime of the Frostmaiden"		
+		case "26": namefromid := "unknown, but 2 after Icewind Dale: Rime of the Frostmaiden"
+		case "27": namefromid := "The Wild Beyond The Witchlight"
+		case "28": namefromid := "Light of Yaryxis"
+		case "29": namefromid := "Turn of Fortune's Wheel"
 		default: namefromid := "Error: " campaignid
 	}
 	return namefromid

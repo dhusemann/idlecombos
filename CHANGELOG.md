@@ -6,6 +6,11 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.75
+
+* Add Elminster to dictionary (Thanks to koe)
+* Update multiple dictionary Campaign From IDs (Thanks to koe)
+
 ## 3.74
 
 * Add The Dark Urge to dictionary
