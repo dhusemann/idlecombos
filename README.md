@@ -2,13 +2,15 @@
 
 Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).
 
-**v3.74** is the current supported Version. [View changelog.](https://github.com/djravine/idlecombos/blob/master/CHANGELOG.md)
+**v3.75** is the current supported Version. [View changelog.](https://github.com/djravine/idlecombos/blob/master/CHANGELOG.md)
 
 ![Screenshot](https://i.imgur.com/LoeTt9r.png)
 
 ## Important Notes
 
 * Steam Launcher will not open Idle Champions if Steam is not open and logged in.
+* Steam game detection only works if your Steam Library is in the default location.
+* If you use a VPN you may have API communication issues. Please whitelist AHK/IdleCombos in your VPN.
 
 ## Features
 

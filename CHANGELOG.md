@@ -6,6 +6,15 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.75
+
+* Add Elminster to dictionary (Thanks to koe)
+* Update multiple dictionary Campaign From IDs (Thanks to koe)
+* Add Redeem Code History
+* Skip codes already in Redeem Code History
+* Resubmit codes if the result JSON is missing required properties
+* Add setting to disable skipping Redeem Codes
+
 ## 3.74
 
 * Add The Dark Urge to dictionary

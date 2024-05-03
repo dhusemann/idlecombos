@@ -14,6 +14,7 @@ bountylog.json
 chestopenlog.json
 journal.json
 redeemcodelog.json
+redeemcodelist.json
 
 # VSCOODE
 .vscode/settings.json
