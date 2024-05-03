@@ -14,6 +14,10 @@ To all the Idle Dragoneers who inspired and assisted me!
 * Skip codes already in Redeem Code History
 * Resubmit codes if the result JSON is missing required properties
 * Add setting to disable skipping Redeem Codes
+* Add Gale to dictionary
+* Update dictionary with Gale chests
+* Add Diana to dictionary
+* Update dictionary with Diana chests
 
 ## 3.74
 
