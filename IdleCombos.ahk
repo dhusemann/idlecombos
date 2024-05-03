@@ -18,6 +18,7 @@ global ChestOpenLogFile := "chestopenlog.json"
 global BlacksmithLogFile := "blacksmithlog.json"
 global BountyLogFile := "bountylog.json"
 global RedeemCodeLogFile := "redeemcodelog.json"
+global RedeemCodeListFile := "redeemcodelist.json"
 global JournalFile := "journal.json"
 global CurrentSettings := []
 global IconFolder := ""
@@ -62,9 +63,10 @@ global ServerDetection := 1
 global ShowResultsBlacksmithContracts := 1
 global DisableUserDetailsReload := 0
 global DisableTooltips := 0
+global RedeemCodeHistorySkip := 1
 global StyleSelection := "Default"
-global SettingsCheckValue := 22 ;used to check for outdated settings file
-global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"disabletooltips":0,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","style":"Default","serverdetection":1,"wrlpath":"","blacksmithcontractresults":1,"disableuserdetailsreload":0})
+global SettingsCheckValue := 23 ;used to check for outdated settings file
+global NewSettings := JSON.stringify({"alwayssavechests":1,"alwayssavecontracts":1,"alwayssavecodes":1,"disabletooltips":0,"firstrun":0,"getdetailsonstart":0,"hash":0,"instance_id":0,"launchgameonstart":0,"loadgameclient":0,"logenabled":0,"nosavesetting":0,"servername":"master","user_id":0,"user_id_epic":0,"user_id_steam":0,"tabactive":"Summary","style":"Default","serverdetection":1,"wrlpath":"","blacksmithcontractresults":1,"disableuserdetailsreload":0,"redeemcodehistoryskip":1})
 
 ;Server globals
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -293,6 +295,8 @@ WM_MOUSEMOVE(wParam, lParam, msg, hwnd) {
 				ToolTip, % "Do not reload the user details after certain actions.`nThis is risky as the user details may be out of sync with the server and cause problems.`nPlease use the UPDATE button to refresh the user details manually."
 			case hcb11: ; Disable Tooltips?
 				ToolTip, % "Show tooltips on window controls"
+			case hcb12: ; Skip Codes in Redeem Code History?
+				ToolTip, % "Any codes already found in the Redeem Code History will be skipped"
 			default:
 				ToolTip, % ""
 		}
@@ -387,7 +391,10 @@ class MyGui {
 		Menu, IdleMenu, Add, &Tools, :ToolsSubmenu
 
 		Menu, HelpSubmenu, Add, &Run Setup, FirstRun
+		Menu, HelpSubmenu, Add
 		Menu, HelpSubmenu, Add, Clear &Log, Clear_Log
+		Menu, HelpSubmenu, Add, Clear Redeem Code H&istory, Redeem_Codes_History_Clear
+		Menu, HelpSubmenu, Add
 		Menu, HelpSubmenu, Add, &Update Dictionary, Update_Dictionary
 		Menu, HelpSubmenu, Add, Download &Journal, Get_Journal
 		Menu, HelpSubmenu, Add
@@ -395,6 +402,7 @@ class MyGui {
 		Menu, HelpSubmenu, Add, List &Champ IDs, List_ChampIDs
 		Menu, HelpSubmenu, Add, List C&hest IDs, List_ChestIDs
 		Menu, HelpSubmenu, Add, List Hot&keys, Hotkeys_Clicked
+		Menu, HelpSubmenu, Add, List &Redeem Code History, Redeem_Codes_History
 		Menu, HelpSubmenu, Add
 		Menu, HelpSubmenu, Add, &About IdleCombos, About_Clicked
 		Menu, HelpSubmenu, Add, &Github Project, Github_Clicked
@@ -577,6 +585,7 @@ class MyGui {
 		Gui, MyWindow:Add, Checkbox, hwndhcb08 vNoSaveSetting, Never save results to file?
 		Gui, MyWindow:Add, Button, y+10+p hwndhbsave gSave_Settings, Save Settings
 		Gui, MyWindow:Add, Checkbox, hwndhcb09 vShowResultsBlacksmithContracts x250 y59, Show Blacksmith Contracts Results?
+		Gui, MyWindow:Add, Checkbox, hwndhcb12 vRedeemCodeHistorySkip, Skip Codes in Redeem Code History?
 		Gui, MyWindow:Add, Checkbox, hwndhcb10 vDisableUserDetailsReload, Disable User Detail Reload? (Risky)
 		Gui, MyWindow:Add, Checkbox, hwndhcb11 vDisableTooltips gRunDisableTooltips, Disable Tooltips?
 		
@@ -649,6 +658,7 @@ class MyGui {
 		ShowResultsBlacksmithContracts := CurrentSettings.blacksmithcontractresults
 		DisableUserDetailsReload := CurrentSettings.disableuserdetailsreload
 		DisableTooltips := CurrentSettings.disabletooltips
+		RedeemCodeHistorySkip := CurrentSettings.redeemcodehistoryskip
 		StyleSelection := CurrentSettings.style
 		StyleChoice := StyleSelection
 		SetStyle(StyleSelection)
@@ -813,6 +823,7 @@ class MyGui {
 		GuiControl, MyWindow:, NoSaveSetting, % NoSaveSetting, w250 h210
 		GuiControl, MyWindow:, LogEnabled, % LogEnabled, w250 h210
 		GuiControl, MyWindow:, ShowResultsBlacksmithContracts, % ShowResultsBlacksmithContracts, w250 h210
+		GuiControl, MyWindow:, RedeemCodeHistorySkip, % RedeemCodeHistorySkip, w250 h210
 		GuiControl, MyWindow:, DisableUserDetailsReload, % DisableUserDetailsReload, w250 h210
 		GuiControl, MyWindow:, DisableTooltips, % DisableTooltips, w250 h210
 		if (StyleSelection) {
@@ -1032,6 +1043,7 @@ SaveSettings()
 	CurrentSettings.blacksmithcontractresults := ShowResultsBlacksmithContracts
 	CurrentSettings.disableuserdetailsreload := DisableUserDetailsReload
 	CurrentSettings.disabletooltips := DisableTooltips
+	CurrentSettings.redeemcodehistoryskip := RedeemCodeHistorySkip
 	if(StyleChoice == "") {
 		CurrentSettings.style := StyleSelection
 	} else {
@@ -1209,6 +1221,8 @@ Open_Codes:
 		Menu, FileMenu, Add, Auto Load &Special && Run (Web)`tCtrl+E, Get_Codes_Autoload_Run_Special
 		Menu, FileMenu, Add, Auto Load &Permanent && Run (Web)`tCtrl+P, Get_Codes_Autoload_Run_Permanent
 		Menu, FileMenu, Add, &Submit`tCtrl+S, Redeem_Codes
+		Menu, FileMenu, Add, Show Submit &History`tCtrl+H, Redeem_Codes_History
+		Menu, FileMenu, Add, &Clear Submit History`tCtrl+C, Redeem_Codes_History_Clear
 		Menu, EditMenu, Add, Paste`tCtrl+V, Paste
 		Menu, EditMenu, Add, Clear`tDel, Delete
 		Menu, HelpMenu, Add, Open &Codes (Web)`tCtrl+O, Open_Web_Codes_Page
@@ -1345,6 +1359,20 @@ Open_Codes:
 		return
 	}
 
+	Redeem_Codes_History() {
+		codelistfile := ""
+		If FileExist(RedeemCodeListFile)
+			FileRead, codelistfile, %RedeemCodeListFile%
+		;MsgBox, , Redeem Code History, % codelistfile
+		;CustomMsgBox("Redeem Code History", codelistfile, "Consolas", "s10", %BgColour%)
+		ScrollBox(codelistfile, "p b1 h300 w210 f{s10, Consolas}", "Redeem Code History")
+		return
+	}
+
+	Redeem_Codes_History_Clear() {
+		FileDelete, %RedeemCodeListFile%
+	}
+
 	Redeem_Codes() {
 		LogFile("Redeem Code Started")
 		Gui, CodeWindow:Submit, NoHide
@@ -1364,6 +1392,8 @@ Open_Codes:
 			GuiControl, Disable, Button_Delete
 			CodeNum := 1
 			CodeTotal := CodeCount
+			reruncodescount := 0
+			reruncodes := ""
 			usedcodescount := 0
 			usedcodes := ""
 			someonescodescount := 0
@@ -1385,6 +1415,12 @@ Open_Codes:
 			codetgps := 0
 			codepolish := 0
 			tempsavesetting := 0
+			codelistcount := 0
+			codelistcodes := ""
+			codelistfile := ""
+			If FileExist(RedeemCodeListFile)
+				FileRead, codelistfile, %RedeemCodeListFile%
+			; MsgBox, % codelistfile
 			if (ServerDetection == 1) {
 				CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Getting User Details..."
 				GuiControl, , CodesOutputStatus, % CodesPending
@@ -1401,100 +1437,120 @@ Open_Codes:
 				CurrentCode := v
 				sCode := RegExReplace(CurrentCode, "&", Replacement := "%26")
 				sCode := RegExReplace(sCode, "#", Replacement := "%23")
-				if !UserID {
-					MsgBox % "Need User ID & Hash"
-					FirstRun()
-				}
-				codeparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&code=" sCode
-				rawresults := ServerCall("redeemcoupon", codeparams)
-				coderesults := JSON.parse(rawresults)
-				rawloot := JSON.stringify(coderesults.loot_details)
-				codeloot := JSON.parse(rawloot)
-				if (coderesults.failure_reason == "Outdated instance id") {
-					MsgBox, 4, , % "Outdated instance id. Update from server?"
-					IfMsgBox, Yes
-					{
-						GetUserDetails()
-						Gui, CodeWindow:Default
-						while (InstanceID == 0) {
-							sleep, 2000
-						}
-						codeparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&code=" sCode
-						rawresults := ServerCall("redeemcoupon", codeparams)
-						coderesults := JSON.parse(rawresults)
-						rawloot := JSON.stringify(coderesults.loot_details)
-						codeloot := JSON.parse(rawloot)
-					} else {
-						return
-					}
-				}
-				if (coderesults.failure_reason == "You have already redeemed this combination.") {
-					usedcodescount += 1
-					usedcodes := usedcodes sCode "`n"
-				} else if (coderesults.failure_reason == "Someone has already redeemed this combination.") {
-					someonescodescount += 1
-					someonescodes := someonescodes sCode "`n"
-				} else if (coderesults.failure_reason == "This offer has expired") {
-					expiredcodescount += 1
-					expiredcodes := expiredcodes sCode "`n"
-				} else if (coderesults.failure_reason == "You can not yet redeem this combination.") {
-					earlycodescount += 1
-					earlycodes := earlycodes sCode "`n"
-				} else if (coderesults.failure_reason == "This is not a valid combination.") {
-					invalidcodescount += 1
-					invalidcodes := invalidcodes sCode "`n"
+				CodeListFound := InStr(codelistfile, sCode)
+				; MsgBox, % CodeListFound
+				if (CodeListFound > 0 and RedeemCodeHistorySkip) {
+					codelistcount += 1
+					codelistcodes := codelistcodes sCode "`n"
 				} else {
-					for kk, vv in codeloot {
-						if (vv.chest_type_id == "2") {
-							codegolds += vv.count
-						} else if (vv.chest_type_id == "37") {
-							codesupplys += vv.count
-						} else if (vv.chest_type_id == "1") {
-							codesilvers += vv.count
-						} else if (vv.chest_type_id) {
-							;otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
-							otherchestscount += vv.count
-							othercheststype:= ChestFromID(vv.chest_type_id)
-							if ( otherchestsarray.HasKey(othercheststype) ) {
-								otherchestsarray[othercheststype] += vv.count
-							} else {
-								otherchestsarray[othercheststype] := 1
+					if !UserID {
+						MsgBox % "Need User ID & Hash"
+						FirstRun()
+					}
+					codeparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&code=" sCode
+					rawresults := ServerCall("redeemcoupon", codeparams)
+					coderesults := JSON.parse(rawresults)
+					rawloot := JSON.stringify(coderesults.loot_details)
+					codeloot := JSON.parse(rawloot)
+					if (coderesults.failure_reason == "Outdated instance id") {
+						MsgBox, 4, , % "Outdated instance id. Update from server?"
+						IfMsgBox, Yes
+						{
+							GetUserDetails()
+							Gui, CodeWindow:Default
+							while (InstanceID == 0) {
+								sleep, 2000
 							}
-						} else if (vv.add_time_gate_key_piece) {
-							codetgps += vv.count
-						} else if (vv.add_inventory_buff_id) {
-							codeepicscount += vv.count
-							switch vv.add_inventory_buff_id {
-								case 4: codeepics := codeepics "STR (" vv.count "), "
-								case 8: codeepics := codeepics "GF (" vv.count "), "
-								case 16: codeepics := codeepics "HP (" vv.count "), "
-								case 20: codeepics := codeepics "Bounty (" vv.count "), "
-								case 34: codeepics := codeepics "BS (" vv.count "), "
-								case 35: codeepics := codeepics "Spec (" vv.count "), "
-								case 40: codeepics := codeepics "FB (" vv.count "), "
-								case 77: codeepics := codeepics "Spd (" vv.count "), "
-								case 36: codepolish += vv.count
-										 codeepicscount -= vv.count
-								default: codeepics := codeepics vv.add_inventory_buff_id " (" vv.count "), "
-							}
+							codeparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&code=" sCode
+							rawresults := ServerCall("redeemcoupon", codeparams)
+							coderesults := JSON.parse(rawresults)
+							rawloot := JSON.stringify(coderesults.loot_details)
+							codeloot := JSON.parse(rawloot)
+						} else {
+							return
 						}
 					}
-				} 
-				CodeCount := % (CodeCount-1)
-				CodeNum := % (CodeTotal-CodeCount)
-				if (CurrentSettings.alwayssavecodes || tempsavesetting) {
-					FileAppend, "{""submit_code"":""" %sCode% """}"`n, %RedeemCodeLogFile%
-					FileAppend, %rawresults%`n, %RedeemCodeLogFile%
-				} else if !(CurrentSettings.nosavesetting) {
-					MsgBox, 4, , "Save to File?"
-					IfMsgBox, Yes
-					{
-						tempsavesetting := 1
-						FileAppend, %sCode%`n, %RedeemCodeLogFile%
+					codelistfile := codelistfile "`n" sCode
+					FileAppend, %sCode% `n, %RedeemCodeListFile%
+					; MsgBox, % codelistfile
+					if (coderesults.failure_reason == "You have already redeemed this combination.") {
+						usedcodescount += 1
+						usedcodes := usedcodes sCode "`n"
+					} else if (coderesults.failure_reason == "Someone has already redeemed this combination.") {
+						someonescodescount += 1
+						someonescodes := someonescodes sCode "`n"
+					} else if (coderesults.failure_reason == "This offer has expired") {
+						expiredcodescount += 1
+						expiredcodes := expiredcodes sCode "`n"
+					} else if (coderesults.failure_reason == "You can not yet redeem this combination.") {
+						earlycodescount += 1
+						earlycodes := earlycodes sCode "`n"
+					} else if (coderesults.failure_reason == "This is not a valid combination.") {
+						invalidcodescount += 1
+						invalidcodes := invalidcodes sCode "`n"
+					} else {
+						; rerun code if json is missing properties
+						if (rawloot.haskey("failure_reason") or !rawloot.haskey("loot_details")) {
+							reruncodescount += 1
+							reruncodes := reruncodes sCode "`n"
+							codeparams := DummyData "&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&code=" sCode
+							rawresults := ServerCall("redeemcoupon", codeparams)
+							coderesults := JSON.parse(rawresults)
+							rawloot := JSON.stringify(coderesults.loot_details)
+							codeloot := JSON.parse(rawloot)
+						}
+						for kk, vv in codeloot {
+							if (vv.chest_type_id == "2") {
+								codegolds += vv.count
+							} else if (vv.chest_type_id == "37") {
+								codesupplys += vv.count
+							} else if (vv.chest_type_id == "1") {
+								codesilvers += vv.count
+							} else if (vv.chest_type_id) {
+								;otherchests := otherchests ChestFromID(vv.chest_type_id) "`n"
+								otherchestscount += vv.count
+								othercheststype:= ChestFromID(vv.chest_type_id)
+								if ( otherchestsarray.HasKey(othercheststype) ) {
+									otherchestsarray[othercheststype] += vv.count
+								} else {
+									otherchestsarray[othercheststype] := 1
+								}
+							} else if (vv.add_time_gate_key_piece) {
+								codetgps += vv.count
+							} else if (vv.add_inventory_buff_id) {
+								codeepicscount += vv.count
+								switch vv.add_inventory_buff_id {
+									case 4: codeepics := codeepics "STR (" vv.count "), "
+									case 8: codeepics := codeepics "GF (" vv.count "), "
+									case 16: codeepics := codeepics "HP (" vv.count "), "
+									case 20: codeepics := codeepics "Bounty (" vv.count "), "
+									case 34: codeepics := codeepics "BS (" vv.count "), "
+									case 35: codeepics := codeepics "Spec (" vv.count "), "
+									case 40: codeepics := codeepics "FB (" vv.count "), "
+									case 77: codeepics := codeepics "Spd (" vv.count "), "
+									case 36: codepolish += vv.count
+											codeepicscount -= vv.count
+									default: codeepics := codeepics vv.add_inventory_buff_id " (" vv.count "), "
+								}
+							}
+						}
+					} 
+					CodeCount := % (CodeCount-1)
+					CodeNum := % (CodeTotal-CodeCount)
+					if (CurrentSettings.alwayssavecodes || tempsavesetting) {
+						FileAppend, "{""submit_code"":""" %sCode% """}"`n, %RedeemCodeLogFile%
 						FileAppend, %rawresults%`n, %RedeemCodeLogFile%
+					} else if !(CurrentSettings.nosavesetting) {
+						MsgBox, 4, , "Save to File?"
+						IfMsgBox, Yes
+						{
+							tempsavesetting := 1
+							FileAppend, %sCode%`n, %RedeemCodeLogFile%
+							FileAppend, %rawresults%`n, %RedeemCodeLogFile%
+						}
 					}
+					sleep, 500
 				}
-				sleep, 500
 				Gui, CodeWindow: Default
 				CodesPending := "⌛ Codes: " CodeNum "/" CodeTotal " - Submitting..."
 				GuiControl, , CodesOutputStatus, % CodesPending
@@ -1545,6 +1601,12 @@ Open_Codes:
 			}
 			if !(usedcodes == "") {
 				codemessage := codemessage "You Already Used (" usedcodescount "):`n" usedcodes "`n"
+			}
+			if !(codelistcodes == "") {
+				codemessage := codemessage "Skipped (" codelistcount "):`n" codelistcodes "`n"
+			}
+			if !(reruncodes == "") {
+				codemessage := codemessage "Resubmitted (" reruncodescount "):`n" reruncodes "`n"
 			}
 			if (codemessage == "") {
 				codemessage := "Unknown or No Results"
