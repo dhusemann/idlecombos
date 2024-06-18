@@ -6,6 +6,14 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.76
+
+* Add Elminster GUI (Thanks to koe, Sorry for missing this!)
+* Add Duke Ravengard to dictionary
+* Update dictionary with Duke Ravengard chests
+* Add Aeon to dictionary
+* Update dictionary with Aeon chests
+
 ## 3.75
 
 * Add Elminster to dictionary (Thanks to koe)
