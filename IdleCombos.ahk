@@ -6,8 +6,8 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.75"
-global CurrentDictionary := "2.38"
+global VersionNumber := "3.76"
+global CurrentDictionary := "2.39"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -174,6 +174,13 @@ global ZarielFPCurrency := ""
 global ZarielChallenges := ""
 global ZarielRequires := ""
 global ZarielCosts := ""
+global ElminsterVariants := ""
+global ElminsterCompleted := ""
+global ElminsterVariantTotal := ""
+global ElminsterFPCurrency := ""
+global ElminsterChallenges := ""
+global ElminsterRequires := ""
+global ElminsterCosts := ""
 
 ;Event globals
 global EventID := ""
@@ -562,6 +569,15 @@ class MyGui {
 		Gui, MyWindow:Add, Text, vZarielChallenges x+p w55 right cRed, % ZarielChallenges
 		Gui, MyWindow:Add, Text, vZarielCosts x+2 w200 right, % ZarielCosts
 
+		Gui, MyWindow:Add, Text, x%col1_x% y+5+p w90, Elminster Variants:
+		Gui, MyWindow:Add, Text, vElminsterVariants x+p w75 right cRed, % ElminsterVariants
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w110, Elminster FP Currency:
+		Gui, MyWindow:Add, Text, vElminsterFPCurrency x+p w55 right cRed, % ElminsterFPCurrency
+		Gui, MyWindow:Add, Text, vElminsterRequires x+2 w200 right, % ElminsterRequires
+		Gui, MyWindow:Add, Text, x%col1_x% y+p w110, Elminster Challenges:
+		Gui, MyWindow:Add, Text, vElminsterChallenges x+p w55 right cRed, % ElminsterChallenges
+		Gui, MyWindow:Add, Text, vElminsterCosts x+2 w200 right, % ElminsterCosts
+
 		Gui, Tab, Champions
 		Gui, MyWindow:Add, Text, vChampDetails x%col1_x% y33 w430 h230, % ChampDetails
 
@@ -793,6 +809,12 @@ class MyGui {
 		GuiControl, MyWindow:, ZarielFPCurrency, % ZarielFPCurrency, w250 h210
 		GuiControl, MyWindow:, ZarielRequires, % ZarielRequires, w250 h210
 		GuiControl, MyWindow:, ZarielCosts, % ZarielCosts, w250 h210
+		GuiControl, MyWindow:, ElminsterCosts, % ElminsterCosts, w250 h210
+		GuiControl, MyWindow:, ElminsterVariants, % ElminsterVariants, w250 h210
+		GuiControl, MyWindow:, ElminsterChallenges, % ElminsterChallenges, w250 h210
+		GuiControl, MyWindow:, ElminsterFPCurrency, % ElminsterFPCurrency, w250 h210
+		GuiControl, MyWindow:, ElminsterRequires, % ElminsterRequires, w250 h210
+		GuiControl, MyWindow:, ElminsterCosts, % ElminsterCosts, w250 h210
 
 		;Champions
 		GuiControl, MyWindow:, ChampDetails, % ChampDetails, w430 h230
@@ -858,6 +880,8 @@ MyWindowGuiSize(GuiHwnd, EventInfo, Width, Height) {
 	GuiControl, MoveDraw, StrahdCosts, % "x" . floor((Width - 280)/2)
 	GuiControl, MoveDraw, ZarielRequires, % "x" . floor((Width - 280)/2)
 	GuiControl, MoveDraw, ZarielCosts, % "x" . floor((Width - 280)/2)
+	GuiControl, MoveDraw, ElminsterRequires, % "x" . floor((Width - 280)/2)
+	GuiControl, MoveDraw, ElminsterCosts, % "x" . floor((Width - 280)/2)
 
 	GuiControl, MoveDraw, EventDetails, % "w" . (Width - 175) . " h" . (Height - 28)
 
@@ -3379,6 +3403,40 @@ ParsePatronData() {
 					ZarielCosts := "Zariel Coins: " SubStr( "          " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)], -9)
 				}
 			}
+			case 5: {
+				if v.unlocked == False {
+					ElminsterVariants := "Locked"
+					ElminsterFPCurrency := "Requires:"
+					ElminsterChallenges := "Costs:"
+					ElminsterRequiresAdventure := UserDetails.details.stats.highest_area_completed_ever_c873
+					if (ElminsterRequiresAdventure = "") {
+						ElminsterRequiresAdventure := "0"
+					}
+					ElminsterRequires := ElminsterRequiresAdventure "/575 in Adv 873 && " TotalChamps "/50 Champs"
+					if ((ElminsterRequiresAdventure > 574) && (TotalChamps > 49)) {
+						Gui, Font, cGreen
+						GuiControl, Font, ElminsterFPCurrency
+					}
+					ElminsterCosts := CurrentSilvers "/50 Silver Chests"
+					if (CurrentSilvers > 49) {
+						Gui, Font, cGreen
+						GuiControl, Font, ElminsterChallenges
+					}
+				} else {
+					for kk, vv in v.progress_bars {
+						switch vv.id {
+							case "variants_completed":
+								ElminsterVariantTotal := vv.goal
+								ElminsterCompleted := vv.count
+								ElminsterVariants := ElminsterCompleted " / " ElminsterVariantTotal
+							case "free_play_limit": ElminsterFPCurrency := vv.count
+							case "weekly_challenge_porgress": ElminsterChallenges := vv.count
+						}
+					}
+					ElminsterRequires := "Elminster Influence: " SubStr( "          " Format("{:.2f}",v.influence_current_amount / (1000 ** Floor(log(v.influence_current_amount)/3))) MagList[Floor(log(v.influence_current_amount)/3)], -9)
+					ElminsterCosts := "Elminster Coins: " SubStr( "          " Format("{:.2f}",v.currency_current_amount / (1000 ** Floor(log(v.currency_current_amount)/3))) MagList[Floor(log(v.currency_current_amount)/3)], -9)
+				}
+			}
 		}
 	}
 }
@@ -3568,6 +3626,29 @@ CheckPatronProgress() {
 		} else {
 			Gui, Font, cRed
 			GuiControl, Font, ZarielVariants
+		}
+	}
+	if !(ElminsterVariants == "Locked") {
+		if (ElminsterChallenges = "8") {
+			Gui, Font, cGreen
+			GuiControl, Font, ElminsterChallenges
+		} else {
+			Gui, Font, cRed
+			GuiControl, Font, ElminsterChallenges
+		}
+		if (ElminsterFPCurrency = "5000") {
+			Gui, Font, cGreen
+			GuiControl, Font, ElminsterFPCurrency
+		} else {
+			Gui, Font, cRed
+			GuiControl, Font, ElminsterFPCurrency
+		}
+		if (ElminsterCompleted = ElminsterVariantTotal) {
+			Gui, Font, cGreen
+			GuiControl, Font, ElminsterVariants
+		} else {
+			Gui, Font, cRed
+			GuiControl, Font, ElminsterVariants
 		}
 	}
 }
@@ -4221,11 +4302,11 @@ IncompleteVariants() {
 		AdventureList()
 	}
 	idtocheck := 0
-	InputBox, idtocheck, Incomplete Adventures, Please enter the Patron to check.`nNone (0)`tMirt (1)`nVajra (2)`tStrahd (3)`nZariel (4), , 250, 200, , , , , % idtocheck
+	InputBox, idtocheck, Incomplete Adventures, Please enter the Patron to check.`nNone (0)`tMirt (1)`nVajra (2)`tStrahd (3)`nZariel (4)`nElminster (5), , 250, 200, , , , , % idtocheck
 	if ErrorLevel
 		return
-	while ((idtocheck < 0) or (idtocheck > 4)) {
-		InputBox, idtocheck, Incomplete Adventures, Please enter a valid Patron ID.`nMirt (1)`tVajra (2)`tStrahd (3)`nZariel (4), , 250, 200, , , , , % idtocheck
+	while ((idtocheck < 0) or (idtocheck > 5)) {
+		InputBox, idtocheck, Incomplete Adventures, Please enter a valid Patron ID.`nMirt (1)`tVajra (2)`tStrahd (3)`nZariel (4)`nElminster (5), , 250, 200, , , , , % idtocheck
 		if ErrorLevel
 			return
 	}
