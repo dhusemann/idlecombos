@@ -2176,12 +2176,12 @@ UseBlacksmith(buffid) {
 	slot6lvs := 0
 	while (count > 0) {
 		SB_SetText("⌛ " contractname " Blacksmith Contracts remaining to use: " count)
-		if (count < 50) {
+		if (count < 1000) {
 			rawresults := ServerCall("useserverbuff", bscontractparams count)
 			count -= count
 		} else {
-			rawresults := ServerCall("useserverbuff", bscontractparams "50")
-			count -= 50
+			rawresults := ServerCall("useserverbuff", bscontractparams "1000")
+			count -= 1000
 		}
 		if (CurrentSettings.alwayssavecontracts || tempsavesetting) {
 			FileAppend, %rawresults%`n, %BlacksmithLogFile%
