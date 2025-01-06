@@ -6,8 +6,8 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.76"
-global CurrentDictionary := "2.39"
+global VersionNumber := "3.77"
+global CurrentDictionary := "2.40"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -3801,14 +3801,16 @@ CheckEvents() {
 			}
 		}
 	}
+	InfoEventName := EventDesc "`n`n"
+	InfoEventTokens := ""
+	InfoEventHeroes := ""
+	InfoEventChests := ""
 	if (EventID != 0) {
 		InfoEventName := EventName " (ID:" EventID ") - " EventDesc "`n`n"
-	} else {
-		InfoEventName := EventDesc "`n`n"
+		InfoEventTokens := EventTokenName ": " EventTokens "`n`n"
+		InfoEventHeroes := "HEROES: " EventHeroes "`n`n"
+		InfoEventChests := "CHESTS: " EventChests "`n`n"
 	}
-	InfoEventTokens := EventTokenName ": " EventTokens "`n`n"
-	InfoEventHeroes := "HEROES: " EventHeroes "`n`n"
-	InfoEventChests := "CHESTS: " EventChests "`n`n"
 	EventDetails := InfoEventName InfoEventTokens InfoEventHeroes InfoEventChests
 }
 

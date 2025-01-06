@@ -6,6 +6,17 @@ To all the Idle Dragoneers who inspired and assisted me!
 
 ------
 
+## 3.77
+
+* Increase Blacksmith calls from 50 to 1000
+* Fix dictionary ID search for efficiency
+* Add Umberto to dictionary
+* Update dictionary with Umberto chests
+* Add Bobby to dictionary
+* Update dictionary with Bobby chests
+* Add Kas to dictionary
+* Update dictionary with Kas chests
+
 ## 3.76
 
 * Add Elminster GUI (Thanks to koe, Sorry for missing this!)
