@@ -1,7 +1,20 @@
 IdleCombos.ahk.bak
-userdetails.json
+*.exe
+
+# SETTINGS
 idlecombosettings.json
+userdetails.json
+advdefs.json
+
+# LOGS
 idlecombolog.txt
 eos_loader_log.txt
-*.exe
+blacksmithlog.json
+bountylog.json
+chestopenlog.json
+journal.json
+redeemcodelog.json
+redeemcodelist.json
+
+# VSCOODE
 .vscode/settings.json

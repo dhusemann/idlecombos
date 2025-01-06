@@ -1,36 +1,52 @@
-# idlecombos
-Because of Health No longer able to maintain. 
-3.00 is supported Version. </br>
-IMPORTANT - When opening chests with the idlecombos app:</br>
-The game client can save an outdated inventory, overwriting some consumables.</br>
-It's recommended to exit the game first to avoid losing items.</br>
-</br>
-IMPORTANT - Epic Launcher will not open Idlechampions if</br>
-Idlecombos is open first.</br>
-</br>
-IdleCombos.ahk (current AHK version)</br>
-idledict.ahk (id definitions file)</br>
-json.ahk (json parsing, included in exe)</br>
-README.md (this file)</br>
-</br>
-<img src="https://i.imgur.com/iu1Qbsj.png"></br>
-Companion App for Idle Champions, written in AHK.</br>
-Features:</br>
-- Simple account statistics display</br>
-- Easy buying/opening many chests</br>
-  - (Can log results to file)</br>
-- Enter multiple combinations at once</br>
-  - (<img src=https://i.imgur.com/GrCti3P.jpg>)
-- Briv Stack Calculator [github.com/Deatho0ne]</br>
-- Manual starting/stopping adventures</br>
-  - (Sometimes can fix stuck accounts)</br>
-- Can reload game client on crash (Steam only)</br>
-</br>
-Requirements:</br>
-Steam install, or able to enter your user_id & hash if on another platform.</br>
-</br>
-Includes:</br>
-json.ahk [github.com/Chunjee]</br>
-</br>
-Discord Support Server:</br>
-<a href="https://discord.com/invite/N3U8xtB">https://discord.com/invite/N3U8xtB</a>
+# IDLE COMBOS
+
+Companion App for Idle Champions, written in [AHK](https://www.autohotkey.com/).
+
+**v3.77** is the current supported Version. [View changelog.](https://github.com/djravine/idlecombos/blob/master/CHANGELOG.md)
+
+![Screenshot](https://i.imgur.com/LoeTt9r.png)
+
+## Important Notes
+
+* Steam Launcher will not open Idle Champions if Steam is not open and logged in.
+* Steam game detection only works if your Steam Library is in the default location.
+* If you use a VPN you may have API communication issues. Please whitelist AHK/IdleCombos in your VPN.
+
+## Features
+
+* Simple account statistics display
+* Easy buying/opening many chests (Gold/Silver/Event)
+* Easy apply bulk blacksmith contracts
+* Enter multiple redeem codes at once  
+  ![Redeem Codes](https://i.imgur.com/vwqDR4U.png)
+* Briv Stack Calculator [github.com/Deatho0ne]
+* Manual starting/stopping adventures (Sometimes can fix stuck accounts)
+* Can reload game client on crash (Steam only)
+
+## Requirements
+
+* Steam install _or_
+* Epic Games install _or_
+* Standalone install _or_
+* Able to enter your `user_id` & `hash` if on another platform.
+
+## Includes
+
+* IdleCombos.ahk (Current AHK version)
+* idledict.ahk (ID Definitions file)
+* json.ahk (JSON parsing) [github.com/Chunjee]
+* README.md (This file)
+
+## How To Run
+
+* Install [AutoHotKey v1.1](https://www.autohotkey.com/download/ahk-install.exe)
+* Checkout this REPO or download a [release](https://github.com/djravine/idlecombos/releases)
+* If you downloaded a release, unzip into a folder
+* Right click the file `IdleCombos.ahk` and open with AutoHotKey  
+  ![How To Run](https://i.imgur.com/UFWxScW.png)
+* The application will ask you to detect your App ID from your currently installed Idle Champions install folder
+* Profit!
+
+## Discord
+
+* We have just setup a [Discord Support Server](https://discord.gg/wFtrGqd3ZQ)

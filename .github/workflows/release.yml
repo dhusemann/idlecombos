@@ -1,0 +1,48 @@
+on:
+  push:
+    tags:
+      - 'v*'
+
+name: Create Release
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ARCHIVE_NAME: ${{ github.event.repository.name }}-${{github.ref_name}}
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v2
+    - name: Make Release Folder
+      run: mkdir "$ARCHIVE_NAME"
+    - name: Copy files
+      run: cp -r *.ahk *.md "$ARCHIVE_NAME"
+    - name: Make Image Folder
+      run: mkdir "$ARCHIVE_NAME/images"
+    - name: Copy Images
+      run: cp -r images/*.png "$ARCHIVE_NAME/images"
+    - name: Archive Release TAR.GZ - No Themes
+      run: tar -czf "$ARCHIVE_NAME"-no-themes.tar.gz "$ARCHIVE_NAME"
+    - name: Archive Release ZIP - No Themes
+      run: zip -r "$ARCHIVE_NAME"-no-themes.zip "$ARCHIVE_NAME"
+    - name: Make Styles Folder
+      run: mkdir "$ARCHIVE_NAME/styles"
+    - name: Copy Styles
+      run: cp -r styles/*.msstyles "$ARCHIVE_NAME/styles"
+    - name: Copy Theme DLL
+      run: cp -r styles/USkin.dll "$ARCHIVE_NAME/styles"
+    - name: Archive Release TAR.GZ - With Themes
+      run: tar -czf "$ARCHIVE_NAME"-themes.tar.gz "$ARCHIVE_NAME"
+    - name: Archive Release ZIP - With Themes
+      run: zip -r "$ARCHIVE_NAME"-themes.zip "$ARCHIVE_NAME"
+    - name: Upload Release
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        artifacts: "*.zip,*.tar.gz"
+        draft: true
+        removeArtifacts: true
+        replacesArtifacts: true
+        token: ${{ secrets.GITHUB_TOKEN }}

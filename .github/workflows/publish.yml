@@ -1,0 +1,27 @@
+on:
+  release:
+    types:
+      - 'published'
+
+name: Publish Release
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Latest Release
+        id: latest_release
+        uses: kaliber5/action-get-release@v1
+        with:
+          token: ${{ github.token }}
+          latest: true
+      - name: Discord Publish
+        uses: rjstone/discord-webhook-notify@v1
+        with:
+          severity: info
+          description: "**NEW:** ${{steps.latest_release.outputs.name}} has been released."
+          details: "**DOWNLOAD:** [${{steps.latest_release.outputs.name}}](${{steps.latest_release.outputs.html_url}})"
+          footer: "PUBLISHED: ${{steps.latest_release.outputs.published_at}} ID: ${{steps.latest_release.outputs.id}}"
+          text: ""
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
