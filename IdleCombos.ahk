@@ -6,8 +6,8 @@
 #include idledict.ahk
 
 ;Versions
-global VersionNumber := "3.76"
-global CurrentDictionary := "2.39"
+global VersionNumber := "3.77"
+global CurrentDictionary := "2.40"
 
 ;Local File globals
 global OutputLogFile := ""
@@ -2176,12 +2176,12 @@ UseBlacksmith(buffid) {
 	slot6lvs := 0
 	while (count > 0) {
 		SB_SetText("⌛ " contractname " Blacksmith Contracts remaining to use: " count)
-		if (count < 50) {
+		if (count < 1000) {
 			rawresults := ServerCall("useserverbuff", bscontractparams count)
 			count -= count
 		} else {
-			rawresults := ServerCall("useserverbuff", bscontractparams "50")
-			count -= 50
+			rawresults := ServerCall("useserverbuff", bscontractparams "1000")
+			count -= 1000
 		}
 		if (CurrentSettings.alwayssavecontracts || tempsavesetting) {
 			FileAppend, %rawresults%`n, %BlacksmithLogFile%
@@ -3801,14 +3801,16 @@ CheckEvents() {
 			}
 		}
 	}
+	InfoEventName := EventDesc "`n`n"
+	InfoEventTokens := ""
+	InfoEventHeroes := ""
+	InfoEventChests := ""
 	if (EventID != 0) {
 		InfoEventName := EventName " (ID:" EventID ") - " EventDesc "`n`n"
-	} else {
-		InfoEventName := EventDesc "`n`n"
+		InfoEventTokens := EventTokenName ": " EventTokens "`n`n"
+		InfoEventHeroes := "HEROES: " EventHeroes "`n`n"
+		InfoEventChests := "CHESTS: " EventChests "`n`n"
 	}
-	InfoEventTokens := EventTokenName ": " EventTokens "`n`n"
-	InfoEventHeroes := "HEROES: " EventHeroes "`n`n"
-	InfoEventChests := "CHESTS: " EventChests "`n`n"
 	EventDetails := InfoEventName InfoEventTokens InfoEventHeroes InfoEventChests
 }
 
